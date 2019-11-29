@@ -19,4 +19,4 @@ A Chess application allowing you to player with other people, and talk through c
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/Zenthos/Chess-Application/blob/master/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/Zenthos/Chess-Application/blob/master/LICENSE.md) file for details

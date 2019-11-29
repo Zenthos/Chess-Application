@@ -7,7 +7,7 @@ var io = require('socket.io')(http);
 app.use('/static', express.static(path.join(__dirname, '/public')));
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '/public/index.html');
+    res.sendFile(__dirname + '/index.html');
 });
 
 io.on('connection', function(socket){
