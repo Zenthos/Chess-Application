@@ -8,8 +8,8 @@ A Chess application allowing you to player with other people, and talk through c
 4. JQuery
 
 ## To Do List
-- [ ] Run all chess actions through the server
-- [ ] Implement turn switch through server
+- [X] Run all chess actions through the server
+- [X] Implement turn switch through server
 - [ ] Finish king piece class
 - [ ] Add win/draw conditions
 - [ ] Create chat rooms
