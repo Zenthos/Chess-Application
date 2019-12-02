@@ -1,24 +1,38 @@
+$('#joinForm').submit(function(e){
+    e.preventDefault(); // prevents page reloading
+    var socket = io({transports: ['websocket'], upgrade: false});
+    $('#JoinContainer').hide();
+    chatFunctions(socket);
+    chessApp(socket);
+    socket.emit('Joined', $('#username').val(), $('#address').val());
+    return false;
+});
 
-window.addEventListener("load", function() {
+const chatFunctions = function(socket) {
+    $('#chatForm').submit(function(e){
+        e.preventDefault(); // prevents page reloading
+        socket.emit('Send Message', $('#usermsg').val());
+        $('#usermsg').val('');
+        return false;
+    });
+
+    socket.on('Emit Message', function(username, message){
+        $('#messages').append($('<li>').text(`${username}: ${message}`));
+    });
+
+    socket.on('Update', function(message){
+        $('#messages').append($('<li>').text(message));
+    });
+}
+
+const chessApp = function(socket) {
     var canvas = document.getElementById("board")
     var ctx = canvas.getContext('2d');
     var board = new Image();
     var figures = new Image();
-    var socket = io({transports: ['websocket'], upgrade: false});
     var pieces = [];
 
     const serverFunctions = function() {
-        $('form').submit(function(e){
-            e.preventDefault(); // prevents page reloading
-            socket.emit('chat message', $('#usermsg').val());
-            $('#usermsg').val('');
-            return false;
-        });
-
-        socket.on('chat message', function(msg){
-            $('#messages').append($('<li>').text(msg));
-        });
-
         socket.on('Update Board', function(serverBoard) {
             serverBoard.forEach((item, index) => {
                 pieces[index].position.x = item.position.x;
@@ -61,7 +75,7 @@ window.addEventListener("load", function() {
             return arr;
         }
 
-        const getRelativeMousePos = function(event) {
+        const getRelativeMousePos = function() {
             var rect = event.target.getBoundingClientRect();
             var x = event.clientX - rect.left;
             var y = event.clientY - rect.top;
@@ -69,7 +83,7 @@ window.addEventListener("load", function() {
         }
 
         const moveAndSelect = function() {
-            let pos = getRelativeMousePos(event);
+            let pos = getRelativeMousePos();
             let tileToMoveTo = tileClicked(pos);
             let selectedObject = getSelectedObject();
             
@@ -123,10 +137,10 @@ window.addEventListener("load", function() {
         
         canvas.addEventListener('click', function(event) {
             moveAndSelect();
-            socket.emit('Click Event');
         });
 
         pieces = initPieces();
+        socket.emit('Validate', pieces);
         window.requestAnimationFrame(mainLoop);
     }
 
@@ -139,7 +153,7 @@ window.addEventListener("load", function() {
         if (figures.complete && board.complete) {
             serverFunctions();
             chessFunctions();
-            this.clearInterval(timer);
+            clearInterval(timer);
         }
     }, 100);
-})
+}

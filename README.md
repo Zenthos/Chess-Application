@@ -9,7 +9,7 @@ A Chess application allowing you to player with other people, and talk through c
 
 ## To Do List
 - [X] Run all chess actions through the server
-- [X] Implement turn switch through server
+- [ ] Implement color switch through server
 - [ ] Finish king piece class
 - [ ] Add win/draw conditions
 - [ ] Create chat rooms

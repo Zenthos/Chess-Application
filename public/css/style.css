@@ -1,80 +1,126 @@
+* {
+    box-sizing: border-box;
+}
+
 html, body {
     background-color: #272121;
     height: 98%;
 }
 
-#board {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    left: 25%;
-    top: 50%;
+#JoinContainer {
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 1;
 }
 
-#wrapper {
-    width: 50%;
-    height: 98%;
-    background-color: grey;
+#JoinContainer #transparency{
+    background-color: black;
+    opacity: 0.6;
+    width: 100%;
+    height: 100%;
+}
+
+#JoinContainer form {
+    z-index: 1;
     position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    width: 40%;
+    height: 40%;
+    background-color: darkgray;
+    text-align: center;
+}
+
+#JoinContainer form input {
+    margin-top: 10%;
+    padding: 8px;
+    height: 10%;
+    width: 90%;
+}
+
+#JoinContainer form button {
+    width: 90%;
+    height: 20%;
+    position: fixed;
+    transform: translate(-50%, 0);
+    left: 50%;
+    bottom: 0px;
+    margin-bottom: 10%;
+}
+
+
+#wrapper {
+    left: 0px;
+    top: 0px;
+    height: 100%;
+    margin: 10px;
+    background-color: lightgray;
+}
+
+#wrapper ul {
+    list-style-type: none;
+    width: 550px;
+    height: 670px;
+    overflow-y: auto;
+    padding-top: 6px;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+#wrapper ul li {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 22px;
+    background-color: gray;
+}
+
+#wrapper ul li:nth-child(odd) {
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 22px;
+    background-color: lightgray;
+}
+
+#wrapper canvas {
+    top: 50%;
     right: 10px;
+    transform: translate(0, -50%);
+    position: relative;
+    float: right;
+}
+
+#wrapper #global {
+    background-color: white;
+    position: relative;
+    width: 550px;
+    height: 100%;
+    top: 0px;
 }
 
 #wrapper form {
     width: 100%;
     height: 5%;
     position: absolute;
-    bottom: 0px;
+    bottom: 0;
 }
 
-#wrapper ul {
+#wrapper form input {
     position: absolute;
-    width: 97%;
-    height: 93%;
-    left: 50%;
-    top: 1%;
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-    list-style-type: none;
-    transform: translate(-50%, 0%);
-    background-color: lightgray;
+    width: 100%;
+    height: 100%;
+    border-color: gray;
+    padding-left: 8px;
+    padding-right: 120px;
 }
 
 #wrapper form button {
-    box-sizing: border-box;
+    display: block;
     position: absolute;
-    right: 0px;
+    width: 20%;
     height: 100%;
-    width: 15%;
-}
-
-#wrapper form #usermsg {
-    box-sizing: border-box;
-    position: absolute;
-    padding-left: 10px;
-    left: 0px;
-    height: 100%;
-    width: 85%;
-}
-
-#wrapper ul li {
-    text-indent: -25px;
-    padding-left: 30px;
-    list-style: none;
-    font-size: 20px;
-    color: black;
-    background-color: darkgray;
-}
-
-#wrapper ul li:nth-child(odd) {
-    text-indent: -25px;
-    padding-left: 30px;
-    list-style: none;
-    font-size: 20px;
-    color: black;
-    background-color: white;
-}
-
-::-webkit-scrollbar { 
-    width: 0px;
-    background: transparent;
+    right: 0;
 }

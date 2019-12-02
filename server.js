@@ -12,25 +12,35 @@ const main = function() {
     
     app.use('/static', express.static(path.join(__dirname, '/public')));
     
-    app.get('/', function(req, res){
-        res.sendFile(__dirname + '/index.html');
+    app.get('/', function(req, res) {
+        res.sendFile(__dirname + '/chess.html');
     });
-    
-    io.on('connection', function(socket){
-        io.emit('chat message', "A User has Connected");
 
-        socket.on('chat message', function(msg){
-            io.emit('chat message', msg);
-        });
-
-        socket.on('disconnect', function(){
-            io.emit('chat message', "A User has Disconnected");
-        });
-    });
-    
     http.listen(3000, function(){
         console.log('listening on *:3000');
     });    
+    
+    // *****************************************
+    // *************** Chat Code ***************
+    // *****************************************
+    var people = {};
+
+    io.on('connection', function(client){
+        client.on("Joined", function(username, address) {
+            people[client.id] = username;
+            client.emit('Update', "You have connected to the server.");
+            io.emit('Update', username + " has joined the server.")
+        });
+
+        client.on('Send Message', function(msg){
+            io.emit('Emit Message', people[client.id], msg);
+        });
+
+        client.on('disconnect', function(){
+            io.emit('Update', people[client.id] + " has left the server.");
+            delete people[client.id];
+        });
+    });
 
     // *****************************************
     // *************** Chess Code **************
@@ -42,21 +52,35 @@ const main = function() {
         res.send(currentPlayer); 
     });
 
-    io.on('connection', function(socket){
-        socket.emit('Update Board', pieces);
+    io.on('connection', function(client){
+        client.on('Validate', function(clientPieces) {
+            let matches = true;
+            pieces.forEach((item, index) => {
+                let c1 = item.position.x != clientPieces[index].position.x;
+                let c2 = item.position.y != clientPieces[index].position.y;
+                let c3 = item.captured != clientPieces[index].captured;
+                if (!c1 && !c2 && !c3) 
+                    matches = false;
+            });
+            
+            if (matches == false)
+                client.emit('Update Board', pieces);
+        });
 
-        socket.on('Moved', function(pieceMoved) {
+        client.on('Moved', function(pieceMoved) {
             currentPlayer = currentPlayer == 'White' ? 'Black' : 'White';
             pieces[pieceMoved.index].position.x = pieceMoved.position.x;
             pieces[pieceMoved.index].position.y = pieceMoved.position.y;
             io.emit('Update Board', pieces);
         });
 
-        socket.on('Captured', function(pieceMoved, capturedPieceIndex) {
+        client.on('Captured', function(pieceMoved, capturedPieceIndex) {
             currentPlayer = currentPlayer == 'White' ? 'Black' : 'White';
             pieces[pieceMoved.index].position.x = pieceMoved.position.x;
             pieces[pieceMoved.index].position.y = pieceMoved.position.y;
             pieces[capturedPieceIndex].captured = true;
+            let capturedPiece = pieces[capturedPieceIndex]
+            io.emit('Update', `${capturedPiece.player} ${capturedPiece.pieceType} Was Captured!`);
             io.emit('Update Board', pieces);
         });
     });
