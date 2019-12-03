@@ -1,6 +1,3 @@
-// Username cannot be already used or Empty
-// Must Contain players on both black and white and cannot >= 2 per color
-
 document.addEventListener('DOMContentLoaded', function() {
     var socket = io({transports: ['websocket'], upgrade: false});
     chatFunctions(socket);
@@ -11,21 +8,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
         socket.emit('Joined', $('#username').val(), $('#address').val(), $('#activity').val(), function(formValid, testFailed) {
             if (formValid) {
-                (function validInput() {
-                    socket.emit('Can Start', function(result) {
-                        if (result) {
-                            $('#JoinContainer').hide();
-                            chessApp(socket);
-                        } else {
-                            $('#joinForm').hide();
-                            $('#Waiting').show();
-                            if ($('#activity').val() == 'Spectator') $('h4').text('Waiting for players...');
-                            else if ($('#activity').val() == 'White') $('h4').text('Waiting for Black...');
-                            else if ($('#activity').val() == 'Black') $('h4').text('Waiting for White...');
-                            setTimeout(validInput, 1000);
-                        }
-                    });
-                })();
+                socket.emit('Can Start', function(result) {
+                    if (result) {
+                        $('#JoinContainer').hide();
+                        chessApp(socket);
+                    } else {
+                        $('#joinForm').hide();
+                        $('#Waiting').show();
+                        if ($('#activity').val() == 'Spectator') $('h4').text('Waiting for players...');
+                        else if ($('#activity').val() == 'White') $('h4').text('Waiting for Black...');
+                        else if ($('#activity').val() == 'Black') $('h4').text('Waiting for White...');
+                    }
+                });
             } else {
                 $('#errMsg').text(testFailed);
             }
@@ -101,22 +95,11 @@ const chessApp = function(socket) {
             let rect = event.target.getBoundingClientRect();
             let x = event.clientX - rect.left;
             let y = event.clientY - rect.top;
-            let occupied = false;
-
-            let tx = Math.floor((x - 28) / 56);
-            let ty = Math.floor((y - 28) / 56);
-
-            for (let piece of pieces) {
-                if (piece.position.x == tx && piece.position.y == ty) occupied = true;
-            }
-    
-            if (tx >= 0 && tx <= 7 && ty >= 0 && ty <= 7) return {x, y, tileX: tx, tileY: ty, occupied};
-            else return undefined;
+            return {x, y};
         }
         
         canvas.addEventListener('click', function(event) {
-            let values = getRelativeMousePos(event);
-            if (values !== undefined) socket.emit('Client Clicked', values);
+            socket.emit('Client Clicked', values);
         });
 
         window.requestAnimationFrame(mainLoop);

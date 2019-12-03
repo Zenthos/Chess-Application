@@ -97,8 +97,7 @@ const main = function() {
 
         client.on('Client Clicked', function(spotClicked) {
             let clientRoom = rooms[people[client.id].room];
-            moveAndSelect(spotClicked, clientRoom, people[client.id]);
-            clientRoom.updateBoard(io);
+            
         });
 
         client.on('Validate', function(clientPieces) {
@@ -115,33 +114,6 @@ const main = function() {
                 clientRoom.updateBoard(io);
         });
     });
-
-    const moveAndSelect = function(spot, room, client) {
-        let selectedObject = room.getSelectedObject(room);
-
-        if (selectedObject.contains) {
-            room.pieces[selectedObject.index].selected = false;
-            let x = room.pieces[selectedObject.index].position.x;
-            let y = room.pieces[selectedObject.index].position.y;
-            if (spot.tileX != x || spot.tileY != y) {
-                let spotClicked = {x: spot.tileX, y: spot.tileY, occupied: spot.occupied};
-                room.pieces[selectedObject.index].moveTo(room.pieces, spotClicked, room);
-            }
-            return;
-        }
-
-        for (let i = 0; i < room.pieces.length; i++) {
-            var tile = {
-                x: 28 + room.pieces[i].position.x * room.pieces[i].tile.s,
-                y: 28 + room.pieces[i].position.y * room.pieces[i].tile.s,
-                s: room.pieces[i].tile.s
-            }
-            if (spot.x > tile.x && spot.y > tile.y && spot.x < tile.x + tile.s && spot.y < tile.y + tile.s) {
-                if (!room.pieces[i].captured) 
-                    room.pieces[i].selectPiece(room.currentPlayer, client.side);
-            }
-        }
-    }
 }
 
 class ChessRoom {
@@ -178,13 +150,6 @@ class ChessRoom {
                     this.pieces.push(new P.Pawn('Pawn', color, 5, index, i, 6));
             }
         })
-    }
-
-    getSelectedObject = function(room) {
-        for (let i = 0; i < room.pieces.length; i++) {
-            if (room.pieces[i].selected) return {contains: true, index: i};
-        }
-        return {contains: false, index: NaN};   // Returns Index of Selected Object
     }
 
     alreadyHas = function(username) {

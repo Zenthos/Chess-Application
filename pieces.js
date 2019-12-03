@@ -11,17 +11,37 @@ function Piece(name, color, tx, ty, px, py) {
     this.moveCount = 0;
 }
 
-Piece.prototype.selectPiece = function(currentPlayer, clientPlayer) {
+Piece.prototype.select = function(currentPlayer, clientPlayer) {
     if (!this.captured && currentPlayer == this.player && clientPlayer == this.player)
         this.selected = true;
     else    
         this.selected = false;
 }
 
-Piece.prototype.moveTo = function(pieces, spotClicked, room) {
-    this.position.x = spotClicked.x;
-    this.position.y = spotClicked.y;
-    room.switchColor();
+Piece.prototype.positionEqual = function(obj2) {
+    let obj1Position = JSON.stringify(this.position);
+    let obj2Position = JSON.stringify(obj2.position);
+
+    if (obj1Position === obj2Position)
+        return true;
+    else 
+        return false;
+}
+
+Piece.prototype.spotOccupied = function(pieces, spotClicked) {
+    for (let piece of pieces) {
+        if (piece.positionEqual(spotClicked))
+            console.log(this.pieceType + " " + piece.pieceType);
+    }
+    return false;
+}
+
+Piece.prototype.move = function(pieces, spotClicked, room) {
+
+}
+
+Piece.prototype.capture = function(pieces, spotClicked, room) {
+
 }
 
 // ---------------------------------------- SHARED FUNCTIONS ----------------------------------------
@@ -36,6 +56,10 @@ function Pawn(name, color, tx, ty, px, py)  {
 
 Pawn.prototype = Object.create(Piece.prototype);
 
+Pawn.prototype.moveTo = function(pieces, spotClicked, room) {
+
+}
+
 // -------------------------------------------- ROOK --------------------------------------------
 
 function Rook(name, color, tx, ty, px, py)  {
@@ -43,6 +67,10 @@ function Rook(name, color, tx, ty, px, py)  {
 }
 
 Rook.prototype = Object.create(Piece.prototype);
+
+Rook.prototype.moveTo = function(pieces, spotClicked, room) {
+
+}
 
 // -------------------------------------------- KNIGHT --------------------------------------------
 
@@ -53,6 +81,10 @@ function Knight(name, color, tx, ty, px, py)  {
 
 Knight.prototype = Object.create(Piece.prototype);
 
+Knight.prototype.moveTo = function(pieces, spotClicked, room) {
+
+}
+
 // -------------------------------------------- BISHOP --------------------------------------------
 
 function Bishop(name, color, tx, ty, px, py)  {
@@ -61,12 +93,20 @@ function Bishop(name, color, tx, ty, px, py)  {
 
 Bishop.prototype = Object.create(Piece.prototype);
 
+Bishop.prototype.moveTo = function(pieces, spotClicked, room) {
+
+}
+
 // -------------------------------------------- QUEEN --------------------------------------------
 function Queen(name, color, tx, ty, px, py)  {
     Piece.call(this, name, color, tx, ty, px, py); 
 }
 
 Queen.prototype = Object.create(Piece.prototype);
+
+Queen.prototype.moveTo = function(pieces, spotClicked, room) {
+
+}
 
 // -------------------------------------------- KING --------------------------------------------
 
@@ -77,6 +117,10 @@ function King(name, color, tx, ty, px, py)  {
 }
 
 King.prototype = Object.create(Piece.prototype);
+
+King.prototype.moveTo = function(pieces, spotClicked, room) {
+
+}
 
 exports.module = {
     King: King,
