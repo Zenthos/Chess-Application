@@ -1,11 +1,38 @@
-$('#joinForm').submit(function(e){
-    e.preventDefault(); // prevents page reloading
+// Username cannot be already used or Empty
+// Must Contain players on both black and white and cannot >= 2 per color
+
+document.addEventListener('DOMContentLoaded', function() {
     var socket = io({transports: ['websocket'], upgrade: false});
-    $('#JoinContainer').hide();
     chatFunctions(socket);
-    chessApp(socket);
-    socket.emit('Joined', $('#username').val(), $('#address').val());
-    return false;
+
+    $('#Waiting').hide();
+    $('#joinForm').submit(function(event){
+        event.preventDefault(); // prevents page reloading
+    
+        socket.emit('Joined', $('#username').val(), $('#address').val(), $('#activity').val(), function(formValid, testFailed) {
+            if (formValid) {
+                (function validInput() {
+                    socket.emit('Can Start', function(result) {
+                        if (result) {
+                            $('#JoinContainer').hide();
+                            chessApp(socket);
+                        } else {
+                            $('#joinForm').hide();
+                            $('#Waiting').show();
+                            if ($('#activity').val() == 'Spectator') $('h4').text('Waiting for players...');
+                            else if ($('#activity').val() == 'White') $('h4').text('Waiting for Black...');
+                            else if ($('#activity').val() == 'Black') $('h4').text('Waiting for White...');
+                            setTimeout(validInput, 1000);
+                        }
+                    });
+                })();
+            } else {
+                $('#errMsg').text(testFailed);
+            }
+        });
+    
+        return false;
+    });
 });
 
 const chatFunctions = function(socket) {
@@ -16,12 +43,14 @@ const chatFunctions = function(socket) {
         return false;
     });
 
-    socket.on('Emit Message', function(username, message){
-        $('#messages').append($('<li>').text(`${username}: ${message}`));
+    socket.on('Emit Message', function(user, message){
+        $('#messages').append($('<li>').text(`[${user.side}] ${user.username}: ${message}`));
+        $('#messages').scrollTop($('#messages')[0].scrollHeight);
     });
 
-    socket.on('Update', function(message){
+    socket.on('Update', function(message) {
         $('#messages').append($('<li>').text(message));
+        $('#messages').scrollTop($('#messages')[0].scrollHeight);
     });
 }
 
@@ -34,10 +63,10 @@ const chessApp = function(socket) {
 
     const serverFunctions = function() {
         socket.on('Update Board', function(serverBoard) {
+            if (pieces.length == 0) pieces = pieces.concat(serverBoard);
+
             serverBoard.forEach((item, index) => {
-                pieces[index].position.x = item.position.x;
-                pieces[index].position.y = item.position.y;
-                pieces[index].captured = item.captured;
+                pieces[index] = JSON.parse(JSON.stringify(item));
             });
         });
     }
@@ -45,115 +74,64 @@ const chessApp = function(socket) {
     const chessFunctions = function() {
         const mainLoop = function() {
             ctx.drawImage(board, 0, 0);
-
-            for (let i = 0; i < pieces.length; i++)
-                pieces[i].draw(figures, ctx);
-
+            for (let piece of pieces) draw(piece);
             window.requestAnimationFrame(mainLoop);
         }
 
+        const draw = function(piece) {
+            if (!piece.captured) {
+                let img = {
+                    tx: piece.tile.x * piece.tile.s,
+                    ty: piece.tile.y * piece.tile.s,
+                    x: 28 + piece.position.x * piece.tile.s, 
+                    y: 28 + piece.position.y * piece.tile.s,
+                    s: piece.tile.s
+                }
+                ctx.drawImage(figures, img.tx, img.ty, img.s, img.s, img.x, img.y, img.s, img.s);
         
-        const initPieces = function() {
-            let arr = [];
-            ['Black', 'White'].forEach((color, index) => {
-                arr.push(new Rook('Rook' , color, 0, index, 0, 7 * index));
-                arr.push(new Knight('Knight', color, 1, index, 1, 7 * index));
-                arr.push(new Bishop('Bishop', color, 2, index, 2, 7 * index));
-                arr.push(new Queen('Queen' , color, 3, index, 3, 7 * index));
-                arr.push(new King('King' , color, 4, index, 4, 7 * index));
-                arr.push(new Bishop('Bishop', color, 2, index, 5, 7 * index));
-                arr.push(new Knight('Knight', color, 1, index, 6, 7 * index));
-                arr.push(new Rook('Rook'  , color, 0, index, 7, 7 * index));
-                for (let i = 0; i < 8; i++) {
-                    if (index == 0)
-                        arr.push(new Pawn('Pawn', color, 5, index, i, 1));
-                    else 
-                        arr.push(new Pawn('Pawn', color, 5, index, i, 6));
+                if (piece.selected) {
+                    ctx.lineWidth = 6;
+                    ctx.strokeStyle = 'rgba(0, 255, 0)';
+                    ctx.strokeRect(img.x, img.y, img.s, img.s);
                 }
-            })
-            arr.forEach((item, index) => {item.index = index});
-            return arr;
-        }
-
-        const getRelativeMousePos = function() {
-            var rect = event.target.getBoundingClientRect();
-            var x = event.clientX - rect.left;
-            var y = event.clientY - rect.top;
-            return {x, y};
-        }
-
-        const moveAndSelect = function() {
-            let pos = getRelativeMousePos();
-            let tileToMoveTo = tileClicked(pos);
-            let selectedObject = getSelectedObject();
-            
-            if (selectedObject.contains) {
-                pieces[selectedObject.index].selected = false;
-                let x = pieces[selectedObject.index].position.x;
-                let y = pieces[selectedObject.index].position.y;
-                if (tileToMoveTo !== undefined && tileToMoveTo.x != x || tileToMoveTo.y != y) {
-                    pieces[selectedObject.index].moveTo(pieces, tileToMoveTo, socket);
-                }
-    
-                return;
-            }
-
-            for (let i = 0; i < pieces.length; i++) {
-                var tile = {
-                    x: 28 + pieces[i].position.x * pieces[i].tile.s,
-                    y: 28 + pieces[i].position.y * pieces[i].tile.s
-                }
-                var size = pieces[i].tile.s;
-                if (pos.x > tile.x && pos.y > tile.y && pos.x < tile.x + size && pos.y < tile.y + size)
-                    if (!pieces[i].captured) {
-                        $.get('http://localhost:3000/currentPlayer', {}, function(data){
-                            pieces[i].selectPiece(data);
-                        });
-                    }
             }
         }
-    
-        const getSelectedObject = function() {
-            for (let i = 0; i < pieces.length; i++) {
-                if (pieces[i].selected) 
-                    return {contains: true, index: i};
-            }
-            return {contains: false, index: NaN};   // Returns Index of Selected Object
-        }
-    
-        const tileClicked = function(spotClicked) {
-            let x = Math.floor((spotClicked.x - 28) / 56);
-            let y = Math.floor((spotClicked.y - 28) / 56);
-            let occupied = false
-    
+
+        const getRelativeMousePos = function(event) {
+            let rect = event.target.getBoundingClientRect();
+            let x = event.clientX - rect.left;
+            let y = event.clientY - rect.top;
+            let occupied = false;
+
+            let tx = Math.floor((x - 28) / 56);
+            let ty = Math.floor((y - 28) / 56);
+
             for (let piece of pieces) {
-                if (piece.position.x == x && piece.position.y == y && !piece.captured)
-                    occupied = true;
+                if (piece.position.x == tx && piece.position.y == ty) occupied = true;
             }
     
-            if (x >= 0 && x <= 7 && y >= 0 && y <= 7)
-                return {x, y, occupied};
+            if (tx >= 0 && tx <= 7 && ty >= 0 && ty <= 7) return {x, y, tileX: tx, tileY: ty, occupied};
+            else return undefined;
         }
         
         canvas.addEventListener('click', function(event) {
-            moveAndSelect();
+            let values = getRelativeMousePos(event);
+            if (values !== undefined) socket.emit('Client Clicked', values);
         });
 
-        pieces = initPieces();
-        socket.emit('Validate', pieces);
         window.requestAnimationFrame(mainLoop);
-    }
+    };
 
-    var timer = setInterval(() => {
+    (function beginChess() {
         board.src = "/static/images/board.png";
         figures.src = "/static/images/figures.png";
         canvas.width = board.width;
         canvas.height = board.height;
-        
+
         if (figures.complete && board.complete) {
             serverFunctions();
             chessFunctions();
-            clearInterval(timer);
-        }
-    }, 100);
+            socket.emit('Validate', pieces);
+        } else { setTimeout(beginChess, 100); }
+    })();
 }

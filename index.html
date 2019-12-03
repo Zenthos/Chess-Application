@@ -11,14 +11,24 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="/static/libs/jquery-3.4.1.min.js" ></script>
 <body>
-    <script src="/static/js/pieces.js"></script>
     <script src="/static/js/client.js" type="module"></script>
 
     <div id="JoinContainer">
         <div id='transparency'></div>
+
+        <div id="Waiting">
+            <h4></h4>
+        </div>
+
         <form id="joinForm" action="">
             <input id="username" autocomplete="off" onfocus="this.value=''" value="username"/>
-            <input id="address" autocomplete="off" onfocus="this.value=''" value="address"/>
+            <input id="address" autocomplete="off" onfocus="this.value=''" value="room"/>
+            <select id="activity">
+                <option value="White">White</option>
+                <option value="Black">Black</option>
+                <option value="Spectator">Spectator</option>
+            </select> 
+            <h3 id="errMsg"></h3>
             <button>Join</button>
         </form> 
     </div>

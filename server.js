@@ -13,7 +13,7 @@ const main = function() {
     app.use('/static', express.static(path.join(__dirname, '/public')));
     
     app.get('/', function(req, res) {
-        res.sendFile(__dirname + '/chess.html');
+        res.sendFile(path.join(__dirname, '/index.html'));
     });
 
     http.listen(3000, function(){
@@ -23,102 +23,192 @@ const main = function() {
     // *****************************************
     // *************** Chat Code ***************
     // *****************************************
+    const P = require('./pieces').module;
     var people = {};
+    var rooms = {};
 
     io.on('connection', function(client){
-        client.on("Joined", function(username, address) {
-            people[client.id] = username;
-            client.emit('Update', "You have connected to the server.");
-            io.emit('Update', username + " has joined the server.")
+        client.on("Joined", function(username, room, side, callback) {
+            people[client.id] = {ID: client.id, username, room, side};
+            if (!rooms.hasOwnProperty(room) && (side == 'White' || side == 'Black')) {
+                console.log("Room did not exist, creating...");
+                rooms[room] = new ChessRoom(room, people[client.id]);
+                rooms[room].initPieces(P);
+                client.join(room);
+            } else {
+                let present = rooms[room].alreadyHas(username);
+                if (present.usr) return callback(false, "Username Already Used In Requested Room");
+                else if (present.blk && side == 'Black') return callback(false, "Black Player Already In Requested Room");
+                else if (present.wht && side == 'White') return callback(false, "White Player Already In Requested Room");
+                console.log("Joining already created room...");
+                rooms[room].players.push(people[client.id]);
+                client.join(room);
+            }
+            client.emit('Update', `You have joined the room: '${room}', as ${side}`);
+            io.to(room).emit('Update', `[${side}] ${username} has joined the room.`)
+            return callback(true, undefined);
         });
 
         client.on('Send Message', function(msg){
-            io.emit('Emit Message', people[client.id], msg);
+            let clientRoomName = rooms[people[client.id].room].roomName;
+            io.to(clientRoomName).emit('Emit Message', people[client.id], msg);
         });
 
         client.on('disconnect', function(){
-            io.emit('Update', people[client.id] + " has left the server.");
-            delete people[client.id];
+            try {
+                let clientRoom = rooms[people[client.id].room];
+                let message = `[${people[client.id].side}] ${people[client.id].username} has left the room.`;
+                io.to(clientRoom.roomName).emit('Update', message);
+                var removeIndex = clientRoom.players.find((element, index) => {
+                    if (element.ID == people[client.id].ID)
+                        return index;
+                });
+                clientRoom.players.splice(removeIndex, 1);
+                delete people[client.id]; 
+                if (clientRoom.players.length == 0) {
+                    console.log("Deleting Room...");
+                    delete rooms[clientRoom.roomName];
+                }
+            } catch(err) {
+                console.log('Attempted to delete room twice');
+            }
         });
     });
 
     // *****************************************
     // *************** Chess Code **************
     // *****************************************
-    var pieces = [];
-    var currentPlayer = 'White';
-
-    app.get('/currentPlayer', function(req, res){
-        res.send(currentPlayer); 
-    });
 
     io.on('connection', function(client){
+        client.on('Start', function() {
+            let clientRoom = rooms[people[client.id].room]
+            clientRoom.canStart();
+        });
+
+        client.on('Can Start', function(callback) {
+            let clientRoom = rooms[people[client.id].room];
+            let result = clientRoom.canStart();
+            callback(result);
+        });
+
+        client.on('Get Player', function(callback) {
+            callback(rooms[people[client.id].room].currentPlayer);
+        });
+
+        client.on('Client Clicked', function(spotClicked) {
+            let clientRoom = rooms[people[client.id].room];
+            moveAndSelect(spotClicked, clientRoom, people[client.id]);
+            clientRoom.updateBoard(io);
+        });
+
         client.on('Validate', function(clientPieces) {
-            let matches = true;
-            pieces.forEach((item, index) => {
-                let c1 = item.position.x != clientPieces[index].position.x;
-                let c2 = item.position.y != clientPieces[index].position.y;
-                let c3 = item.captured != clientPieces[index].captured;
-                if (!c1 && !c2 && !c3) 
-                    matches = false;
-            });
-            
-            if (matches == false)
-                client.emit('Update Board', pieces);
-        });
+            let clientRoom = rooms[people[client.id].room];
+            let match = true;
+            if (clientPieces.length != 0) {
+                clientRoom.pieces.forEach((item, index) => {
+                    if (JSON.stringify(item) !== JSON.stringify(clientRoom.pieces[index]))
+                        match = false
+                });
+            } 
 
-        client.on('Moved', function(pieceMoved) {
-            currentPlayer = currentPlayer == 'White' ? 'Black' : 'White';
-            pieces[pieceMoved.index].position.x = pieceMoved.position.x;
-            pieces[pieceMoved.index].position.y = pieceMoved.position.y;
-            io.emit('Update Board', pieces);
-        });
-
-        client.on('Captured', function(pieceMoved, capturedPieceIndex) {
-            currentPlayer = currentPlayer == 'White' ? 'Black' : 'White';
-            pieces[pieceMoved.index].position.x = pieceMoved.position.x;
-            pieces[pieceMoved.index].position.y = pieceMoved.position.y;
-            pieces[capturedPieceIndex].captured = true;
-            let capturedPiece = pieces[capturedPieceIndex]
-            io.emit('Update', `${capturedPiece.player} ${capturedPiece.pieceType} Was Captured!`);
-            io.emit('Update Board', pieces);
+            if (!match || clientPieces.length == 0)
+                clientRoom.updateBoard(io);
         });
     });
 
-    const initPieces = function() {
-        let arr = [];
-        ['Black', 'White'].forEach((color, index) => {
-            arr.push(new Piece('Rook' , color, 0, index, 0, 7 * index));
-            arr.push(new Piece('Knight', color, 1, index, 1, 7 * index));
-            arr.push(new Piece('Bishop', color, 2, index, 2, 7 * index));
-            arr.push(new Piece('Queen' , color, 3, index, 3, 7 * index));
-            arr.push(new Piece('King' , color, 4, index, 4, 7 * index));
-            arr.push(new Piece('Bishop', color, 2, index, 5, 7 * index));
-            arr.push(new Piece('Knight', color, 1, index, 6, 7 * index));
-            arr.push(new Piece('Rook'  , color, 0, index, 7, 7 * index));
-            for (let i = 0; i < 8; i++) {
-                if (index == 0)
-                    arr.push(new Piece('Pawn', color, 5, index, i, 1));
-                else 
-                    arr.push(new Piece('Pawn', color, 5, index, i, 6));
-            }
-        })
-        return arr;
-    }
+    const moveAndSelect = function(spot, room, client) {
+        let selectedObject = room.getSelectedObject(room);
 
-    pieces = initPieces();
+        if (selectedObject.contains) {
+            room.pieces[selectedObject.index].selected = false;
+            let x = room.pieces[selectedObject.index].position.x;
+            let y = room.pieces[selectedObject.index].position.y;
+            if (spot.tileX != x || spot.tileY != y) {
+                let spotClicked = {x: spot.tileX, y: spot.tileY, occupied: spot.occupied};
+                room.pieces[selectedObject.index].moveTo(room.pieces, spotClicked, room);
+            }
+            return;
+        }
+
+        for (let i = 0; i < room.pieces.length; i++) {
+            var tile = {
+                x: 28 + room.pieces[i].position.x * room.pieces[i].tile.s,
+                y: 28 + room.pieces[i].position.y * room.pieces[i].tile.s,
+                s: room.pieces[i].tile.s
+            }
+            if (spot.x > tile.x && spot.y > tile.y && spot.x < tile.x + tile.s && spot.y < tile.y + tile.s) {
+                if (!room.pieces[i].captured) 
+                    room.pieces[i].selectPiece(room.currentPlayer, client.side);
+            }
+        }
+    }
 }
 
-class Piece {
-    constructor(name, color, tx, ty, px, py) {
-        this.pieceType = name;
-        this.player = color;
-        this.tile = {x: tx, y: ty, s: 56};
-        this.position = {x: px, y: py};
-        this.initial = {x: px, y: py};
-        this.selected = false;
-        this.captured = false;
-        this.moveCount = 0;
+class ChessRoom {
+    constructor(room, creator) {
+        this.currentPlayer = 'White';
+        this.roomName = room;
+        this.pieces = [];
+        this.players = [creator]
+        this.ready = false;
+    }
+
+    switchColor = function() {
+        this.currentPlayer = this.currentPlayer == 'White' ? 'Black' : 'White';
+    }
+
+    updateBoard = function(io) {
+        io.to(this.roomName).emit('Update Board', this.pieces);
+    }
+
+    initPieces = function(P) {
+        ['Black', 'White'].forEach((color, index) => {
+            this.pieces.push(new P.Rook('Rook' , color, 0, index, 0, 7 * index));
+            this.pieces.push(new P.Knight('Knight', color, 1, index, 1, 7 * index));
+            this.pieces.push(new P.Bishop('Bishop', color, 2, index, 2, 7 * index));
+            this.pieces.push(new P.Queen('Queen' , color, 3, index, 3, 7 * index));
+            this.pieces.push(new P.King('King' , color, 4, index, 4, 7 * index));
+            this.pieces.push(new P.Bishop('Bishop', color, 2, index, 5, 7 * index));
+            this.pieces.push(new P.Knight('Knight', color, 1, index, 6, 7 * index));
+            this.pieces.push(new P.Rook('Rook'  , color, 0, index, 7, 7 * index));
+            for (let i = 0; i < 8; i++) {
+                if (index == 0) 
+                    this.pieces.push(new P.Pawn('Pawn', color, 5, index, i, 1));
+                else 
+                    this.pieces.push(new P.Pawn('Pawn', color, 5, index, i, 6));
+            }
+        })
+    }
+
+    getSelectedObject = function(room) {
+        for (let i = 0; i < room.pieces.length; i++) {
+            if (room.pieces[i].selected) return {contains: true, index: i};
+        }
+        return {contains: false, index: NaN};   // Returns Index of Selected Object
+    }
+
+    alreadyHas = function(username) {
+        let usernameCheck = false;
+        let blackCheck = false;
+        let whiteCheck = false;
+        this.players.forEach(element => {
+            if (element.username == username) usernameCheck = true;
+            else if (element.side == 'Black') blackCheck = true;
+            else if (element.side == 'White') whiteCheck = true;
+        });
+
+        return {usr: usernameCheck, blk: blackCheck, wht: whiteCheck};
+    }
+
+    canStart = function() {
+        let blackPlayer, whitePlayer;
+        this.players.forEach(element => {
+            if (element.side == 'Black') blackPlayer = element;
+            else if (element.side == 'White') whitePlayer = element;
+        });
+
+        if (blackPlayer !== undefined && whitePlayer !== undefined) return true;
+        else return false;
     }
 }
 

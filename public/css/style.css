@@ -16,11 +16,24 @@ html, body {
     z-index: 1;
 }
 
-#JoinContainer #transparency{
+#JoinContainer #transparency {
     background-color: black;
     opacity: 0.6;
     width: 100%;
     height: 100%;
+}
+
+#JoinContainer #Waiting {
+    z-index: 1;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    width: 40%;
+    height: 40%;
+    background-color: lightgray;
+    text-align: center;
+    font-size: 30px;
 }
 
 #JoinContainer form {
@@ -36,7 +49,7 @@ html, body {
 }
 
 #JoinContainer form input {
-    margin-top: 10%;
+    margin-top: 30px;
     padding: 8px;
     height: 10%;
     width: 90%;
@@ -49,9 +62,12 @@ html, body {
     transform: translate(-50%, 0);
     left: 50%;
     bottom: 0px;
-    margin-bottom: 10%;
+    margin-bottom: 30px;
 }
 
+#JoinContainer form select {
+    margin-top: 20px;
+}
 
 #wrapper {
     left: 0px;
@@ -65,7 +81,7 @@ html, body {
     list-style-type: none;
     width: 550px;
     height: 670px;
-    overflow-y: auto;
+    overflow: auto;
     padding-top: 6px;
     padding-left: 6px;
     padding-right: 6px;
@@ -87,14 +103,14 @@ html, body {
 
 #wrapper canvas {
     top: 50%;
-    right: 10px;
+    right: calc(50% - 530px);
     transform: translate(0, -50%);
     position: relative;
     float: right;
 }
 
 #wrapper #global {
-    background-color: white;
+    background-color: darkslategray;
     position: relative;
     width: 550px;
     height: 100%;

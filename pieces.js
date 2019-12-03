@@ -9,32 +9,31 @@ function Piece(name, color, tx, ty, px, py) {
     this.selected = false;
     this.captured = false;
     this.moveCount = 0;
-    this.index = NaN;
 }
 
-Piece.prototype.selectPiece = function(currentPlayer) {
-    if (!this.captured && currentPlayer == this.player)
+Piece.prototype.selectPiece = function(currentPlayer, clientPlayer) {
+    if (!this.captured && currentPlayer == this.player && clientPlayer == this.player)
         this.selected = true;
-    else 
+    else    
         this.selected = false;
 }
 
-Piece.prototype.move = function(pieces, spotClicked, socket) {
+Piece.prototype.move = function(pieces, spotClicked, clientRoom) {
     this.position = spotClicked;
     this.moveCount++;
-    socket.emit('Moved', this);
     this.kingInCheck(pieces);
+    clientRoom.switchColor();
 }
 
-Piece.prototype.capture = function(pieces, spotClicked, socket) {
+Piece.prototype.capture = function(pieces, spotClicked, clientRoom) {
     let capturedIndex = this.getObjectAtTile(pieces, spotClicked)
     let capturedPiece = pieces[capturedIndex];
-    if (typeof capturedPiece === 'object' && capturedPiece.player != this.player && capturedPiece.pieceType != 'King') {
+    if (capturedPiece !== undefined && capturedPiece.player != this.player && capturedPiece.pieceType != 'King') {
         capturedPiece.captured = true;
         this.position = spotClicked;
         this.moveCount++;
-        socket.emit('Captured', this, capturedIndex);
         this.kingInCheck(pieces);
+        clientRoom.switchColor();
     }
 }
 
@@ -51,25 +50,6 @@ Piece.prototype.validMove = function(obj, xoffSet=0, yoffSet=0) {
         return true;
     else
         return false;
-}
-
-Piece.prototype.draw = function(figures, ctx) {
-    if (!this.captured) {
-        let img = {
-            tx: this.tile.x * this.tile.s,
-            ty: this.tile.y * this.tile.s,
-            x: 28 + this.position.x * this.tile.s, 
-            y: 28 + this.position.y * this.tile.s,
-            s: this.tile.s
-        }
-        ctx.drawImage(figures, img.tx, img.ty, img.s, img.s, img.x, img.y, img.s, img.s);
-
-        if (this.selected) {
-            ctx.lineWidth = 6;
-            ctx.strokeStyle = 'rgba(0, 255, 0)';
-            ctx.strokeRect(img.x, img.y, img.s, img.s);
-        }
-    }
 }
 
 // ---------------------------------------- SHARED FUNCTIONS ----------------------------------------
@@ -276,21 +256,21 @@ Pawn.prototype.kingInCheck = function(pieces) {
     }
 }
 
-Pawn.prototype.moveTo = function(pieces, spotClicked, socket) {
+Pawn.prototype.moveTo = function(pieces, spotClicked, clientRoom) {
     if (this.player == 'Black') {
         if (this.validMove(spotClicked, 0, 2) && this.validMove(this.initial) && this.linearObstacle(pieces, spotClicked) && !spotClicked.occupied)
-            this.move(pieces, spotClicked, socket);
+            this.move(pieces, spotClicked, clientRoom);
         else if (this.validMove(spotClicked, 0, 1) && !spotClicked.occupied)
-            this.move(pieces, spotClicked, socket);
+            this.move(pieces, spotClicked, clientRoom);
         else if (this.validMove(spotClicked, 1, 1) || this.validMove(spotClicked, -1, 1) && spotClicked.occupied)
-            this.capture(pieces, spotClicked, socket);
+            this.capture(pieces, spotClicked, clientRoom);
     } else {
         if (this.validMove(spotClicked, 0, -2) && this.validMove(this.initial) && this.linearObstacle(pieces, spotClicked) && !spotClicked.occupied) 
-            this.move(pieces, spotClicked, socket);
+            this.move(pieces, spotClicked, clientRoom);
         else if (this.validMove(spotClicked, 0, -1) && !spotClicked.occupied)
-            this.move(pieces, spotClicked, socket);
+            this.move(pieces, spotClicked, clientRoom);
         else if (this.validMove(spotClicked, 1, -1) || this.validMove(spotClicked, -1, -1) && spotClicked.occupied)
-            this.capture(pieces, spotClicked, socket);
+            this.capture(pieces, spotClicked, clientRoom);
     }
     this.kingInCheck(pieces);
 }
@@ -309,15 +289,15 @@ Rook.prototype.kingInCheck = function(pieces) {
     this.linearCheck(pieces);
 }
 
-Rook.prototype.moveTo = function(pieces, spotClicked, socket) {
+Rook.prototype.moveTo = function(pieces, spotClicked, clientRoom) {
     if (this.position.y == spotClicked.y && !spotClicked.occupied && this.linearObstacle(pieces, spotClicked))
-        this.move(pieces, spotClicked, socket);
+        this.move(pieces, spotClicked, clientRoom);
     else if (this.position.x == spotClicked.x && !spotClicked.occupied && this.linearObstacle(pieces, spotClicked))
-        this.move(pieces, spotClicked, socket);
+        this.move(pieces, spotClicked, clientRoom);
     else if (this.position.x == spotClicked.x && spotClicked.occupied && this.linearObstacle(pieces, spotClicked))
-        this.capture(pieces, spotClicked, socket);
+        this.capture(pieces, spotClicked, clientRoom);
     else if (this.position.y == spotClicked.y && spotClicked.occupied && this.linearObstacle(pieces, spotClicked))
-        this.capture(pieces, spotClicked, socket);
+        this.capture(pieces, spotClicked, clientRoom);
 }
 
 // -------------------------------------------- KNIGHT --------------------------------------------
@@ -341,14 +321,14 @@ Knight.prototype.kingInCheck = function(pieces) {
     }
 }
 
-Knight.prototype.moveTo = function(pieces, spotClicked, socket) {
+Knight.prototype.moveTo = function(pieces, spotClicked, clientRoom) {
     for (let move of this.possibleMoves) {
         let x = move[0];
         let y = move[1];
         if (this.validMove(spotClicked, x, y) && !spotClicked.occupied)
-            this.move(pieces, spotClicked, socket);
+            this.move(pieces, spotClicked, clientRoom);
         else if (this.validMove(spotClicked, x, y))
-            this.capture(pieces, spotClicked, socket);
+            this.capture(pieces, spotClicked, clientRoom);
     }
 }
 
@@ -366,14 +346,14 @@ Bishop.prototype.kingInCheck = function(pieces) {
     this.diagonalCheck(pieces);
 }
 
-Bishop.prototype.moveTo = function(pieces, spotClicked, socket) {
+Bishop.prototype.moveTo = function(pieces, spotClicked, clientRoom) {
     let x = this.position.x - spotClicked.x;
     let y = this.position.y - spotClicked.y;
 
     if (Math.abs(x) == Math.abs(y) && !spotClicked.occupied && this.diagonalObstacle(pieces, spotClicked))
-        this.move(pieces, spotClicked, socket);
+        this.move(pieces, spotClicked, clientRoom);
     else if (Math.abs(x) == Math.abs(y) && spotClicked.occupied && this.diagonalObstacle(pieces, spotClicked))
-        this.capture(pieces, spotClicked, socket);
+        this.capture(pieces, spotClicked, clientRoom);
 }
 
 // -------------------------------------------- QUEEN --------------------------------------------
@@ -392,22 +372,22 @@ Queen.prototype.kingInCheck = function(pieces) {
     this.diagonalCheck(pieces);
 }
 
-Queen.prototype.moveTo = function(pieces, spotClicked, socket) {
+Queen.prototype.moveTo = function(pieces, spotClicked, clientRoom) {
     let x = this.position.x - spotClicked.x;
     let y = this.position.y - spotClicked.y;
 
     if (this.position.y == spotClicked.y && !spotClicked.occupied && this.linearObstacle(pieces, spotClicked))
-        this.move(pieces, spotClicked, socket);
+        this.move(pieces, spotClicked, clientRoom);
     else if (this.position.x == spotClicked.x && !spotClicked.occupied && this.linearObstacle(pieces, spotClicked))
-        this.move(pieces, spotClicked, socket);
+        this.move(pieces, spotClicked, clientRoom);
     else if (this.position.x == spotClicked.x && spotClicked.occupied && this.linearObstacle(pieces, spotClicked))
-        this.capture(pieces, spotClicked, socket);
+        this.capture(pieces, spotClicked, clientRoom);
     else if (this.position.y == spotClicked.y && spotClicked.occupied && this.linearObstacle(pieces, spotClicked))
-        this.capture(pieces, spotClicked, socket);
+        this.capture(pieces, spotClicked, clientRoom);
     else if (Math.abs(x) == Math.abs(y) && !spotClicked.occupied && this.diagonalObstacle(pieces, spotClicked))
-        this.move(pieces, spotClicked, socket);
+        this.move(pieces, spotClicked, clientRoom);
     else if (Math.abs(x) == Math.abs(y) && spotClicked.occupied && this.diagonalObstacle(pieces, spotClicked))
-        this.capture(pieces, spotClicked, socket);
+        this.capture(pieces, spotClicked, clientRoom);
 }
 
 // -------------------------------------------- KING --------------------------------------------
@@ -458,28 +438,37 @@ King.prototype.castle = function(pieces, spotClicked) {
     if (this.validMove(spotClicked, 2, 0)) {
         let rook = pieces[pieces.findIndex(piece => piece.pieceType === "Rook" && piece.player == this.player && piece.position.x > this.position.x)];
         rook.move({x: this.position.x + 1, y: this.position.y})
-        this.move(pieces, spotClicked, socket);
+        this.move(pieces, spotClicked, clientRoom);
     } 
 
     // Castle QueenSide
     if (this.validMove(spotClicked, -2, 0)) {
         let rook = pieces[pieces.findIndex(piece => piece.pieceType === "Rook" && piece.player == this.player && piece.position.x < this.position.x)];
         rook.move({x: this.position.x - 1, y: this.position.y})
-        this.move(pieces, spotClicked, socket);
+        this.move(pieces, spotClicked, clientRoom);
     } 
 }
 
-King.prototype.moveTo = function(pieces, spotClicked, socket) {
+King.prototype.moveTo = function(pieces, spotClicked, clientRoom) {
     let possibleMoves = [[-1, -1], [-1, 0], [-1, 1], [0, 1], [0, -1], [1, 1], [1, 0], [1, -1]]
     
     for (let i = 0; i < possibleMoves.length; i++) {
         let x = possibleMoves[i][0];
         let y = possibleMoves[i][1];
         if (this.validMove(spotClicked, x, y) && !spotClicked.occupied)
-            this.move(pieces, spotClicked, socket);
+            this.move(pieces, spotClicked, clientRoom);
         else if (this.validMove(spotClicked, x, y) && spotClicked.occupied)
-            this.capture(pieces, spotClicked, socket);
+            this.capture(pieces, spotClicked, clientRoom);
         else if (this.canCastle(pieces, spotClicked))
             this.castle(pieces, spotClicked, currentPlayer);
     }
+}
+
+exports.module = {
+    King: King,
+    Queen: Queen,
+    Knight: Knight,
+    Bishop: Bishop,
+    Rook: Rook,
+    Pawn: Pawn
 }
