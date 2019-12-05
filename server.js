@@ -37,9 +37,9 @@ const main = function() {
                 client.join(room);
             } else {
                 let present = rooms[room].alreadyHas(username);
-                if (present.usr) return callback(false, "Username Already Used In Requested Room");
-                else if (present.blk && side == 'Black') return callback(false, "Black Player Already In Requested Room");
-                else if (present.wht && side == 'White') return callback(false, "White Player Already In Requested Room");
+                // if (present.hasUser) return callback(false, "Username Already Used In Requested Room");
+                if (present.hasBlack && side == 'Black') return callback(false, "Black Player Already In Requested Room");
+                if (present.hasWhite && side == 'White') return callback(false, "White Player Already In Requested Room");
                 console.log("Joining already created room...");
                 rooms[room].players.push(people[client.id]);
                 client.join(room);
@@ -95,9 +95,10 @@ const main = function() {
             callback(rooms[people[client.id].room].currentPlayer);
         });
 
-        client.on('Client Clicked', function(spotClicked) {
+        client.on('Client Clicked', function(clickPosition) {
             let clientRoom = rooms[people[client.id].room];
-            
+            clientRoom.onClickEvent(clickPosition, people[client.id].side);
+            io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces);
         });
 
         client.on('Validate', function(clientPieces) {
@@ -110,8 +111,9 @@ const main = function() {
                 });
             } 
 
-            if (!match || clientPieces.length == 0)
-                clientRoom.updateBoard(io);
+            if (!match || clientPieces.length == 0) {
+                io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces);
+            }
         });
     });
 }
@@ -123,14 +125,29 @@ class ChessRoom {
         this.pieces = [];
         this.players = [creator]
         this.ready = false;
+        this.pieceSelected = false;
     }
 
     switchColor = function() {
         this.currentPlayer = this.currentPlayer == 'White' ? 'Black' : 'White';
     }
 
-    updateBoard = function(io) {
-        io.to(this.roomName).emit('Update Board', this.pieces);
+    onClickEvent = function(clickPosition, clientPlayer) {
+        let containsSelectedPiece = false;
+        for (let piece of this.pieces) {
+            if (piece.selected)
+                containsSelectedPiece = true;
+        }
+
+        if (containsSelectedPiece) {
+            for (let piece of this.pieces) piece.deselect();
+
+        } else {
+            for (let piece of this.pieces) {
+                if (!piece.captured && clickPosition.x == piece.position.x && clickPosition.y == piece.position.y)
+                    piece.select(this.currentPlayer, clientPlayer);
+            }
+        }
     }
 
     initPieces = function(P) {
@@ -162,7 +179,7 @@ class ChessRoom {
             else if (element.side == 'White') whiteCheck = true;
         });
 
-        return {usr: usernameCheck, blk: blackCheck, wht: whiteCheck};
+        return {hasUser: usernameCheck, hasBlack: blackCheck, hasWhite: whiteCheck};
     }
 
     canStart = function() {

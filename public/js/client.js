@@ -8,23 +8,26 @@ document.addEventListener('DOMContentLoaded', function() {
     
         socket.emit('Joined', $('#username').val(), $('#address').val(), $('#activity').val(), function(formValid, testFailed) {
             if (formValid) {
-                socket.emit('Can Start', function(result) {
-                    if (result) {
-                        $('#JoinContainer').hide();
-                        chessApp(socket);
-                    } else {
-                        $('#joinForm').hide();
-                        $('#Waiting').show();
-                        if ($('#activity').val() == 'Spectator') $('h4').text('Waiting for players...');
-                        else if ($('#activity').val() == 'White') $('h4').text('Waiting for Black...');
-                        else if ($('#activity').val() == 'Black') $('h4').text('Waiting for White...');
-                    }
-                });
+                (function waitingForOther() {
+                    socket.emit('Can Start', function(result) {
+                        if (result) {
+                            $('#JoinContainer').hide();
+                            chessApp(socket);
+                        } else {
+                            $('#joinForm').hide();
+                            $('#Waiting').show();
+                            if ($('#activity').val() == 'Spectator') $('h4').text('Waiting for players...');
+                            else if ($('#activity').val() == 'White') $('h4').text('Waiting for Black...');
+                            else if ($('#activity').val() == 'Black') $('h4').text('Waiting for White...');
+                            setTimeout(waitingForOther, 1000);
+                        }
+                    });
+                })();                
             } else {
                 $('#errMsg').text(testFailed);
             }
         });
-    
+
         return false;
     });
 });
@@ -91,15 +94,18 @@ const chessApp = function(socket) {
             }
         }
 
-        const getRelativeMousePos = function(event) {
+        const tileClicked = function(event) {
             let rect = event.target.getBoundingClientRect();
             let x = event.clientX - rect.left;
             let y = event.clientY - rect.top;
-            return {x, y};
+
+            let tx = Math.floor((x - 28) / 56); 
+            let ty = Math.floor((y - 28) / 56);
+            return {x: tx, y: ty};  // Return the Tile Clicked
         }
         
         canvas.addEventListener('click', function(event) {
-            socket.emit('Client Clicked', values);
+            socket.emit('Client Clicked', tileClicked(event));
         });
 
         window.requestAnimationFrame(mainLoop);

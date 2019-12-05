@@ -12,10 +12,12 @@ function Piece(name, color, tx, ty, px, py) {
 }
 
 Piece.prototype.select = function(currentPlayer, clientPlayer) {
-    if (!this.captured && currentPlayer == this.player && clientPlayer == this.player)
+    if (!this.selected && !this.captured && currentPlayer == this.player && clientPlayer == this.player)
         this.selected = true;
-    else    
-        this.selected = false;
+}
+
+Piece.prototype.deselect = function() {
+    this.selected = false;
 }
 
 Piece.prototype.positionEqual = function(obj2) {
@@ -31,7 +33,7 @@ Piece.prototype.positionEqual = function(obj2) {
 Piece.prototype.spotOccupied = function(pieces, spotClicked) {
     for (let piece of pieces) {
         if (piece.positionEqual(spotClicked))
-            console.log(this.pieceType + " " + piece.pieceType);
+            console.log(spotClicked + "Was Occupied");
     }
     return false;
 }
