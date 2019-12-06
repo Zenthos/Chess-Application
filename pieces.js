@@ -43,11 +43,15 @@ Piece.prototype.spotOccupied = function(pieces, spotClicked) {
 }
 
 Piece.prototype.move = function(pieces, spotClicked, room) {
-    console.log('Moving...')
+    console.log('Moving...');
+    this.position.x = spotClicked.x;
+    this.position.y = spotClicked.y;
 }
 
 Piece.prototype.capture = function(pieces, spotClicked, room) {
-    console.log('Capturing...')
+    console.log('Capturing...');
+    this.position.x = spotClicked.x;
+    this.position.y = spotClicked.y;
 }
 
 Piece.prototype.legalMove = function(pieces, spotClicked, room) {
@@ -64,7 +68,7 @@ Piece.prototype.legalMove = function(pieces, spotClicked, room) {
 Piece.prototype.moveOrCapture = function(pieces, spotClicked, room) {
     if (this.legalMove(pieces, spotClicked, room) && !this.spotOccupied(pieces, spotClicked))
         this.move(pieces, spotClicked, room);
-    if (this.legalMove(pieces, spotClicked, room) && this.spotOccupied(pieces, spotClicked))
+    else if (this.legalMove(pieces, spotClicked, room) && this.spotOccupied(pieces, spotClicked))
         this.capture(pieces, spotClicked, room);
 }
 
@@ -83,7 +87,7 @@ Pawn.prototype = Object.create(Piece.prototype);
 Pawn.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
 
-    return true;
+    return false;
 }
 
 
@@ -98,7 +102,7 @@ Rook.prototype = Object.create(Piece.prototype);
 Rook.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
 
-    return true;
+    return false;
 }
 
 // -------------------------------------------- KNIGHT --------------------------------------------
@@ -113,7 +117,13 @@ Knight.prototype = Object.create(Piece.prototype);
 Knight.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
 
-    return true;
+    let dx = this.position.x - spotClicked.x;
+    let dy = this.position.y - spotClicked.y;
+    for (let [x, y] of this.possibleMoves) {
+        if (x == dx && y == dy) return true
+    }
+
+    return false;
 }
 
 // -------------------------------------------- BISHOP --------------------------------------------
@@ -127,7 +137,7 @@ Bishop.prototype = Object.create(Piece.prototype);
 Bishop.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
 
-    return true;
+    return false;
 }
 
 // -------------------------------------------- QUEEN --------------------------------------------
@@ -140,7 +150,7 @@ Queen.prototype = Object.create(Piece.prototype);
 Queen.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
 
-    return true;
+    return false;
 }
 
 // -------------------------------------------- KING --------------------------------------------
@@ -156,7 +166,7 @@ King.prototype = Object.create(Piece.prototype);
 King.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
 
-    return true;
+    return false;
 }
 
 exports.module = {
