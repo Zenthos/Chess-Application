@@ -95,12 +95,6 @@ const main = function() {
             callback(rooms[people[client.id].room].currentPlayer);
         });
 
-        client.on('Client Clicked', function(clickPosition) {
-            let clientRoom = rooms[people[client.id].room];
-            clientRoom.onClickEvent(clickPosition, people[client.id].side);
-            io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces);
-        });
-
         client.on('Validate', function(clientPieces) {
             let clientRoom = rooms[people[client.id].room];
             let match = true;
@@ -114,6 +108,12 @@ const main = function() {
             if (!match || clientPieces.length == 0) {
                 io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces);
             }
+        });
+
+        client.on('Client Clicked', function(clickPosition) {
+            let clientRoom = rooms[people[client.id].room];
+            clientRoom.onClickEvent(clickPosition, people[client.id].side, clientRoom);
+            io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces);
         });
     });
 }
@@ -132,19 +132,21 @@ class ChessRoom {
         this.currentPlayer = this.currentPlayer == 'White' ? 'Black' : 'White';
     }
 
-    onClickEvent = function(clickPosition, clientPlayer) {
-        let containsSelectedPiece = false;
-        for (let piece of this.pieces) {
-            if (piece.selected)
-                containsSelectedPiece = true;
-        }
+    onClickEvent = function(clickPosition, clientPlayer, clientRoom) {
+        let selectedPiece = {contains: false, index: NaN};
+        this.pieces.forEach((item, index) => {
+            if (item.selected) {
+                selectedPiece.contains = true;
+                selectedPiece.index = index;
+            }
+        });
 
-        if (containsSelectedPiece) {
-            for (let piece of this.pieces) piece.deselect();
-
+        if (selectedPiece.contains) {
+            this.pieces[selectedPiece.index].deselect();
+            this.pieces[selectedPiece.index].moveOrCapture(this.pieces, clickPosition, clientRoom);
         } else {
             for (let piece of this.pieces) {
-                if (!piece.captured && clickPosition.x == piece.position.x && clickPosition.y == piece.position.y)
+                if (!piece.captured && piece.positionEqual(clickPosition))
                     piece.select(this.currentPlayer, clientPlayer);
             }
         }
