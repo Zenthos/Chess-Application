@@ -23,35 +23,16 @@ const main = function() {
     // *****************************************
     // *************** Chat Code ***************
     // *****************************************
-    const P = require('./pieces').module;
     var people = {};
-    var rooms = {};
 
     io.on('connection', function(client){
-        client.on("Joined", function(username, room, side, callback) {
-            people[client.id] = {ID: client.id, username, room, side};
-            if (!rooms.hasOwnProperty(room) && (side == 'White' || side == 'Black')) {
-                console.log("Room did not exist, creating...");
-                rooms[room] = new ChessRoom(room, people[client.id]);
-                rooms[room].initPieces(P);
-                client.join(room);
-            } else {
-                let present = rooms[room].alreadyHas(username);
-                // if (present.hasUser) return callback(false, "Username Already Used In Requested Room");
-                if (present.hasBlack && side == 'Black') return callback(false, "Black Player Already In Requested Room");
-                if (present.hasWhite && side == 'White') return callback(false, "White Player Already In Requested Room");
-                console.log("Joining already created room...");
-                rooms[room].players.push(people[client.id]);
-                client.join(room);
-            }
-            client.emit('Update', `You have joined the room: '${room}', as ${side}`);
-            io.to(room).emit('Update', `[${side}] ${username} has joined the room.`)
-            return callback(true, undefined);
-        });
-
         client.on('Send Message', function(msg){
-            let clientRoomName = rooms[people[client.id].room].roomName;
-            io.to(clientRoomName).emit('Emit Message', people[client.id], msg);
+            try {
+                let clientRoomName = rooms[people[client.id].room].roomName;
+                io.to(clientRoomName).emit('Emit Message', people[client.id], msg);
+            } catch(err) {
+                console.log('Attempted to send message to non-existent room');
+            }
         });
 
         client.on('disconnect', function(){
@@ -78,8 +59,31 @@ const main = function() {
     // *****************************************
     // *************** Chess Code **************
     // *****************************************
+    const P = require('./pieces').module;
+    var rooms = {};
 
     io.on('connection', function(client){
+        client.on("Joined", function(username, room, side, callback) {
+            people[client.id] = {ID: client.id, username, room, side};
+            if (!rooms.hasOwnProperty(room) && (side == 'White' || side == 'Black')) {
+                console.log("Room did not exist, creating...");
+                rooms[room] = new ChessRoom(room, people[client.id]);
+                rooms[room].initPieces(P);
+                client.join(room);
+            } else {
+                let present = rooms[room].alreadyHas(username);
+                // if (present.hasUser) return callback(false, "Username Already Used In Requested Room");
+                if (present.hasBlack && side == 'Black') return callback(false, "Black Player Already In Requested Room");
+                if (present.hasWhite && side == 'White') return callback(false, "White Player Already In Requested Room");
+                console.log("Joining already created room...");
+                rooms[room].players.push(people[client.id]);
+                client.join(room);
+            }
+            client.emit('Update', `You have joined the room: '${room}', as ${side}`);
+            io.to(room).emit('Update', `[${side}] ${username} has joined the room.`)
+            return callback(true, undefined);
+        });
+
         client.on('Start', function() {
             let clientRoom = rooms[people[client.id].room]
             clientRoom.canStart();
