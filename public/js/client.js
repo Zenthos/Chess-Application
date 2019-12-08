@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     $('#Waiting').hide();
     $('#joinForm').submit(function(event){
         event.preventDefault(); // prevents page reloading
+        $("#joinButton").attr("disabled", true);
         $('#errMsg').text("Please wait, Attempting to Connect...");
         socket.emit('Joined', $('#username').val(), $('#address').val(), $('#activity').val(), function(formValid, testFailed) {
             if (formValid) {
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })();                
             } else {
                 $('#errMsg').text(testFailed);
+                $("#joinButton").attr("disabled", false);
             }
         });
 

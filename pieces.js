@@ -47,19 +47,19 @@ Piece.prototype.move = function(pieces, spotClicked, room) {
     this.position.y = spotClicked.y;
     this.moveCount = this.moveCount + 1;
     // room.switchColor();
-    if (this.pieceType === 'Knight') this.threatToKing(pieces, spotClicked, room);
+    this.threatToKing(pieces, spotClicked, room);
 }
 
 Piece.prototype.capture = function(pieces, spotClicked, room) {
     for (let piece of pieces) {
-        if (piece.positionEqual(spotClicked) && !piece.captured) {
+        if (piece.positionEqual(spotClicked) && !piece.captured && piece.pieceType !== 'King') {
             piece.captured = true;
             this.position.x = spotClicked.x;
             this.position.y = spotClicked.y;
             this.moveCount = this.moveCount + 1;
-            this.threatToKing(pieces, spotClicked, room);
             room.switchColor();
             room.sendUpdate(`${piece.player} ${piece.pieceType} was captured!`);
+            this.threatToKing(pieces, spotClicked, room);
             break;
         }
     }
@@ -121,6 +121,61 @@ linearMove = function(pieces, spotClicked, room) {
     return true;
 }
 
+linearCheck = function(pieces, spotClicked, room) {
+    if (this.captured === true) return;
+
+    let enemyKing = this.findEnemyKing(pieces)
+
+    // Gets all pieces that are in the same row and column as THIS rook, disregarding self
+    let rowObjects = [], colObjects = [];
+    for (let i = 0; i < 8; i++) {
+        for (let piece of pieces) {
+            if (piece.positionEqual({ x: i, y: this.position.y }) && 
+            JSON.stringify(piece.initial) !== JSON.stringify(this.initial)) rowObjects.push(piece);
+            if (piece.positionEqual({ x: this.position.x, y: i }) && 
+            JSON.stringify(piece.initial) !== JSON.stringify(this.initial)) colObjects.push(piece);
+        }
+    }
+
+    // gets closest pieces from the left and right, relative to this rooks position
+    let closestLeft, closestRight;
+    let leftX = 7, rightX = 0;
+    for (let item of rowObjects) {
+        if (item.position.x > this.position.x && item.position.x <= leftX) {
+            leftX = item.position.x;
+            closestRight = item;
+        }
+        if (item.position.x < this.position.x && item.position.x >= rightX) {
+            rightX = item.position.x;
+            closestLeft = item;
+        }
+    }
+
+    // gets closest pieces from above and below, relative to this rooks position
+    let closestUp, closestDown;
+    let upY = 7, downY = 0;
+    for (let item of colObjects) {
+        if (item.position.y > this.position.y && item.position.y <= upY) {
+            upY = item.position.y;
+            closestDown = item;
+        }
+        if (item.position.y < this.position.y && item.position.y >= downY) {
+            downY = item.position.y;
+            closestUp = item;
+        }
+    }
+
+    // King is in check if any of the pieces being attacked are an enemy king
+    for (let piece of [closestUp, closestDown, closestLeft, closestRight]) {
+        if (typeof piece === 'undefined') continue;
+        if (enemyKing.positionEqual(piece.position)) {
+            enemyKing.inCheck = true;
+            room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King!`);
+            break; 
+        }
+    }
+}
+
 diagonalMove = function(pieces, spotClicked, room) {
     let dx = this.position.x - spotClicked.x;
     let dy = this.position.y - spotClicked.y;
@@ -144,6 +199,66 @@ diagonalMove = function(pieces, spotClicked, room) {
     return true;
 }
 
+diagonalCheck = function(pieces, spotClicked, room) {
+    if (this.captured === true) return;
+
+    let enemyKing = this.findEnemyKing(pieces)
+    let attackingPieces = [];
+
+    let findPiece = function(current, initial, xoff, yoff) {
+        for (let piece of pieces) {
+            if (piece.captured === true) continue;
+            if (JSON.stringify(piece.initial) === JSON.stringify(initial)) continue;
+            if (piece.positionEqual({ x: current.x + xoff, y: current.y + yoff })) return piece;
+        }
+        return;
+    }
+
+    // Up-Right + -
+    for (let i = 0; this.position.x + i <= 7 && this.position.y - i >= 0; i++) {
+        let result = findPiece(this.position, this.initial, i, -i)
+        if (typeof result !== 'undefined') {
+            attackingPieces.push(result);
+            break;
+        }
+    }
+
+    //Up-Left Check - -
+    for (let i = 0; this.position.x - i >= 0 && this.position.y - i >= 0; i++) {
+        let result = findPiece(this.position, this.initial, -i, -i)
+        if (typeof result !== 'undefined') {
+            attackingPieces.push(result);
+            break;
+        }
+    }
+    //Down-Left Check - +
+    for (let i = 0; this.position.x - i >= 0 && this.position.y + i <= 7; i++) {
+        let result = findPiece(this.position, this.initial, -i, i)
+        if (typeof result !== 'undefined') {
+            attackingPieces.push(result);
+            break;
+        }
+    }
+
+    //Down-Right Check + +
+    for (let i = 0; this.position.x + i <= 7 && this.position.y + i <= 7; i++) {
+        let result = findPiece(this.position, this.initial, i, i)
+        if (typeof result !== 'undefined') {
+            attackingPieces.push(result);
+            break;
+        }
+    }
+
+    for (let piece of attackingPieces) {
+        if (piece.player === this.player) continue;
+        if (enemyKing.positionEqual(piece.position)) {
+            enemyKing.inCheck = true;
+            room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King!`);
+            break; 
+        }
+    }
+}
+
 // -------------------------------------------- PAWN --------------------------------------------
 
 function Pawn(name, color, tx, ty, px, py)  {
@@ -151,6 +266,24 @@ function Pawn(name, color, tx, ty, px, py)  {
 }
 
 Pawn.prototype = Object.create(Piece.prototype);
+
+Pawn.prototype.threatToKing = function(pieces, spotClicked, room) {
+    if (this.captured === true) return;
+
+    let enemyKing = this.findEnemyKing(pieces)
+
+    if (this.player === 'White') var attackableSpots = [[-1, -1], [1, -1]];
+    if (this.player === 'Black') var attackableSpots = [[-1, 1], [1, 1]];
+
+    for (let [x, y] of attackableSpots) {
+        let spotAttacking = { x: this.position.x + x, y: this.position.y + y};
+        if (enemyKing.positionEqual(spotAttacking)) {
+            enemyKing.inCheck = true;
+            room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King!`);
+            return;
+        }
+    }
+}
 
 Pawn.prototype.verticalMove = function(pieces, spotClicked, room) {
     let dx = this.position.x - spotClicked.x;
@@ -186,11 +319,10 @@ function Rook(name, color, tx, ty, px, py)  {
 
 Rook.prototype = Object.create(Piece.prototype);
 Rook.prototype.linearMove = linearMove;
+Rook.prototype.linearCheck = linearCheck;
 
 Rook.prototype.threatToKing = function(pieces, spotClicked, room) {
-    let enemyKing = this.findEnemyKing(pieces)
-
-    
+    this.linearCheck(pieces, spotClicked, room);
 }
 
 Rook.prototype.legalMove = function(pieces, spotClicked, room) {
@@ -208,13 +340,15 @@ function Knight(name, color, tx, ty, px, py)  {
 Knight.prototype = Object.create(Piece.prototype);
 
 Knight.prototype.threatToKing = function(pieces, spotClicked, room) {
+    if (this.captured === true) return;
+
     let enemyKing = this.findEnemyKing(pieces)
 
     for (let [x, y] of this.possibleMoves) {
         let spotAttacking = { x: this.position.x + x, y: this.position.y + y};
         if (enemyKing.positionEqual(spotAttacking)) {
             enemyKing.inCheck = true;
-            room.sendUpdate(`${enemyKing.player} King is in Check!`);
+            room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King!`);
             break; 
         }
     }
@@ -241,6 +375,11 @@ function Bishop(name, color, tx, ty, px, py)  {
 
 Bishop.prototype = Object.create(Piece.prototype);
 Bishop.prototype.diagonalMove = diagonalMove;
+Bishop.prototype.diagonalCheck = diagonalCheck;
+
+Bishop.prototype.threatToKing = function(pieces, spotClicked, room) {
+    this.diagonalCheck(pieces, spotClicked, room);
+}
 
 Bishop.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
@@ -255,6 +394,13 @@ function Queen(name, color, tx, ty, px, py)  {
 Queen.prototype = Object.create(Piece.prototype);
 Queen.prototype.linearMove = linearMove;
 Queen.prototype.diagonalMove = diagonalMove;
+Queen.prototype.linearCheck = linearCheck;
+Queen.prototype.diagonalCheck = diagonalCheck;
+
+Queen.prototype.threatToKing = function(pieces, spotClicked, room) {
+    this.linearCheck(pieces, spotClicked, room);
+    this.diagonalCheck(pieces, spotClicked, room);
+}
 
 Queen.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
@@ -272,6 +418,14 @@ function King(name, color, tx, ty, px, py)  {
 }
 
 King.prototype = Object.create(Piece.prototype);
+
+King.prototype.threatToKing = function(pieces, spotClicked, room) {
+    let inDanger = false;
+    for (let piece of pieces) if (piece.pieceType !== 'King') {
+        if (piece.threatToKing(pieces, spotClicked, room)) inDanger = true;
+    }
+    return inDanger;
+}
 
 King.prototype.moveOneSpot = function(pieces, spotClicked, room) {
     let dx = this.position.x - spotClicked.x;
