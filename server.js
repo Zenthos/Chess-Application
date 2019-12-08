@@ -60,6 +60,7 @@ const main = function() {
     // *************** Chess Code **************
     // *****************************************
     const P = require('./pieces').module;
+    var namespaces = {};
     var rooms = {};
 
     io.on('connection', function(client){
@@ -67,7 +68,7 @@ const main = function() {
             people[client.id] = {ID: client.id, username, room, side};
             if (!rooms.hasOwnProperty(room) && (side == 'White' || side == 'Black')) {
                 console.log("Room did not exist, creating...");
-                rooms[room] = new ChessRoom(room, people[client.id]);
+                rooms[room] = new ChessRoom(io, room, people[client.id]);
                 rooms[room].initPieces(P);
                 client.join(room);
             } else {
@@ -110,22 +111,26 @@ const main = function() {
             } 
 
             if (!match || clientPieces.length == 0) {
-                io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces);
+                
+            let clientColor = people[client.id].side;
+                io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces, clientColor);
             }
         });
 
         client.on('Client Clicked', function(clickPosition) {
             let clientRoom = rooms[people[client.id].room];
+            let clientColor = people[client.id].side;
             clientRoom.onClickEvent(clickPosition, people[client.id].side, clientRoom);
-            io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces);
+            io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces, clientColor);
         });
     });
 }
 
 class ChessRoom {
-    constructor(room, creator) {
+    constructor(io, room, creator) {
         this.currentPlayer = 'White';
         this.roomName = room;
+        this.io = io;
         this.pieces = [];
         this.players = [creator]
         this.ready = false;
@@ -134,6 +139,20 @@ class ChessRoom {
 
     switchColor = function() {
         this.currentPlayer = this.currentPlayer == 'White' ? 'Black' : 'White';
+    }
+
+    sendUpdate = function(message) {
+        this.io.to(this.roomName).emit('Update', message);
+    }
+
+    flippedPieces = function() {
+        let newPieces = [];
+        for (let piece of this.pieces) {
+            let shallowObject = JSON.parse(JSON.stringify(piece));
+            shallowObject.position.y = 7 - piece.position.y;
+            newPieces.push(shallowObject)
+        }
+        return newPieces;
     }
 
     onClickEvent = function(clickPosition, clientPlayer, clientRoom) {

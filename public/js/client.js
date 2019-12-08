@@ -5,14 +5,14 @@ document.addEventListener('DOMContentLoaded', function() {
     $('#Waiting').hide();
     $('#joinForm').submit(function(event){
         event.preventDefault(); // prevents page reloading
-    
+        $('#errMsg').text("Please wait, Attempting to Connect...");
         socket.emit('Joined', $('#username').val(), $('#address').val(), $('#activity').val(), function(formValid, testFailed) {
             if (formValid) {
                 (function waitingForOther() {
                     socket.emit('Can Start', function(result) {
                         if (result) {
                             $('#JoinContainer').hide();
-                            chessApp(socket);
+                            chessApp(socket, $('#activity').val());
                         } else {
                             $('#joinForm').hide();
                             $('#Waiting').show();
@@ -51,7 +51,7 @@ const chatFunctions = function(socket) {
     });
 }
 
-const chessApp = function(socket) {
+const chessApp = function(socket, clientColor) {
     var canvas = document.getElementById("board")
     var ctx = canvas.getContext('2d');
     var board = new Image();
@@ -63,6 +63,7 @@ const chessApp = function(socket) {
             if (pieces.length == 0) pieces = pieces.concat(serverBoard);
 
             serverBoard.forEach((item, index) => {
+                if (clientColor === 'Black') item.position.y = 7 - item.position.y
                 pieces[index] = JSON.parse(JSON.stringify(item));
             });
         });
@@ -101,7 +102,12 @@ const chessApp = function(socket) {
 
             let tx = Math.floor((x - 28) / 56); 
             let ty = Math.floor((y - 28) / 56);
-            return {x: tx, y: ty};  // Return the Tile Clicked
+            if (clientColor === 'Black') {
+                let tyOffset = 7 - ty;
+                return {x: tx, y: tyOffset};  // Return the Tile Clicked
+            } else {
+                return {x: tx, y: ty};  // Return the Tile Clicked
+            }
         }
         
         canvas.addEventListener('click', function(event) {

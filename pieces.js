@@ -45,21 +45,31 @@ Piece.prototype.spotOccupied = function(pieces, spotClicked) {
 Piece.prototype.move = function(pieces, spotClicked, room) {
     this.position.x = spotClicked.x;
     this.position.y = spotClicked.y;
-    room.switchColor();
+    this.moveCount = this.moveCount + 1;
+    // room.switchColor();
+    if (this.pieceType === 'Knight') this.threatToKing(pieces, spotClicked, room);
 }
 
 Piece.prototype.capture = function(pieces, spotClicked, room) {
-    for (let piece of pieces) if(piece.positionEqual(spotClicked)) piece.captured = true;
-    this.position.x = spotClicked.x;
-    this.position.y = spotClicked.y;
-    room.switchColor();
+    for (let piece of pieces) {
+        if (piece.positionEqual(spotClicked) && !piece.captured) {
+            piece.captured = true;
+            this.position.x = spotClicked.x;
+            this.position.y = spotClicked.y;
+            this.moveCount = this.moveCount + 1;
+            this.threatToKing(pieces, spotClicked, room);
+            room.switchColor();
+            room.sendUpdate(`${piece.player} ${piece.pieceType} was captured!`);
+            break;
+        }
+    }
 }
 
 Piece.prototype.legalMove = function(pieces, spotClicked, room) {
     // If the piece tries to move onto another piece and its the same color => not a legal move
     if (this.spotOccupied(pieces, spotClicked)) {
         for (let piece of pieces) {
-            if (piece.positionEqual(spotClicked) && !piece.captured && piece.player == this.player) return false;
+            if (piece.positionEqual(spotClicked) && piece.pieceType !== 'King' && !piece.captured && piece.player == this.player) return false;
         }
     }
     
@@ -71,6 +81,12 @@ Piece.prototype.moveOrCapture = function(pieces, spotClicked, room) {
         this.move(pieces, spotClicked, room);
     else if (this.legalMove(pieces, spotClicked, room) && this.spotOccupied(pieces, spotClicked))
         this.capture(pieces, spotClicked, room);
+}
+
+Piece.prototype.findEnemyKing = function(pieces) {
+    for (let piece of pieces) {
+        if (piece.pieceType === 'King' && piece.player !== this.player) return piece;
+    }
 }
 
 // ---------------------------------------- SHARED FUNCTIONS ----------------------------------------
@@ -136,10 +152,29 @@ function Pawn(name, color, tx, ty, px, py)  {
 
 Pawn.prototype = Object.create(Piece.prototype);
 
+Pawn.prototype.verticalMove = function(pieces, spotClicked, room) {
+    let dx = this.position.x - spotClicked.x;
+    let dy = this.position.y - spotClicked.y;
+
+    if (Math.abs(dx) === 0) {
+        if (Math.abs(dy) == 2 && this.player == 'White' && dy > 0 && this.positionEqual(this.initial)) return true;
+        if (Math.abs(dy) == 2 && this.player == 'Black' && dy < 0 && this.positionEqual(this.initial)) return true;
+        if (Math.abs(dy) == 1 && this.player == 'White' && dy > 0) return true;
+        if (Math.abs(dy) == 1 && this.player == 'Black' && dy < 0) return true;
+    }
+
+    if (Math.abs(dx) == 1 && Math.abs(dy) == 1 && this.spotOccupied(pieces, spotClicked)) {
+        if (this.player == 'White' && dy > 0) return true;
+        if (this.player == 'Black' && dy < 0) return true;
+    }
+
+    return false;
+}
+
 Pawn.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
 
-    return true;
+    return this.verticalMove(pieces, spotClicked, room);
 }
 
 
@@ -151,6 +186,12 @@ function Rook(name, color, tx, ty, px, py)  {
 
 Rook.prototype = Object.create(Piece.prototype);
 Rook.prototype.linearMove = linearMove;
+
+Rook.prototype.threatToKing = function(pieces, spotClicked, room) {
+    let enemyKing = this.findEnemyKing(pieces)
+
+    
+}
 
 Rook.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
@@ -165,6 +206,19 @@ function Knight(name, color, tx, ty, px, py)  {
 }
 
 Knight.prototype = Object.create(Piece.prototype);
+
+Knight.prototype.threatToKing = function(pieces, spotClicked, room) {
+    let enemyKing = this.findEnemyKing(pieces)
+
+    for (let [x, y] of this.possibleMoves) {
+        let spotAttacking = { x: this.position.x + x, y: this.position.y + y};
+        if (enemyKing.positionEqual(spotAttacking)) {
+            enemyKing.inCheck = true;
+            room.sendUpdate(`${enemyKing.player} King is in Check!`);
+            break; 
+        }
+    }
+}
 
 Knight.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
@@ -219,10 +273,60 @@ function King(name, color, tx, ty, px, py)  {
 
 King.prototype = Object.create(Piece.prototype);
 
+King.prototype.moveOneSpot = function(pieces, spotClicked, room) {
+    let dx = this.position.x - spotClicked.x;
+    let dy = this.position.y - spotClicked.y;
+    if (Math.abs(dx) < 2 && Math.abs(dy) < 2) return true;
+    else return false;
+}
+
+King.prototype.wantsToCastle = function(pieces, spotClicked, room) {
+    // Cannot castle if king has moved
+    if (this.moveCount !== 0) return false;
+
+    // Rooks on either side
+    for (let piece of pieces) {
+        if (piece.pieceType === 'Rook' && this.player === piece.player && piece.position.x < this.position.x) var leftRook = piece;
+        if (piece.pieceType === 'Rook' && this.player === piece.player && piece.position.x > this.position.x) var rightRook = piece;
+    }
+    
+    // Wants to castle left-side
+    if (spotClicked.x == 2 && spotClicked.y == this.position.y) {
+        if (leftRook.moveCount !== 0) return false;
+        let leftTiles = [{ x: 1, y: this.position.y }, { x: 2, y: this.position.y }, { x: 3, y: this.position.y }];
+        let canCastle = true;
+        for (let spot of leftTiles) { if (this.spotOccupied(pieces, spot)) canCastle = false };
+        return canCastle;
+    }
+
+    // Wants to castle right-side 
+    if (spotClicked.x == 6 && spotClicked.y == this.position.y) {
+        if (rightRook.moveCount !== 0) return false;
+        let rightTiles = [{ x: 5, y: this.position.y }, { x: 6, y: this.position.y }];
+        let canCastle = true;
+        for (let spot of rightTiles) { if (this.spotOccupied(pieces, spot)) canCastle = false };
+        return canCastle;
+    }
+}
+
+King.prototype.castle = function(pieces, spotClicked, room) {
+    // Rooks on either side
+    for (let piece of pieces) {
+        if (piece.pieceType === 'Rook' && this.player === piece.player && piece.position.x < this.position.x) var leftRook = piece;
+        if (piece.pieceType === 'Rook' && this.player === piece.player && piece.position.x > this.position.x) var rightRook = piece;
+    }
+    // Move left side rook
+    if (spotClicked.x == 2 && spotClicked.y == this.position.y) leftRook.position.x = 3;
+    // Move right side rook
+    if (spotClicked.x == 6 && spotClicked.y == this.position.y) rightRook.position.x = 5;
+
+    return true;
+}
+
 King.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
-
-    return false;
+    if (this.wantsToCastle(pieces, spotClicked, room)) return this.castle(pieces, spotClicked, room);
+    return this.moveOneSpot(pieces, spotClicked, room);
 }
 
 exports.module = {
