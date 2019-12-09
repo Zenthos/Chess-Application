@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 const chatFunctions = function(socket) {
-    $('#chatForm').submit(function(e){
-        e.preventDefault(); // prevents page reloading
+    $('#chatForm').submit(function(event){
+        event.preventDefault(); // prevents page reloading
         socket.emit('Send Message', $('#usermsg').val());
         $('#usermsg').val('');
         return false;
@@ -65,7 +65,7 @@ const chessApp = function(socket, clientColor) {
             if (pieces.length == 0) pieces = pieces.concat(serverBoard);
 
             serverBoard.forEach((item, index) => {
-                if (clientColor === 'Black') item.position.y = 7 - item.position.y
+                if (clientColor === 'Black') item.position.y = 7 - item.position.y;
                 pieces[index] = JSON.parse(JSON.stringify(item));
             });
         });

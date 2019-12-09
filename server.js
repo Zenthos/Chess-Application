@@ -60,7 +60,6 @@ const main = function() {
     // *************** Chess Code **************
     // *****************************************
     const P = require('./pieces').module;
-    var namespaces = {};
     var rooms = {};
 
     io.on('connection', function(client){

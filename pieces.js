@@ -43,24 +43,60 @@ Piece.prototype.spotOccupied = function(pieces, spotClicked) {
 }
 
 Piece.prototype.move = function(pieces, spotClicked, room) {
+    let previousPosition = { x: this.position.x, y: this.position.y };
+    let friendlyKing = this.findKing(pieces, this.player);
+    let enemyKing = this.findKing(pieces, this.player == 'White' ? 'Black':'White');
+
     this.position.x = spotClicked.x;
     this.position.y = spotClicked.y;
     this.moveCount = this.moveCount + 1;
-    // room.switchColor();
-    this.threatToKing(pieces, spotClicked, room);
+    room.switchColor();
+
+    if (friendlyKing.kingChecked(pieces, spotClicked, room)) {
+        console.log("Undid Move");
+        friendlyKing.inCheck = false;
+        this.position.x = previousPosition.x;
+        this.position.y = previousPosition.y;
+        this.moveCount = this.moveCount - 1;
+        room.switchColor();
+        return;
+    }
+
+    if (enemyKing.kingChecked(pieces, spotClicked, room)) {
+        room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King!`);
+    }
 }
 
 Piece.prototype.capture = function(pieces, spotClicked, room) {
     for (let piece of pieces) {
         if (piece.positionEqual(spotClicked) && !piece.captured && piece.pieceType !== 'King') {
+            let previousPosition = { x: this.position.x, y: this.position.y };
+            let friendlyKing = this.findKing(pieces, this.player);
+            let enemyKing = this.findKing(pieces, this.player == 'White' ? 'Black':'White');
+
             piece.captured = true;
             this.position.x = spotClicked.x;
             this.position.y = spotClicked.y;
             this.moveCount = this.moveCount + 1;
             room.switchColor();
+            
+            if (friendlyKing.kingChecked(pieces, spotClicked, room)) {
+                friendlyKing.inCheck = false;
+                piece.captured = false;
+                this.position.x = previousPosition.x;
+                this.position.y = previousPosition.y;
+                this.moveCount = this.moveCount - 1;
+                room.switchColor();
+                return;
+            }
+
             room.sendUpdate(`${piece.player} ${piece.pieceType} was captured!`);
-            this.threatToKing(pieces, spotClicked, room);
-            break;
+
+            if (enemyKing.kingChecked(pieces, spotClicked, room)) {
+                room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King!`);
+            }
+            
+            return;
         }
     }
 }
@@ -83,9 +119,9 @@ Piece.prototype.moveOrCapture = function(pieces, spotClicked, room) {
         this.capture(pieces, spotClicked, room);
 }
 
-Piece.prototype.findEnemyKing = function(pieces) {
+Piece.prototype.findKing = function(pieces, color) {
     for (let piece of pieces) {
-        if (piece.pieceType === 'King' && piece.player !== this.player) return piece;
+        if (piece.pieceType === 'King' && piece.player === color) return piece;
     }
 }
 
@@ -124,7 +160,7 @@ linearMove = function(pieces, spotClicked, room) {
 linearCheck = function(pieces, spotClicked, room) {
     if (this.captured === true) return;
 
-    let enemyKing = this.findEnemyKing(pieces)
+    let enemyKing = this.findKing(pieces, this.player == 'White' ? 'Black':'White');
 
     // Gets all pieces that are in the same row and column as THIS rook, disregarding self
     let rowObjects = [], colObjects = [];
@@ -170,7 +206,7 @@ linearCheck = function(pieces, spotClicked, room) {
         if (typeof piece === 'undefined') continue;
         if (enemyKing.positionEqual(piece.position)) {
             enemyKing.inCheck = true;
-            room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King!`);
+            
             break; 
         }
     }
@@ -202,7 +238,7 @@ diagonalMove = function(pieces, spotClicked, room) {
 diagonalCheck = function(pieces, spotClicked, room) {
     if (this.captured === true) return;
 
-    let enemyKing = this.findEnemyKing(pieces)
+    let enemyKing = this.findKing(pieces, this.player == 'White' ? 'Black':'White');
     let attackingPieces = [];
 
     let findPiece = function(current, initial, xoff, yoff) {
@@ -253,7 +289,6 @@ diagonalCheck = function(pieces, spotClicked, room) {
         if (piece.player === this.player) continue;
         if (enemyKing.positionEqual(piece.position)) {
             enemyKing.inCheck = true;
-            room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King!`);
             break; 
         }
     }
@@ -267,10 +302,10 @@ function Pawn(name, color, tx, ty, px, py)  {
 
 Pawn.prototype = Object.create(Piece.prototype);
 
-Pawn.prototype.threatToKing = function(pieces, spotClicked, room) {
+Pawn.prototype.kingChecked = function(pieces, spotClicked, room) {
     if (this.captured === true) return;
 
-    let enemyKing = this.findEnemyKing(pieces)
+    let enemyKing = this.findKing(pieces, this.player == 'White' ? 'Black':'White');
 
     if (this.player === 'White') var attackableSpots = [[-1, -1], [1, -1]];
     if (this.player === 'Black') var attackableSpots = [[-1, 1], [1, 1]];
@@ -279,7 +314,7 @@ Pawn.prototype.threatToKing = function(pieces, spotClicked, room) {
         let spotAttacking = { x: this.position.x + x, y: this.position.y + y};
         if (enemyKing.positionEqual(spotAttacking)) {
             enemyKing.inCheck = true;
-            room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King!`);
+            
             return;
         }
     }
@@ -321,7 +356,7 @@ Rook.prototype = Object.create(Piece.prototype);
 Rook.prototype.linearMove = linearMove;
 Rook.prototype.linearCheck = linearCheck;
 
-Rook.prototype.threatToKing = function(pieces, spotClicked, room) {
+Rook.prototype.kingChecked = function(pieces, spotClicked, room) {
     this.linearCheck(pieces, spotClicked, room);
 }
 
@@ -339,16 +374,15 @@ function Knight(name, color, tx, ty, px, py)  {
 
 Knight.prototype = Object.create(Piece.prototype);
 
-Knight.prototype.threatToKing = function(pieces, spotClicked, room) {
+Knight.prototype.kingChecked = function(pieces, spotClicked, room) {
     if (this.captured === true) return;
 
-    let enemyKing = this.findEnemyKing(pieces)
+    let enemyKing = this.findKing(pieces, this.player == 'White' ? 'Black':'White');
 
     for (let [x, y] of this.possibleMoves) {
         let spotAttacking = { x: this.position.x + x, y: this.position.y + y};
         if (enemyKing.positionEqual(spotAttacking)) {
             enemyKing.inCheck = true;
-            room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King!`);
             break; 
         }
     }
@@ -377,7 +411,7 @@ Bishop.prototype = Object.create(Piece.prototype);
 Bishop.prototype.diagonalMove = diagonalMove;
 Bishop.prototype.diagonalCheck = diagonalCheck;
 
-Bishop.prototype.threatToKing = function(pieces, spotClicked, room) {
+Bishop.prototype.kingChecked = function(pieces, spotClicked, room) {
     this.diagonalCheck(pieces, spotClicked, room);
 }
 
@@ -397,7 +431,7 @@ Queen.prototype.diagonalMove = diagonalMove;
 Queen.prototype.linearCheck = linearCheck;
 Queen.prototype.diagonalCheck = diagonalCheck;
 
-Queen.prototype.threatToKing = function(pieces, spotClicked, room) {
+Queen.prototype.kingChecked = function(pieces, spotClicked, room) {
     this.linearCheck(pieces, spotClicked, room);
     this.diagonalCheck(pieces, spotClicked, room);
 }
@@ -419,12 +453,11 @@ function King(name, color, tx, ty, px, py)  {
 
 King.prototype = Object.create(Piece.prototype);
 
-King.prototype.threatToKing = function(pieces, spotClicked, room) {
-    let inDanger = false;
-    for (let piece of pieces) if (piece.pieceType !== 'King') {
-        if (piece.threatToKing(pieces, spotClicked, room)) inDanger = true;
-    }
-    return inDanger;
+King.prototype.kingChecked = function(pieces, spotClicked, room) {
+    for (let piece of pieces) if (piece.pieceType !== 'King')
+        piece.kingChecked(pieces, spotClicked, room)
+
+    return this.inCheck;
 }
 
 King.prototype.moveOneSpot = function(pieces, spotClicked, room) {
