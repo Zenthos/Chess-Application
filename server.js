@@ -134,6 +134,7 @@ class ChessRoom {
         this.players = [creator]
         this.ready = false;
         this.pieceSelected = false;
+        this.gameFinished = false;
     }
 
     switchColor = function() {
@@ -142,6 +143,16 @@ class ChessRoom {
 
     sendUpdate = function(message) {
         this.io.to(this.roomName).emit('Update', message);
+    }
+
+    checkMated = function(winner) {
+        this.io.to(this.roomName).emit('Update', `${winner} has won!`);
+        this.gameFinished = true;
+    }
+
+    staleMated = function() {
+        this.io.to(this.roomName).emit('Update', `The game is a stalemate!`);
+        this.gameFinished = true;
     }
 
     flippedPieces = function() {
@@ -155,6 +166,8 @@ class ChessRoom {
     }
 
     onClickEvent = function(clickPosition, clientPlayer, clientRoom) {
+        if (this.gameFinished) return;
+
         let selectedPiece = {contains: false, index: NaN};
         this.pieces.forEach((item, index) => {
             if (item.selected) {
