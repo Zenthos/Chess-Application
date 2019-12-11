@@ -110,17 +110,15 @@ const main = function() {
             } 
 
             if (!match || clientPieces.length == 0) {
-                
-            let clientColor = people[client.id].side;
-                io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces, clientColor);
+                io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces, clientRoom.currentPlayer);
             }
         });
 
         client.on('Client Clicked', function(clickPosition) {
             let clientRoom = rooms[people[client.id].room];
             let clientColor = people[client.id].side;
-            clientRoom.onClickEvent(clickPosition, people[client.id].side, clientRoom);
-            io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces, clientColor);
+            clientRoom.onClickEvent(clickPosition, people[client.id].side, clientRoom, clientColor);
+            io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces, clientRoom.currentPlayer);
         });
     });
 }
@@ -145,7 +143,9 @@ class ChessRoom {
         this.io.to(this.roomName).emit('Update', message);
     }
 
-    checkMated = function(winner) {
+    checkMated = function(color) {
+        // The winner is the opposite color of the side that got checkmated
+        let winner = color == 'White' ? 'Black':'White';
         this.io.to(this.roomName).emit('Update', `${winner} has won!`);
         this.gameFinished = true;
     }
@@ -155,18 +155,24 @@ class ChessRoom {
         this.gameFinished = true;
     }
 
-    flippedPieces = function() {
-        let newPieces = [];
+    isGameFinished = function(color) {
+        let availableMoves = [];
         for (let piece of this.pieces) {
-            let shallowObject = JSON.parse(JSON.stringify(piece));
-            shallowObject.position.y = 7 - piece.position.y;
-            newPieces.push(shallowObject)
+            if (piece.captured || piece.player !== color) continue;
+            let result = piece.listOfMoves(this.pieces, undefined, this);
+            if (typeof result !== 'undefined' && result.moves.length !== 0) availableMoves.push(result);
         }
-        return newPieces;
+        
+        if (availableMoves.length === 0) {
+            let king = this.pieces[0].findKing(this.pieces, color);
+            if (king.kingChecked(this.pieces, undefined, this)) this.checkMated(color);
+            else this.staleMated();
+        }
     }
 
-    onClickEvent = function(clickPosition, clientPlayer, clientRoom) {
+    onClickEvent = function(clickPosition, clientPlayer, clientRoom, clientColor) {
         if (this.gameFinished) return;
+        if (clientColor !== this.currentPlayer) return;
 
         let selectedPiece = {contains: false, index: NaN};
         this.pieces.forEach((item, index) => {

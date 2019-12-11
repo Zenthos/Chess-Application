@@ -61,11 +61,12 @@ const chessApp = function(socket, clientColor) {
     var pieces = [];
 
     const serverFunctions = function() {
-        socket.on('Update Board', function(serverBoard) {
+        socket.on('Update Board', function(serverBoard, serverColor) {
             if (pieces.length == 0) pieces = pieces.concat(serverBoard);
 
             serverBoard.forEach((item, index) => {
                 if (clientColor === 'Black') item.position.y = 7 - item.position.y;
+                if (clientColor !== serverColor && clientColor !== 'Spectator') item.selected = false;
                 pieces[index] = JSON.parse(JSON.stringify(item));
             });
         });
@@ -104,12 +105,9 @@ const chessApp = function(socket, clientColor) {
 
             let tx = Math.floor((x - 28) / 56); 
             let ty = Math.floor((y - 28) / 56);
-            if (clientColor === 'Black') {
-                let tyOffset = 7 - ty;
-                return {x: tx, y: tyOffset};  // Return the Tile Clicked
-            } else {
-                return {x: tx, y: ty};  // Return the Tile Clicked
-            }
+
+            if (clientColor === 'Black') return {x: tx, y: (7 - ty) }; 
+            else return {x: tx, y: ty};
         }
         
         canvas.addEventListener('click', function(event) {

@@ -11,9 +11,11 @@ A Chess application allowing you to player with other people, and talk through c
 - [X] Run all chess actions through the server
 - [X] Implement turn switch through server
 - [X] Finish king checking
-- [ ] Add win/draw conditions
+- [X] Add win/draw conditions
 - [X] Create chat rooms
 - [ ] Create homepage
+- [ ] Optimize Search Algorithms
+- [ ] Improve Performance
 - [ ] Allow users to play from multiple computers
 - [ ] Add Cross-Platform Support
 

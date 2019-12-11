@@ -1,6 +1,6 @@
 {
   "name": "chess",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Chess Program with Chat Using Socket.io",
   "main": "server.js",
   "scripts": {
