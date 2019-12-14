@@ -163,11 +163,13 @@ class ChessRoom {
             if (typeof result !== 'undefined' && result.moves.length !== 0) availableMoves.push(result);
         }
         
-        if (availableMoves.length === 0) {
-            let king = this.pieces[0].findKing(this.pieces, color);
-            if (king.kingChecked(this.pieces, undefined, this)) this.checkMated(color);
-            else this.staleMated();
-        }
+        // console.log(availableMoves);
+
+        // if (availableMoves.length === 0) {
+        //     let king = this.pieces[0].findKing(this.pieces, color);
+        //     if (king.kingChecked(this.pieces, undefined, this)) this.checkMated(color);
+        //     else this.staleMated();
+        // }
     }
 
     onClickEvent = function(clickPosition, clientPlayer, clientRoom, clientColor) {

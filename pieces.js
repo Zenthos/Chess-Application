@@ -37,29 +37,12 @@ Piece.prototype.spotOccupied = function(pieces, spotClicked) {
     return false;
 }
 
-Piece.prototype.pieceAtSpot = function(pieces, spotClicked) {
-    for (let piece of pieces) {
-        if (piece.positionEqual(spotClicked) && !piece.captured) return piece;
-    }
-}
-
-Piece.prototype.canAttack = function(pieces, nextSpot) {
-    for (let piece of pieces) {
-        if (piece.positionEqual(nextSpot) && !piece.captured) {
-            let spot = this.pieceAtSpot(pieces, nextSpot);
-            if (spot.player === this.player) return false;
-            else return true;
-        }
-    }
-    return true;
-}
-
 Piece.prototype.listOfMoves = function(pieces, spotClicked, room) {
     let moves = [];
     for (let [x, y] of this.possibleMoves) {
         let nextSpot = { x: this.position.x + x, y: this.position.y + y };
         if (nextSpot.x > 7 || nextSpot.x < 0 || nextSpot.y > 7 || nextSpot.y < 0) continue;
-        if (this.legalMove(pieces, nextSpot, room) && this.canAttack(pieces, nextSpot)) moves.push([x, y]);
+        if (this.legalMove(pieces, nextSpot, room)) moves.push([x, y]);
     }
     return {piece: `${this.player} ${this.pieceType}`, moves};
 }
@@ -80,8 +63,8 @@ Piece.prototype.move = function(pieces, spotClicked, room) {
 
 Piece.prototype.capture = function(pieces, spotClicked, room) {
     for (let piece of pieces) {
+        if (JSON.stringify(this.initial) === JSON.stringify(piece.initial)) continue; // Skip Self
         if (piece.positionEqual(spotClicked) && !piece.captured && piece.pieceType !== 'King') {
-
             let enemyKing = this.findKing(pieces, this.player == 'White' ? 'Black':'White');
 
             piece.captured = true;
@@ -110,24 +93,28 @@ Piece.prototype.legalMove = function(pieces, spotClicked, room) {
     // If the piece tries to move onto another piece and its the same color => not a legal move
     if (this.spotOccupied(pieces, spotClicked)) {
         for (let piece of pieces) {
-            if (piece.positionEqual(spotClicked) && piece.pieceType !== 'King' && !piece.captured && piece.player == this.player) return false;
+            if (piece.positionEqual(spotClicked) && !piece.captured && piece.player == this.player) return false;
         }
     }
     
     // Not legal move if the move causes friendly king to be in check
+    if (this.doesMoveCheckSelf(pieces, spotClicked, room)) return false;
+
+    return true;
+}
+
+Piece.prototype.doesMoveCheckSelf = function(pieces, spotClicked, room) {
     let previousPosition = { x: this.position.x, y: this.position.y };
     let friendlyKing = this.findKing(pieces, this.player);
+
     this.position.x = spotClicked.x;
     this.position.y = spotClicked.y;
     let result = friendlyKing.kingChecked(pieces, spotClicked, room)
     this.position.x = previousPosition.x;
     this.position.y = previousPosition.y;
-    if (result) {
-        friendlyKing.inCheck = false;
-        return false;
-    }
 
-    return true;
+    if (result) return true;
+    else return false;
 }
 
 Piece.prototype.moveOrCapture = function(pieces, spotClicked, room) {
@@ -323,7 +310,7 @@ Pawn.prototype.listOfMoves = function(pieces, spotClicked, room) {
     for (let [x, y] of possibleMoves) {
         let nextSpot = { x: this.position.x + x, y: this.position.y + y };
         if (nextSpot.x > 7 || nextSpot.x < 0 || nextSpot.y > 7 || nextSpot.y < 0) continue;
-        if (this.legalMove(pieces, nextSpot, room) && this.canAttack(pieces, nextSpot)) moves.push([x, y]);
+        if (this.legalMove(pieces, nextSpot, room)) moves.push([x, y]);
     }
     return {piece: `${this.player} ${this.pieceType}`, moves};
 }
