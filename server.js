@@ -146,12 +146,12 @@ class ChessRoom {
     checkMated = function(color) {
         // The winner is the opposite color of the side that got checkmated
         let winner = color == 'White' ? 'Black':'White';
-        this.io.to(this.roomName).emit('Update', `${winner} has won!`);
+        this.io.to(this.roomName).emit('Update', `Checkmate! ${winner} has won!`);
         this.gameFinished = true;
     }
 
-    staleMated = function() {
-        this.io.to(this.roomName).emit('Update', `The game is a stalemate!`);
+    staleMated = function(color) {
+        this.io.to(this.roomName).emit('Update', `${color} has no more legal moves! The game is a stalemate!`);
         this.gameFinished = true;
     }
 
@@ -165,11 +165,11 @@ class ChessRoom {
         
         // console.log(availableMoves);
 
-        // if (availableMoves.length === 0) {
-        //     let king = this.pieces[0].findKing(this.pieces, color);
-        //     if (king.kingChecked(this.pieces, undefined, this)) this.checkMated(color);
-        //     else this.staleMated();
-        // }
+        if (availableMoves.length === 0) {
+            let king = this.pieces[0].findKing(this.pieces, color);
+            if (king.kingChecked(this.pieces, undefined, this)) this.checkMated(color);
+            else this.staleMated(color);
+        }
     }
 
     onClickEvent = function(clickPosition, clientPlayer, clientRoom, clientColor) {

@@ -72,8 +72,6 @@ Piece.prototype.capture = function(pieces, spotClicked, room) {
             this.position.y = spotClicked.y;
             this.moveCount = this.moveCount + 1;
             room.switchColor();
-
-
             room.sendUpdate(`${piece.player} ${piece.pieceType} was captured!`);
 
             if (enemyKing.kingChecked(pieces, spotClicked, room) && this.pieceType !== 'King') {
@@ -104,6 +102,7 @@ Piece.prototype.legalMove = function(pieces, spotClicked, room) {
 }
 
 Piece.prototype.doesMoveCheckSelf = function(pieces, spotClicked, room) {
+
     let previousPosition = { x: this.position.x, y: this.position.y };
     let friendlyKing = this.findKing(pieces, this.player);
 
@@ -291,7 +290,8 @@ diagonalCheck = function(pieces, spotClicked, room) {
 
     for (let piece of attackingPieces) {
         if (piece.player === this.player) continue;
-        if (enemyKing.positionEqual(piece.position)) return this; 
+        if (JSON.stringify(piece.position) === JSON.stringify(this.position)) continue; // Cannot check pieces on top of self
+        if (enemyKing.positionEqual(piece.position)) return true;
     }
 }
 
