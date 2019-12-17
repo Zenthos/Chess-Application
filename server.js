@@ -9,6 +9,11 @@ const main = function() {
     const app = express();
     const http = require('http').createServer(app);
     const io = require('socket.io')(http);
+    let port = process.env.PORT;
+    
+    if (port == null || port == "") {
+      port = 8000;
+    }
     
     app.use('/static', express.static(path.join(__dirname, '/public')));
     
@@ -16,7 +21,7 @@ const main = function() {
         res.sendFile(path.join(__dirname, '/index.html'));
     });
 
-    http.listen(3000, function(){
+    http.listen(port, function(){
         console.log('listening on *:3000');
     });    
     
