@@ -10,9 +10,9 @@ const main = function() {
     const http = require('http').createServer(app);
     const io = require('socket.io')(http);
     let port = process.env.PORT;
-    
+
     if (port == null || port == "") {
-      port = 8000;
+        port = 8000;
     }
     
     app.use('/static', express.static(path.join(__dirname, '/public')));
@@ -22,7 +22,7 @@ const main = function() {
     });
 
     http.listen(port, function(){
-        console.log('listening on *:3000');
+        console.log(`listening on *:${port}`);
     });    
     
     // *****************************************
@@ -64,7 +64,7 @@ const main = function() {
     // *****************************************
     // *************** Chess Code **************
     // *****************************************
-    const P = require('./pieces').module;
+    const piecesModule = require('./pieces').module;
     var rooms = {};
 
     io.on('connection', function(client){
@@ -73,11 +73,11 @@ const main = function() {
             if (!rooms.hasOwnProperty(room) && (side == 'White' || side == 'Black')) {
                 console.log("Room did not exist, creating...");
                 rooms[room] = new ChessRoom(io, room, people[client.id]);
-                rooms[room].initPieces(P);
+                rooms[room].initPieces(piecesModule);
                 client.join(room);
             } else {
                 let present = rooms[room].alreadyHas(username);
-                // if (present.hasUser) return callback(false, "Username Already Used In Requested Room");
+                if (present.hasUser) return callback(false, "Username Already Used In Requested Room");
                 if (present.hasBlack && side == 'Black') return callback(false, "Black Player Already In Requested Room");
                 if (present.hasWhite && side == 'White') return callback(false, "White Player Already In Requested Room");
                 console.log("Joining already created room...");
