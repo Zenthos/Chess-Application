@@ -57,12 +57,12 @@ Piece.prototype.move = function(pieces, spotClicked, room) {
 
     if (enemyKing.kingChecked(pieces, spotClicked, room) && this.pieceType !== 'King') {
         enemyKing.inCheck = true;
-        room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King!`);
+        room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King`);
     } 
 }
 
 Piece.prototype.capture = function(pieces, spotClicked, room) {
-    for (let piece of pieces) {
+    for (let [index, piece] of pieces.entries()) {
         if (JSON.stringify(this.initial) === JSON.stringify(piece.initial)) continue; // Skip Self
         if (piece.positionEqual(spotClicked) && !piece.captured && piece.pieceType !== 'King') {
             let enemyKing = this.findKing(pieces, this.player == 'White' ? 'Black':'White');
@@ -72,13 +72,14 @@ Piece.prototype.capture = function(pieces, spotClicked, room) {
             this.position.y = spotClicked.y;
             this.moveCount = this.moveCount + 1;
             room.switchColor();
-            room.sendUpdate(`${piece.player} ${piece.pieceType} was captured!`);
+            room.sendUpdate(`${piece.player} ${piece.pieceType} was captured`);
 
             if (enemyKing.kingChecked(pieces, spotClicked, room) && this.pieceType !== 'King') {
                 enemyKing.inCheck = true;
-                room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King!`);
+                room.sendUpdate(`${this.player} ${this.pieceType} checked ${enemyKing.player} King`);
             }
-            
+
+            pieces.splice(index, 1);
             return;
         }
     }
@@ -302,6 +303,7 @@ function Pawn(name, color, tx, ty, px, py)  {
 }
 
 Pawn.prototype = Object.create(Piece.prototype);
+Pawn.prototype.linearMove = linearMove;
 
 Pawn.prototype.listOfMoves = function(pieces, spotClicked, room) {
     if (this.player === 'White') var possibleMoves = [[-1, -1], [1, -1],  [0, -1], [0, -2]];
@@ -334,10 +336,10 @@ Pawn.prototype.verticalMove = function(pieces, spotClicked, room) {
     let dy = this.position.y - spotClicked.y;
 
     if (Math.abs(dx) === 0 && !this.spotOccupied(pieces, spotClicked)) {
-        if (Math.abs(dy) == 2 && this.player == 'White' && dy > 0 && this.positionEqual(this.initial)) return true;
-        if (Math.abs(dy) == 2 && this.player == 'Black' && dy < 0 && this.positionEqual(this.initial)) return true;
-        if (Math.abs(dy) == 1 && this.player == 'White' && dy > 0) return true;
-        if (Math.abs(dy) == 1 && this.player == 'Black' && dy < 0) return true;
+        if (dy == 2 && this.player == 'White' && this.linearMove(pieces, spotClicked, room) && this.positionEqual(this.initial)) return true;
+        if (dy == -2 && this.player == 'Black' && this.linearMove(pieces, spotClicked, room) && this.positionEqual(this.initial)) return true;
+        if (dy == 1 && this.player == 'White') return true;
+        if (dy == -1 && this.player == 'Black') return true;
     }
 
     if (Math.abs(dx) == 1 && Math.abs(dy) == 1 && this.spotOccupied(pieces, spotClicked)) {

@@ -12,7 +12,7 @@ const main = function() {
     let port = process.env.PORT;
 
     if (port == null || port == "") {
-        port = 8000;
+        port = 3000;
     }
     
     app.use('/static', express.static(path.join(__dirname, '/public')));
@@ -145,18 +145,18 @@ class ChessRoom {
     }
 
     sendUpdate = function(message) {
-        this.io.to(this.roomName).emit('Update', message);
+        this.io.to(this.roomName).emit('Update', `[SYSTEM] ${message}`);
     }
 
     checkMated = function(color) {
         // The winner is the opposite color of the side that got checkmated
         let winner = color == 'White' ? 'Black':'White';
-        this.io.to(this.roomName).emit('Update', `Checkmate! ${winner} has won!`);
+        this.sendUpdate(`Checkmate! ${winner} has won!`);
         this.gameFinished = true;
     }
 
     staleMated = function(color) {
-        this.io.to(this.roomName).emit('Update', `${color} has no more legal moves! The game is a stalemate!`);
+        this.sendUpdate(`${color} has no more legal moves, but the king is not in check. The game is a stalemate!`);
         this.gameFinished = true;
     }
 
@@ -167,8 +167,8 @@ class ChessRoom {
             let result = piece.listOfMoves(this.pieces, undefined, this);
             if (typeof result !== 'undefined' && result.moves.length !== 0) availableMoves.push(result);
         }
-        
-        // console.log(availableMoves);
+
+        console.log(availableMoves.length, color);
 
         if (availableMoves.length === 0) {
             let king = this.pieces[0].findKing(this.pieces, color);
