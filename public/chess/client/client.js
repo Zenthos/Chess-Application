@@ -70,6 +70,25 @@ const chessApp = function(socket, clientColor) {
                 pieces[index] = JSON.parse(JSON.stringify(item));
             });
         });
+
+        socket.on('Player Left', function() {
+            (function waitingForRejoin() {
+                socket.emit('Player Validation', function(result) {
+                    if (result) {
+                        console.log('Core Players Are Present');
+                        $('#JoinContainer').hide();
+                    } else {
+                        $('#JoinContainer').show();
+                        $('#joinForm').hide();
+                        $('#Waiting').show();
+                        if (clientColor == 'Spectator') $('h4').text('A player has left, waiting for another person...');
+                        else if (clientColor == 'White') $('h4').text('Black has left, waiting for another person...');
+                        else if (clientColor == 'Black') $('h4').text('White has left, waiting for another person...');
+                        setTimeout(waitingForRejoin, 5000);
+                    }
+                });
+            })();
+        });
     }
 
     const chessFunctions = function() {

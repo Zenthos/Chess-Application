@@ -1,11 +1,11 @@
 
 module.exports = class ChessRoom {
-    constructor(io, room, creator) {
+    constructor(io, room) {
         this.currentPlayer = 'White';
         this.roomName = room;
         this.io = io;
         this.pieces = [];
-        this.players = [creator]
+        this.players = [];
         this.ready = false;
         this.pieceSelected = false;
         this.gameFinished = false;
@@ -17,6 +17,10 @@ module.exports = class ChessRoom {
 
     sendUpdate = function(message) {
         this.io.to(this.roomName).emit('Update', `[SYSTEM] ${message}`);
+    }
+
+    addPlayer = function(person) {
+        this.players.push(person);
     }
 
     checkMated = function(color) {
@@ -94,8 +98,8 @@ module.exports = class ChessRoom {
         let whiteCheck = false;
         this.players.forEach(element => {
             if (element.username == username) usernameCheck = true;
-            else if (element.side == 'Black') blackCheck = true;
-            else if (element.side == 'White') whiteCheck = true;
+            if (element.side == 'Black') blackCheck = true;
+            if (element.side == 'White') whiteCheck = true;
         });
 
         return {hasUser: usernameCheck, hasBlack: blackCheck, hasWhite: whiteCheck};

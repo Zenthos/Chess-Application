@@ -17,20 +17,21 @@ module.exports = class Chat {
                 people[client.id].username = username;
                 people[client.id].room = room;
                 people[client.id].side = side;
+
                 if (!rooms.hasOwnProperty(room) && (side == 'White' || side == 'Black')) {
-                    console.log("Room did not exist, creating...");
-                    rooms[room] = new modules.rooms(io, room, people[client.id]);
+                    rooms[room] = new modules.rooms(io, room);
                     rooms[room].initPieces(modules.pieces);
+                    rooms[room].addPlayer(people[client.id]);
                     client.join(room);
                 } else {
                     let present = rooms[room].alreadyHas(username);
                     if (present.hasUser) return callback(false, "Username Already Used In Requested Room");
                     if (present.hasBlack && side == 'Black') return callback(false, "Black Player Already In Requested Room");
                     if (present.hasWhite && side == 'White') return callback(false, "White Player Already In Requested Room");
-                    console.log("Joining already created room...");
-                    rooms[room].players.push(people[client.id]);
+                    rooms[room].addPlayer(people[client.id]);
                     client.join(room);
                 }
+
                 client.emit('Update', `You have joined the room: '${room}', as ${side}`);
                 io.to(room).emit('Update', `[${side}] ${username} has joined the room.`);
                 return callback(true, undefined);
@@ -41,16 +42,14 @@ module.exports = class Chat {
                     if (Object.entries(rooms).length === 0 && rooms.constructor === Object) return;
                     let clientRoom = rooms[people[client.id].room];
                     let message = `[${people[client.id].side}] ${people[client.id].username} has left the room.`;
-                    io.to(clientRoom.roomName).emit('Update', message);
-                    var removeIndex = clientRoom.players.find((element, index) => {
-                        if (element.ID == people[client.id].ID) return index;
-                    });
+
+                    var removeIndex = clientRoom.players.findIndex(person => person.ID === client.id);
+                    if (clientRoom.players.length == 0) delete rooms[clientRoom.roomName];
                     clientRoom.players.splice(removeIndex, 1);
                     delete people[client.id]; 
-                    if (clientRoom.players.length == 0) {
-                        console.log("Deleting Room...");
-                        delete rooms[clientRoom.roomName];
-                    }
+
+                    io.to(clientRoom.roomName).emit('Player Left');
+                    io.to(clientRoom.roomName).emit('Update', message);
                 } catch(err) {
                     console.log(err);
                 }

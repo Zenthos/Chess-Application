@@ -32,6 +32,17 @@ module.exports = class ChessGame {
                 }
             });
 
+            client.on('Player Validation', function(callback) {
+                let clientRoom = rooms[people[client.id].room];
+                let contains = clientRoom.alreadyHas(people[client.id].username);
+
+                if (contains.hasBlack && contains.hasWhite) {
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            });
+
             client.on('Client Clicked', function(clickPosition) {
                 let clientRoom = rooms[people[client.id].room];
                 let clientColor = people[client.id].side;

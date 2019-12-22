@@ -1,5 +1,6 @@
 # A Chess Application
 A Chess application allowing you to player with other people, and talk through chat rooms.
+The game can be played at https://chessrooms.herokuapp.com/ 
 
 ## Built Using
 1. Node.js
@@ -29,8 +30,8 @@ A Chess application allowing you to player with other people, and talk through c
 - [X] Create homepage
 - [ ] Optimize Search Algorithms
 - [ ] Improve Performance
-- [ ] Allow users to play from multiple computers
-- [ ] Add Cross-Platform Support
+- [ ] Add QOL improvements
+- [ ] More functional Chat
 
 ### How to help
 
