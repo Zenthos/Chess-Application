@@ -26,7 +26,7 @@ A Chess application allowing you to player with other people, and talk through c
 - [X] Finish king checking
 - [X] Add win/draw conditions
 - [X] Create chat rooms
-- [ ] Create homepage
+- [X] Create homepage
 - [ ] Optimize Search Algorithms
 - [ ] Improve Performance
 - [ ] Allow users to play from multiple computers

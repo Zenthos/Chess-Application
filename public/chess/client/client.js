@@ -118,8 +118,8 @@ const chessApp = function(socket, clientColor) {
     };
 
     (function beginChess() {
-        board.src = "/static/images/board.png";
-        figures.src = "/static/images/figures.png";
+        board.src = "/static/chess/images/board.png";
+        figures.src = "/static/chess/images/figures.png";
         canvas.width = board.width;
         canvas.height = board.height;
 
