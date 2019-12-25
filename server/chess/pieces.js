@@ -13,7 +13,7 @@ function Piece(name, color, tx, ty, px, py) {
 
 Piece.prototype.select = function(currentPlayer, clientPlayer) {
     // Only Selects if the Client, Server, and Piece are all the same color
-    // if (!this.selected && !this.captured && currentPlayer == this.player && clientPlayer == this.player)
+    if (!this.selected && !this.captured && currentPlayer == this.player && clientPlayer == this.player)
         this.selected = true;
 }
 
@@ -232,8 +232,10 @@ Pawn.prototype.verticalMove = function(pieces, spotClicked, room) {
     let dy = this.position.y - spotClicked.y;
 
     if (Math.abs(dx) === 0 && !this.spotOccupied(pieces, spotClicked)) {
-        if (dy == 2 && this.player == 'White' && this.linearMove(pieces, spotClicked, room) && this.positionEqual(this.initial)) return true;
-        if (dy == -2 && this.player == 'Black' && this.linearMove(pieces, spotClicked, room) && this.positionEqual(this.initial)) return true;
+        if (this.linearMove(pieces, spotClicked, room)) {
+            if (dy == 2 && this.player == 'White' && this.positionEqual(this.initial)) return true;
+            if (dy == -2 && this.player == 'Black' && this.positionEqual(this.initial)) return true;
+        }
         if (dy == 1 && this.player == 'White') return true;
         if (dy == -1 && this.player == 'Black') return true;
     }
@@ -354,18 +356,6 @@ function King(name, color, tx, ty, px, py)  {
 
 King.prototype = Object.create(Piece.prototype);
 
-// Version 1
-// King.prototype.kingChecked = function(pieces, spotClicked, room) {
-//     for (let piece of pieces) {
-//         if (piece.pieceType !== 'King' && piece.player !== this.player) {
-//             let result = piece.kingChecked(pieces, spotClicked, room)
-//             if (typeof result !== 'undefined') return true;
-//         }
-//     }
-//     return false;
-// }
-
-// Version 2
 King.prototype.kingChecked = function(pieces, spotClicked, room) {
     let attackingPieces = [];
 
