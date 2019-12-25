@@ -44,9 +44,11 @@ module.exports = class Chat {
                     let message = `[${people[client.id].side}] ${people[client.id].username} has left the room.`;
 
                     var removeIndex = clientRoom.players.findIndex(person => person.ID === client.id);
-                    if (clientRoom.players.length == 0) delete rooms[clientRoom.roomName];
+                    if (clientRoom.players === undefined) return;
                     clientRoom.players.splice(removeIndex, 1);
                     delete people[client.id]; 
+
+                    if (clientRoom.players.length == 0) delete rooms[clientRoom.roomName];
 
                     io.to(clientRoom.roomName).emit('Player Left');
                     io.to(clientRoom.roomName).emit('Update', message);

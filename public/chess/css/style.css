@@ -50,9 +50,11 @@ html, body {
 
 #JoinContainer form input {
     margin-top: 30px;
+    margin-right: 25%;
+    margin-left: 25%; 
     padding: 8px;
     height: 10%;
-    width: 90%;
+    width: 50%;
 }
 
 #JoinContainer form button {

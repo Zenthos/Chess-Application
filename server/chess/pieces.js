@@ -13,7 +13,7 @@ function Piece(name, color, tx, ty, px, py) {
 
 Piece.prototype.select = function(currentPlayer, clientPlayer) {
     // Only Selects if the Client, Server, and Piece are all the same color
-    if (!this.selected && !this.captured && currentPlayer == this.player && clientPlayer == this.player)
+    // if (!this.selected && !this.captured && currentPlayer == this.player && clientPlayer == this.player)
         this.selected = true;
 }
 
@@ -103,28 +103,32 @@ Piece.prototype.legalMove = function(pieces, spotClicked, room) {
 }
 
 Piece.prototype.doesMoveCheckSelf = function(pieces, spotClicked, room) {
-
     let previousPosition = { x: this.position.x, y: this.position.y };
     let friendlyKing = this.findKing(pieces, this.player);
 
     this.position.x = spotClicked.x;
     this.position.y = spotClicked.y;
+    for (let piece of pieces) if (piece.positionEqual(this.position)) piece.captured = true;
+
     let result = friendlyKing.kingChecked(pieces, spotClicked, room)
+
     this.position.x = previousPosition.x;
     this.position.y = previousPosition.y;
+    for (let piece of pieces) if (piece.captured) piece.captured = false;
 
     if (result) return true;
     else return false;
 }
 
 Piece.prototype.moveOrCapture = function(pieces, spotClicked, room) {
-    if (this.legalMove(pieces, spotClicked, room) && !this.spotOccupied(pieces, spotClicked))
-        this.move(pieces, spotClicked, room);
-    else if (this.legalMove(pieces, spotClicked, room) && this.spotOccupied(pieces, spotClicked))
-        this.capture(pieces, spotClicked, room);
+    let legal = this.legalMove(pieces, spotClicked, room);
+    let occupied = this.spotOccupied(pieces, spotClicked);
+
+    if (legal && !occupied) this.move(pieces, spotClicked, room);
+    else if (legal && occupied) this.capture(pieces, spotClicked, room);
 
     // Check if the opposite color has reached a checkmate or stalemate
-    room.isGameFinished(this.player == 'White' ? 'Black':'White');
+    room.isGameFinished(this.player == 'White' ? 'Black':'White'); 
 }
 
 Piece.prototype.findKing = function(pieces, color) {
@@ -165,57 +169,6 @@ linearMove = function(pieces, spotClicked, room) {
     return true;
 }
 
-linearCheck = function(pieces, spotClicked, room) {
-    if (this.captured === true) return;
-
-    let enemyKing = this.findKing(pieces, this.player == 'White' ? 'Black':'White');
-
-    // Gets all pieces that are in the same row and column as THIS rook, disregarding self
-    let rowObjects = [], colObjects = [];
-    for (let i = 0; i < 8; i++) {
-        for (let piece of pieces) {
-            if (piece.positionEqual({ x: i, y: this.position.y }) && 
-            JSON.stringify(piece.initial) !== JSON.stringify(this.initial)) rowObjects.push(piece);
-            if (piece.positionEqual({ x: this.position.x, y: i }) && 
-            JSON.stringify(piece.initial) !== JSON.stringify(this.initial)) colObjects.push(piece);
-        }
-    }
-
-    // gets closest pieces from the left and right, relative to this rooks position
-    let closestLeft, closestRight;
-    let leftX = 7, rightX = 0;
-    for (let item of rowObjects) {
-        if (item.position.x > this.position.x && item.position.x <= leftX) {
-            leftX = item.position.x;
-            closestRight = item;
-        }
-        if (item.position.x < this.position.x && item.position.x >= rightX) {
-            rightX = item.position.x;
-            closestLeft = item;
-        }
-    }
-
-    // gets closest pieces from above and below, relative to this rooks position
-    let closestUp, closestDown;
-    let upY = 7, downY = 0;
-    for (let item of colObjects) {
-        if (item.position.y > this.position.y && item.position.y <= upY) {
-            upY = item.position.y;
-            closestDown = item;
-        }
-        if (item.position.y < this.position.y && item.position.y >= downY) {
-            downY = item.position.y;
-            closestUp = item;
-        }
-    }
-
-    // King is in check if any of the pieces being attacked are an enemy king
-    for (let piece of [closestUp, closestDown, closestLeft, closestRight]) {
-        if (typeof piece === 'undefined') continue;
-        if (enemyKing.positionEqual(piece.position)) return this; 
-    }
-}
-
 diagonalMove = function(pieces, spotClicked, room) {
     let dx = this.position.x - spotClicked.x;
     let dy = this.position.y - spotClicked.y;
@@ -237,63 +190,6 @@ diagonalMove = function(pieces, spotClicked, room) {
     }
 
     return true;
-}
-
-diagonalCheck = function(pieces, spotClicked, room) {
-    if (this.captured === true) return;
-
-    let enemyKing = this.findKing(pieces, this.player == 'White' ? 'Black':'White');
-    let attackingPieces = [];
-
-    let findPiece = function(current, initial, xoff, yoff) {
-        for (let piece of pieces) {
-            if (piece.captured === true) continue;
-            if (JSON.stringify(piece.initial) === JSON.stringify(initial)) continue; // Skip Self
-            if (piece.positionEqual({ x: current.x + xoff, y: current.y + yoff })) return piece;
-        }
-        return;
-    }
-
-    // Up-Right + -
-    for (let i = 0; this.position.x + i <= 7 && this.position.y - i >= 0; i++) {
-        let result = findPiece(this.position, this.initial, i, -i)
-        if (typeof result !== 'undefined') {
-            attackingPieces.push(result);
-            break;
-        }
-    }
-
-    //Up-Left Check - -
-    for (let i = 0; this.position.x - i >= 0 && this.position.y - i >= 0; i++) {
-        let result = findPiece(this.position, this.initial, -i, -i)
-        if (typeof result !== 'undefined') {
-            attackingPieces.push(result);
-            break;
-        }
-    }
-    //Down-Left Check - +
-    for (let i = 0; this.position.x - i >= 0 && this.position.y + i <= 7; i++) {
-        let result = findPiece(this.position, this.initial, -i, i)
-        if (typeof result !== 'undefined') {
-            attackingPieces.push(result);
-            break;
-        }
-    }
-
-    //Down-Right Check + +
-    for (let i = 0; this.position.x + i <= 7 && this.position.y + i <= 7; i++) {
-        let result = findPiece(this.position, this.initial, i, i)
-        if (typeof result !== 'undefined') {
-            attackingPieces.push(result);
-            break;
-        }
-    }
-
-    for (let piece of attackingPieces) {
-        if (piece.player === this.player) continue;
-        if (JSON.stringify(piece.position) === JSON.stringify(this.position)) continue; // Cannot check pieces on top of self
-        if (enemyKing.positionEqual(piece.position)) return true;
-    }
 }
 
 // -------------------------------------------- PAWN --------------------------------------------
@@ -368,11 +264,6 @@ function Rook(name, color, tx, ty, px, py)  {
 
 Rook.prototype = Object.create(Piece.prototype);
 Rook.prototype.linearMove = linearMove;
-Rook.prototype.linearCheck = linearCheck;
-
-Rook.prototype.kingChecked = function(pieces, spotClicked, room) {
-    return this.linearCheck(pieces, spotClicked, room);
-}
 
 Rook.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
@@ -395,7 +286,7 @@ Knight.prototype.kingChecked = function(pieces, spotClicked, room) {
 
     for (let [x, y] of this.possibleMoves) {
         let spotAttacking = { x: this.position.x + x, y: this.position.y + y};
-        if (enemyKing.positionEqual(spotAttacking)) return this; 
+        if (enemyKing.positionEqual(spotAttacking)) return true; 
     }
 }
 
@@ -424,11 +315,6 @@ function Bishop(name, color, tx, ty, px, py)  {
 
 Bishop.prototype = Object.create(Piece.prototype);
 Bishop.prototype.diagonalMove = diagonalMove;
-Bishop.prototype.diagonalCheck = diagonalCheck;
-
-Bishop.prototype.kingChecked = function(pieces, spotClicked, room) {
-    return this.diagonalCheck(pieces, spotClicked, room);
-}
 
 Bishop.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
@@ -451,15 +337,6 @@ function Queen(name, color, tx, ty, px, py)  {
 Queen.prototype = Object.create(Piece.prototype);
 Queen.prototype.linearMove = linearMove;
 Queen.prototype.diagonalMove = diagonalMove;
-Queen.prototype.linearCheck = linearCheck;
-Queen.prototype.diagonalCheck = diagonalCheck;
-
-Queen.prototype.kingChecked = function(pieces, spotClicked, room) {
-    let r1 = this.linearCheck(pieces, spotClicked, room);
-    let r2 = this.diagonalCheck(pieces, spotClicked, room);
-    if (typeof r1 !== 'undefined' || typeof r2 !== 'undefined') return this;
-    else return;
-}
 
 Queen.prototype.legalMove = function(pieces, spotClicked, room) {
     if (!Piece.prototype.legalMove.call(this, pieces, spotClicked, room)) return false;
@@ -471,22 +348,102 @@ Queen.prototype.legalMove = function(pieces, spotClicked, room) {
 // -------------------------------------------- KING --------------------------------------------
 
 function King(name, color, tx, ty, px, py)  {
-    Piece.call(this, name, color, tx, ty, px, py); 
+    Piece.call(this, name, color, tx, ty, px, py);
     this.possibleMoves = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
 }
 
 King.prototype = Object.create(Piece.prototype);
 
+// Version 1
+// King.prototype.kingChecked = function(pieces, spotClicked, room) {
+//     for (let piece of pieces) {
+//         if (piece.pieceType !== 'King' && piece.player !== this.player) {
+//             let result = piece.kingChecked(pieces, spotClicked, room)
+//             if (typeof result !== 'undefined') return true;
+//         }
+//     }
+//     return false;
+// }
+
+// Version 2
 King.prototype.kingChecked = function(pieces, spotClicked, room) {
+    let attackingPieces = [];
+
+    let upRight = this.findPiece(pieces, 1, -1);
+    let upLeft = this.findPiece(pieces, -1, -1);
+    let downRight = this.findPiece(pieces, 1, 1);
+    let downLeft = this.findPiece(pieces, -1, 1);
+
+    attackingPieces.push({ direction: 'upRight', piece: upRight });
+    attackingPieces.push({ direction: 'upLeft', piece: upLeft });
+    attackingPieces.push({ direction: 'downRight', piece: downRight });
+    attackingPieces.push({ direction: 'downLeft', piece: downLeft });
+
+    let up = this.findPiece(pieces, 0, -1);
+    let down = this.findPiece(pieces, 0, 1);
+    let left = this.findPiece(pieces, -1, 0);
+    let right = this.findPiece(pieces, 1, 0);
+
+    attackingPieces.push({ direction: 'up', piece: up });
+    attackingPieces.push({ direction: 'down', piece: down });
+    attackingPieces.push({ direction: 'left', piece: left });
+    attackingPieces.push({ direction: 'right', piece: right });
+
+    // Determines if the king is being attacked by a knight
     for (let piece of pieces) {
-        if (piece.pieceType !== 'King' && piece.player !== this.player) {
-            let result = piece.kingChecked(pieces, spotClicked, room)
-            if (typeof result !== 'undefined') return true;
+        if (piece.pieceType === 'Knight' && piece.player !== this.player) {
+            if (piece.kingChecked(pieces, spotClicked, room)) attackingPieces.push({ direction: 'knight', piece})
         }
     }
 
+    let filtered = attackingPieces.filter(item => item.piece !== undefined);
+
+    if (filtered.length !== 0) {
+        for (let attacker of filtered) {
+            let piece = attacker.piece;
+            let direction = attacker.direction;
+            if (piece.captured) continue;
+            if (piece.player === this.player) continue;
+            if (piece.positionEqual(this.position)) continue;
+
+            let diagDirections = ['upLeft', 'upRight', 'downLeft', 'downRight'];
+            if (piece.pieceType === 'Queen' || piece.pieceType === 'Bishop' || piece.pieceType === 'Pawn') {
+                if (piece.pieceType !== 'Pawn') {
+                    if (piece.pieceType === 'Bishop' && diagDirections.includes(direction)) return true;
+                    if (piece.pieceType === 'Queen' && diagDirections.includes(direction)) return true;
+                } else {
+                    let dx = Math.abs(this.position.x - piece.position.x);
+                    let dy = Math.abs(this.position.y - piece.position.y);
+                    if (dx !== 1 && dy !== 1) continue;
+                    if (this.player === 'White' && direction === 'upLeft' || direction === 'upRight') return true;
+                    if (this.player === 'Black' && direction === 'downLeft' || direction === 'downRight') return true;
+                }
+            }
+
+            let linearDirections = ['right', 'left', 'up', 'down'];
+            if (piece.pieceType === 'Queen' || piece.pieceType === 'Rook') {
+                if (linearDirections.includes(direction)) return true;
+            } 
+
+            if (direction === 'knight' && piece.pieceType === 'Knight') return true;
+        }
+    }
     return false;
+}   
+
+King.prototype.findPiece = function(pieces, sign1, sign2) {
+    for (let i = 1; this.position.x + i*sign1 <= 7 && this.position.y + i*sign2 <= 7; i++) {
+        let newX = this.position.x + i*sign1;
+        let newY = this.position.y + i*sign2;
+        if (newX > 7 || newX < 0 || newY > 7 || newY < 0) break;
+        for (let piece of pieces) {
+            if (piece.captured === true) continue;
+            if (piece.positionEqual({ x: newX, y: newY })) return piece;
+        }
+    }
+    return;
 }
+
 
 King.prototype.moveOneSpot = function(pieces, spotClicked, room) {
     let dx = this.position.x - spotClicked.x;

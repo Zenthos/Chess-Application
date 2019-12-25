@@ -63,7 +63,7 @@ module.exports = class ChessRoom {
         });
 
         if (selectedPiece.contains) {
-            this.pieces[selectedPiece.index].deselect();
+            this.pieces[selectedPiece.index].selected = false;
             this.pieces[selectedPiece.index].moveOrCapture(this.pieces, clickPosition, clientRoom);
         } else {
             for (let piece of this.pieces) {
@@ -71,6 +71,11 @@ module.exports = class ChessRoom {
                     piece.select(this.currentPlayer, clientPlayer);
             }
         }
+    }
+
+    playAgain = function(piecesModule) {
+        this.pieces.splice(0, this.pieces.length);
+        initPieces(piecesModule);
     }
 
     initPieces = function(piecesModule) {

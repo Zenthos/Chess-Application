@@ -2,6 +2,30 @@ document.addEventListener('DOMContentLoaded', function() {
     var socket = io({transports: ['websocket'], upgrade: false});
     chatFunctions(socket);
 
+    $('#username').focus(function() {
+        if ($('#username').val().trim() === 'username') {
+            $('#username').val('');
+        }
+    });
+
+    $('#username').blur(function() {
+        if ($('#username').val().trim() === '') {
+            $('#username').val('username');
+        }
+    });
+
+    $('#address').focus(function() {
+        if ($('#address').val().trim() === 'address') {
+            $('#address').val('');
+        }
+    });
+
+    $('#address').blur(function() {
+        if ($('#address').val().trim() === '') {
+            $('#address').val('address');
+        }
+    });
+
     $('#Waiting').hide();
     $('#joinForm').submit(function(event){
         event.preventDefault(); // prevents page reloading
@@ -75,7 +99,6 @@ const chessApp = function(socket, clientColor) {
             (function waitingForRejoin() {
                 socket.emit('Player Validation', function(result) {
                     if (result) {
-                        console.log('Core Players Are Present');
                         $('#JoinContainer').hide();
                     } else {
                         $('#JoinContainer').show();

@@ -28,10 +28,10 @@ The game can be played at https://chessrooms.herokuapp.com/
 - [X] Add win/draw conditions
 - [X] Create chat rooms
 - [X] Create homepage
-- [ ] Optimize Search Algorithms
-- [ ] Improve Performance
+- [X] Improve Performance
 - [ ] Add QOL improvements
 - [ ] More functional Chat
+- [ ] Make pages more appealing
 
 ### How to help
 
