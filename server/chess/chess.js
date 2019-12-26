@@ -20,11 +20,27 @@ module.exports = class ChessGame {
                     callback(false);
                 }
             });
-            
+
             client.on('Can Start', function(callback) {
                 let clientRoom = rooms[people[client.id].room];
                 let result = clientRoom.canStart();
                 callback(result);
+            });
+
+            client.on('Get Rooms', function(callback) {
+                let dataToSend = [];
+                for (let room in rooms) {
+                    let data = { name: null, white: 0, black: 0, spectators: 0 };
+                    let present = rooms[room].alreadyHas(undefined);
+
+                    data.name = rooms[room].roomName;
+                    if (present.hasWhite) data.white = 1;
+                    if (present.hasBlack) data.black = 1;
+                    data.spectators = rooms[room].players.length - data.white - data.black;
+
+                    dataToSend.push(data);
+                }
+                callback(dataToSend);
             });
 
             client.on('Get Player', function(callback) {

@@ -26,6 +26,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    $("#roomList").click(function(event) {
+        if (event.target && event.target.matches("pre.Item")) {
+            event.target.className = "element";
+            let split = event.target.innerText.split('\n');
+            $('#address').val(split[0].substr(11));
+        }
+    });
+
     $('#Yes').click(function() {
         $('#Yes').prop('disabled', true);
         $('#No').prop('disabled', true);
@@ -50,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         $('#Waiting').hide();
                         $('#Again').hide();
                         $('#joinForm').show();
+                        $('#joinList').show();
                         $("#joinButton").attr("disabled", false);
                         $('#errMsg').text("");
                         socket.emit('Change Rooms');
@@ -69,12 +78,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 $('#Waiting').hide();
                 $('#Again').hide();
                 $('#joinForm').show();
+                $('#joinList').show();
                 $("#joinButton").attr("disabled", false);
                 $('#errMsg').text("");
                 socket.emit('Change Rooms');
             }, 3000);
         });
     });
+
+    setInterval(() => {
+        socket.emit('Get Rooms', function(listOfRooms) {
+            $('#roomList').empty();
+            listOfRooms.forEach((room) => {
+                let text1 = `Room Name: ${room.name}\n    White: ${room.white}/1\n    `;
+                let text2 = `Black: ${room.black}/1\n    Spectators: ${room.spectators}`;
+                let formattedText = $('<pre></pre>').text(`${text1}${text2}`).addClass('Item');
+                let $room = $('<li>').append(formattedText);
+                $('#roomList').append($room);
+            });
+        });
+    }, 3000)
 
     $('#Waiting').hide();
     $('#Again').hide();
@@ -92,6 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             chessApp(socket, $('#activity').val());
                         } else {
                             $('#joinForm').hide();
+                            $('#joinList').hide();
                             $('#Waiting').show();
                             if ($('#activity').val() == 'Spectator') $('h4').text('Waiting for players...');
                             else if ($('#activity').val() == 'White') $('h4').text('Waiting for Black...');
@@ -154,6 +178,7 @@ const chessApp = function(socket, clientColor) {
         socket.on('Player Left', function() {
             $('#JoinContainer').show();
             $('#joinForm').hide();
+            $('#joinList').hide();
             $('#Again').hide();
             $('#Waiting').show();
             if (clientColor == 'Spectator') $('h4').text('A player has left, waiting for another person...');
@@ -174,6 +199,7 @@ const chessApp = function(socket, clientColor) {
         socket.on('Again Prompt', function() {
             $('#JoinContainer').show();
             $('#joinForm').hide();
+            $('#joinList').hide();
             $('#Waiting').hide();
             $('#Again').show();
             $('#Yes').prop('disabled', false);

@@ -21,10 +21,7 @@ module.exports = class Chat {
 
                 client.leave(clientRoom.roomName);
 
-                if (clientRoom.players.length == 0) {
-                    console.log('Room Deleted');
-                    delete rooms[clientRoom.roomName];
-                }
+                if (clientRoom.players.length == 0) delete rooms[clientRoom.roomName];
 
                 if (people[client.id].hasOwnProperty('username')) delete people[client.id].username;
                 if (people[client.id].hasOwnProperty('room')) delete people[client.id].room;
@@ -70,10 +67,7 @@ module.exports = class Chat {
                     clientRoom.players.splice(removeIndex, 1);
                     delete people[client.id]; 
 
-                    if (clientRoom.players.length == 0) {
-                        console.log('Room Deleted');
-                        delete rooms[clientRoom.roomName];
-                    }
+                    if (clientRoom.players.length == 0) delete rooms[clientRoom.roomName];
 
                     io.to(clientRoom.roomName).emit('Player Left');
                     io.to(clientRoom.roomName).emit('Update', message);

@@ -75,39 +75,82 @@ html, body {
     font-size: 30px;
 }
 
-#JoinContainer form {
+#joinList {
     z-index: 1;
     position: absolute;
     transform: translate(-50%, -50%);
     left: 50%;
     top: 50%;
-    width: 40%;
-    height: 40%;
+    width: 60%;
+    height: 60%;
     background-color: darkgray;
-    text-align: center;
+}
+
+#joinList ul {
+    list-style-type: none;
+    padding-left: 0;
+    z-index: 1;
+    position: absolute;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    margin: 0px;
+    overflow: auto;
+    background-color: white  ;
+}
+
+#joinList pre {
+    padding: 0px;
+    margin: 0px;
+}
+
+#joinList ul li {
+    padding: 6px;
+    font-size: 22px;
+    background-color: gray;
+}
+
+#joinList ul li:nth-child(odd) {
+    padding: 6px;
+    font-size: 22px;
+    background-color: lightgray;
+}
+
+#JoinContainer form {
+    z-index: 1;
+    position: absolute;
+    left: 0%;
+    width: 50%;
+    height: 100%;
+    background-color: darkgray;
 }
 
 #JoinContainer form input {
     margin-top: 30px;
-    margin-right: 25%;
-    margin-left: 25%; 
+    margin-left: 10%;
     padding: 8px;
+    width: 80%;
     height: 10%;
-    width: 50%;
 }
 
 #JoinContainer form button {
-    width: 90%;
+    left: 5%;
+    width: 40%;
     height: 20%;
     position: fixed;
-    transform: translate(-50%, 0);
-    left: 50%;
     bottom: 0px;
     margin-bottom: 30px;
 }
 
 #JoinContainer form select {
-    margin-top: 20px;
+    margin-top: 30px;
+    margin-left: 50%;
+    transform: translate(-50%, 0);
+}
+
+#JoinContainer form #errMsg {
+    margin-top: 30px;
+    text-align: center;
 }
 
 #wrapper {
