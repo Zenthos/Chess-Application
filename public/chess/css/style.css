@@ -36,6 +36,45 @@ html, body {
     font-size: 30px;
 }
 
+#JoinContainer #Again {
+    z-index: 1;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    width: 40%;
+    height: 40%;
+    background-color: lightgray;
+    text-align: center;
+    font-size: 30px;
+}
+
+#JoinContainer #Yes {
+    z-index: 1;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 25%;
+    top: 50%;
+    width: 40%;
+    height: 40%;
+    background-color: lightgray;
+    text-align: center;
+    font-size: 30px;
+}
+
+#JoinContainer #No {
+    z-index: 1;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 75%;
+    top: 50%;
+    width: 40%;
+    height: 40%;
+    background-color: lightgray;
+    text-align: center;
+    font-size: 30px;
+}
+
 #JoinContainer form {
     z-index: 1;
     position: absolute;

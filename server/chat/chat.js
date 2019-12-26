@@ -13,14 +13,36 @@ module.exports = class Chat {
                 }
             });
 
+            client.on('Change Rooms', function() {
+                let clientRoom = rooms[people[client.id].room];
+                var removeIndex = clientRoom.players.findIndex(person => person.ID === client.id);
+                if (clientRoom.players === undefined) return;
+                clientRoom.players.splice(removeIndex, 1);
+
+                client.leave(clientRoom.roomName);
+
+                if (clientRoom.players.length == 0) {
+                    console.log('Room Deleted');
+                    delete rooms[clientRoom.roomName];
+                }
+
+                if (people[client.id].hasOwnProperty('username')) delete people[client.id].username;
+                if (people[client.id].hasOwnProperty('room')) delete people[client.id].room;
+                if (people[client.id].hasOwnProperty('side')) delete people[client.id].side;
+                if (people[client.id].hasOwnProperty('again')) delete people[client.id].again;
+
+                client.emit('Reset Chat');
+            });
+
             client.on("Joined", function(username, room, side, callback) {
                 people[client.id].username = username;
                 people[client.id].room = room;
                 people[client.id].side = side;
+                people[client.id].again = 'No Response';
 
                 if (!rooms.hasOwnProperty(room) && (side == 'White' || side == 'Black')) {
-                    rooms[room] = new modules.rooms(io, room);
-                    rooms[room].initPieces(modules.pieces);
+                    rooms[room] = new modules.rooms(io, room, modules.pieces);
+                    rooms[room].initPieces();
                     rooms[room].addPlayer(people[client.id]);
                     client.join(room);
                 } else {
@@ -48,7 +70,10 @@ module.exports = class Chat {
                     clientRoom.players.splice(removeIndex, 1);
                     delete people[client.id]; 
 
-                    if (clientRoom.players.length == 0) delete rooms[clientRoom.roomName];
+                    if (clientRoom.players.length == 0) {
+                        console.log('Room Deleted');
+                        delete rooms[clientRoom.roomName];
+                    }
 
                     io.to(clientRoom.roomName).emit('Player Left');
                     io.to(clientRoom.roomName).emit('Update', message);

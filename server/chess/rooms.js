@@ -1,14 +1,15 @@
 
 module.exports = class ChessRoom {
-    constructor(io, room) {
+    constructor(io, room, piecesModule) {
         this.currentPlayer = 'White';
-        this.roomName = room;
-        this.io = io;
-        this.pieces = [];
-        this.players = [];
-        this.ready = false;
         this.pieceSelected = false;
         this.gameFinished = false;
+        this.ready = false;
+        this.players = [];
+        this.pieces = [];
+        this.roomName = room;
+        this.io = io;
+        this.piecesModule = piecesModule;
     }
 
     switchColor = function() {
@@ -16,7 +17,7 @@ module.exports = class ChessRoom {
     }
 
     sendUpdate = function(message) {
-        this.io.to(this.roomName).emit('Update', `[SYSTEM] ${message}`);
+        this.io.to(this.roomName).emit('Update', `[System] ${message}`);
     }
 
     addPlayer = function(person) {
@@ -47,6 +48,8 @@ module.exports = class ChessRoom {
             let king = this.pieces[0].findKing(this.pieces, color);
             if (king.kingChecked(this.pieces, undefined, this)) this.checkMated(color);
             else this.staleMated(color);
+
+            setTimeout(() => { this.io.to(this.roomName).emit('Again Prompt')}, 5000 );
         }
     }
 
@@ -73,26 +76,32 @@ module.exports = class ChessRoom {
         }
     }
 
-    playAgain = function(piecesModule) {
-        this.pieces.splice(0, this.pieces.length);
-        initPieces(piecesModule);
+    playAgain = function() {
+        let whiteAgain, blackAgain;
+        this.players.forEach(element => {
+            if (element.side == 'Black') blackAgain = element.again;
+            else if (element.side == 'White') whiteAgain = element.again;
+        });
+
+        if (whiteAgain === 'Yes' && blackAgain === 'Yes') return true;
+        else return false;
     }
 
-    initPieces = function(piecesModule) {
+    initPieces = function() {
         ['Black', 'White'].forEach((color, index) => {
-            this.pieces.push(new piecesModule.Rook('Rook' , color, 0, index, 0, 7 * index));
-            this.pieces.push(new piecesModule.Knight('Knight', color, 1, index, 1, 7 * index));
-            this.pieces.push(new piecesModule.Bishop('Bishop', color, 2, index, 2, 7 * index));
-            this.pieces.push(new piecesModule.Queen('Queen' , color, 3, index, 3, 7 * index));
-            this.pieces.push(new piecesModule.King('King' , color, 4, index, 4, 7 * index));
-            this.pieces.push(new piecesModule.Bishop('Bishop', color, 2, index, 5, 7 * index));
-            this.pieces.push(new piecesModule.Knight('Knight', color, 1, index, 6, 7 * index));
-            this.pieces.push(new piecesModule.Rook('Rook'  , color, 0, index, 7, 7 * index));
+            this.pieces.push(new this.piecesModule.Rook('Rook' , color, 0, index, 0, 7 * index));
+            this.pieces.push(new this.piecesModule.Knight('Knight', color, 1, index, 1, 7 * index));
+            this.pieces.push(new this.piecesModule.Bishop('Bishop', color, 2, index, 2, 7 * index));
+            this.pieces.push(new this.piecesModule.Queen('Queen' , color, 3, index, 3, 7 * index));
+            this.pieces.push(new this.piecesModule.King('King' , color, 4, index, 4, 7 * index));
+            this.pieces.push(new this.piecesModule.Bishop('Bishop', color, 2, index, 5, 7 * index));
+            this.pieces.push(new this.piecesModule.Knight('Knight', color, 1, index, 6, 7 * index));
+            this.pieces.push(new this.piecesModule.Rook('Rook'  , color, 0, index, 7, 7 * index));
             for (let i = 0; i < 8; i++) {
                 if (index == 0) 
-                    this.pieces.push(new piecesModule.Pawn('Pawn', color, 5, index, i, 1));
+                    this.pieces.push(new this.piecesModule.Pawn('Pawn', color, 5, index, i, 1));
                 else 
-                    this.pieces.push(new piecesModule.Pawn('Pawn', color, 5, index, i, 6));
+                    this.pieces.push(new this.piecesModule.Pawn('Pawn', color, 5, index, i, 6));
             }
         })
     }

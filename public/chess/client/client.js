@@ -26,11 +26,63 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    $('#Yes').click(function() {
+        $('#Yes').prop('disabled', true);
+        $('#No').prop('disabled', true);
+
+        (function waitingForResponse() {
+            socket.emit('Play Again', 'Yes', function(result) {
+                if (result) {
+                    $('#JoinContainer').hide();
+                }
+
+                if (!result && result !== 'Rejected') {
+                    $('h4').text('Waiting For Response From Other Player...');
+                    setTimeout(waitingForResponse, 1000);
+                } 
+
+                if (result === 'Rejected') {
+                    $('h4').text('Other player has declined. Please wait...');
+
+                    setTimeout(() => {
+                        $('#Yes').prop('disabled', true);
+                        $('#No').prop('disabled', true);
+                        $('#Waiting').hide();
+                        $('#Again').hide();
+                        $('#joinForm').show();
+                        $("#joinButton").attr("disabled", false);
+                        $('#errMsg').text("");
+                        socket.emit('Change Rooms');
+                    }, 6000);
+                }
+            });
+        })();
+    });
+
+    $('#No').click(function() {
+        socket.emit('Play Again', 'Declined', function(result) {
+            $('h4').text('You have declined. Please wait...');
+
+            setTimeout(() => {
+                $('#Yes').prop('disabled', true);
+                $('#No').prop('disabled', true);
+                $('#Waiting').hide();
+                $('#Again').hide();
+                $('#joinForm').show();
+                $("#joinButton").attr("disabled", false);
+                $('#errMsg').text("");
+                socket.emit('Change Rooms');
+            }, 3000);
+        });
+    });
+
     $('#Waiting').hide();
+    $('#Again').hide();
     $('#joinForm').submit(function(event){
         event.preventDefault(); // prevents page reloading
         $("#joinButton").attr("disabled", true);
         $('#errMsg').text("Please wait, Attempting to Connect...");
+
         socket.emit('Joined', $('#username').val(), $('#address').val(), $('#activity').val(), function(formValid, testFailed) {
             if (formValid) {
                 (function waitingForOther() {
@@ -75,6 +127,10 @@ const chatFunctions = function(socket) {
         $('#messages').append($('<li>').text(message));
         $('#messages').scrollTop($('#messages')[0].scrollHeight);
     });
+
+    socket.on('Reset Chat', function() {
+        $('#messages').empty();
+    });
 }
 
 const chessApp = function(socket, clientColor) {
@@ -96,21 +152,33 @@ const chessApp = function(socket, clientColor) {
         });
 
         socket.on('Player Left', function() {
+            $('#JoinContainer').show();
+            $('#joinForm').hide();
+            $('#Again').hide();
+            $('#Waiting').show();
+            if (clientColor == 'Spectator') $('h4').text('A player has left, waiting for another person...');
+            else if (clientColor == 'White') $('h4').text('Black has left, waiting for another person...');
+            else if (clientColor == 'Black') $('h4').text('White has left, waiting for another person...');
+            
             (function waitingForRejoin() {
                 socket.emit('Player Validation', function(result) {
                     if (result) {
                         $('#JoinContainer').hide();
                     } else {
-                        $('#JoinContainer').show();
-                        $('#joinForm').hide();
-                        $('#Waiting').show();
-                        if (clientColor == 'Spectator') $('h4').text('A player has left, waiting for another person...');
-                        else if (clientColor == 'White') $('h4').text('Black has left, waiting for another person...');
-                        else if (clientColor == 'Black') $('h4').text('White has left, waiting for another person...');
-                        setTimeout(waitingForRejoin, 5000);
+                        setTimeout(waitingForRejoin, 3000);
                     }
                 });
             })();
+        });
+
+        socket.on('Again Prompt', function() {
+            $('#JoinContainer').show();
+            $('#joinForm').hide();
+            $('#Waiting').hide();
+            $('#Again').show();
+            $('#Yes').prop('disabled', false);
+            $('#No').prop('disabled', false);
+            $('h4').text('Would you like to play another match?');
         });
     }
 
@@ -155,6 +223,10 @@ const chessApp = function(socket, clientColor) {
         canvas.addEventListener('click', function(event) {
             socket.emit('Client Clicked', tileClicked(event));
         });
+
+        // canvas.addEventListener('contextmenu', function(event) {
+        //     socket.emit('test');
+        // });
 
         window.requestAnimationFrame(mainLoop);
     };

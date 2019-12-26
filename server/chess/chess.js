@@ -2,11 +2,25 @@
 module.exports = class ChessGame {
     start = function(io, people, rooms) {
         io.on('connection', function(client){
-            client.on('Start', function() {
-                let clientRoom = rooms[people[client.id].room]
-                clientRoom.canStart();
-            });
+            client.on('Play Again', function(response, callback) {
+                let clientRoom = rooms[people[client.id].room];
 
+                if (clientRoom.playAgain()) {
+                    clientRoom.pieces.splice(0, clientRoom.pieces.length);
+                    clientRoom.initPieces();
+                    clientRoom.currentPlayer = 'White';
+                    clientRoom.sendUpdate('New Match Started.');
+                    io.to(clientRoom.roomName).emit('Update Board', clientRoom.pieces, clientRoom.currentPlayer);
+                    setTimeout(() => { clientRoom.players.forEach((person) => person.again = 'No Response') }, 3000);
+                    callback(true);
+                } else if (clientRoom.players.some((item) => item.again === 'Declined')) {
+                    callback('Rejected');
+                } else {
+                    clientRoom.players[clientRoom.players.findIndex((person) => person.ID === client.id)].again = response;
+                    callback(false);
+                }
+            });
+            
             client.on('Can Start', function(callback) {
                 let clientRoom = rooms[people[client.id].room];
                 let result = clientRoom.canStart();
@@ -22,8 +36,7 @@ module.exports = class ChessGame {
                 let match = true;
                 if (clientPieces.length != 0) {
                     clientRoom.pieces.forEach((item, index) => {
-                        if (JSON.stringify(item) !== JSON.stringify(clientRoom.pieces[index]))
-                            match = false
+                        if (JSON.stringify(item) !== JSON.stringify(clientRoom.pieces[index])) match = false
                     });
                 } 
 
