@@ -95,7 +95,8 @@ html, body {
     width: 50%;
     height: 100%;
     margin: 0px;
-    overflow: auto;
+    
+    overflow-y: scroll;
     background-color: white  ;
 }
 
@@ -164,11 +165,14 @@ html, body {
 #wrapper ul {
     list-style-type: none;
     width: 550px;
-    height: 670px;
-    overflow: auto;
+    height: 700px;
     padding-top: 6px;
     padding-left: 6px;
     padding-right: 6px;
+
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; 
 }
 
 #wrapper ul li {
@@ -190,6 +194,17 @@ html, body {
     right: calc(50% - 530px);
     transform: translate(0, -50%);
     position: relative;
+    float: right;
+}
+
+#wrapper #currentPlayer {
+    top: 10%;
+    width: 504px;
+    right: calc(50% - 530px);
+    transform: translate(0, -50%);
+    z-index: 1;
+    position: absolute;
+    text-align: center;
     float: right;
 }
 

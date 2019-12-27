@@ -1,13 +1,22 @@
 
 module.exports = class Chat {
+    filter = function() {
+
+    }
+
     start = function(io, rooms, people, modules) {
+        var _this_Chat = this;
         io.on('connection', function(client){
             people[client.id] = {ID: client.id};
 
             client.on('Send Message', function(msg){
                 try {
-                    let clientRoomName = rooms[people[client.id].room].roomName;
-                    io.to(clientRoomName).emit('Emit Message', people[client.id], msg);
+                    let clientRoom = rooms[people[client.id].room];
+                    if (!/\b(fuck|bitch|ass|motherfucker|fucker|bitchy)\b/.test(msg)) {
+                        io.to(clientRoom.roomName).emit('Emit Message', people[client.id], msg);
+                    } else {
+                        clientRoom.sendUpdate('Message deleted.');
+                    }
                 } catch(err) {
                     console.log('Attempted to send message to non-existent room');
                 }

@@ -2,27 +2,22 @@ document.addEventListener('DOMContentLoaded', function() {
     var socket = io({transports: ['websocket'], upgrade: false});
     chatFunctions(socket);
 
-    $('#username').focus(function() {
-        if ($('#username').val().trim() === 'username') {
-            $('#username').val('');
+    $('#username').focus(handlers.focus);
+    $('#username').blur(handlers.blur);
+    $('#username').on('keypress', handlers.whiteSpace);
+    $('#address').focus(handlers.focus);
+    $('#address').blur(handlers.blur);
+    $('#address').on('keypress', handlers.whiteSpace);
+
+    $('#usermsg').focus(function() {
+        if ($('#usermsg').val().trim() === 'Start Typing Here...') {
+            $('#usermsg').val('');
         }
     });
 
-    $('#username').blur(function() {
-        if ($('#username').val().trim() === '') {
-            $('#username').val('username');
-        }
-    });
-
-    $('#address').focus(function() {
-        if ($('#address').val().trim() === 'address') {
-            $('#address').val('');
-        }
-    });
-
-    $('#address').blur(function() {
-        if ($('#address').val().trim() === '') {
-            $('#address').val('address');
+    $('#usermsg').blur(function() {
+        if ($('#usermsg').val().trim() === '') {
+            $('#usermsg').val('Start Typing Here...');
         }
     });
 
@@ -97,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 $('#roomList').append($room);
             });
         });
-    }, 3000)
+    }, 3000);
 
     $('#Waiting').hide();
     $('#Again').hide();
@@ -134,11 +129,29 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+const handlers = {
+    focus: function() {
+        if ($(`#${this.id}`).val().trim() === `${this.id}`) {
+            $(`#${this.id}`).val('');
+        }
+    },
+    blur: function() {
+        if ($(`#${this.id}`).val().trim() === '') {
+            $(`#${this.id}`).val(`${this.id}`);
+        }
+    },
+    whiteSpace: function(event) {
+        if (event.which === 32) return false;
+    }
+}
+
 const chatFunctions = function(socket) {
     $('#chatForm').submit(function(event){
         event.preventDefault(); // prevents page reloading
-        socket.emit('Send Message', $('#usermsg').val());
-        $('#usermsg').val('');
+        if ($('#usermsg').val().trim() !== 'Start Typing Here...') {
+            socket.emit('Send Message', $('#usermsg').val());
+            $('#usermsg').val('Start Typing Here...');
+        }
         return false;
     });
 
@@ -173,6 +186,8 @@ const chessApp = function(socket, clientColor) {
                 if (clientColor !== serverColor && clientColor !== 'Spectator') item.selected = false;
                 pieces[index] = JSON.parse(JSON.stringify(item));
             });
+
+            $('#currentPlayer').text(`It is ${serverColor}'s turn!`);
         });
 
         socket.on('Player Left', function() {
@@ -204,6 +219,7 @@ const chessApp = function(socket, clientColor) {
             $('#Again').show();
             $('#Yes').prop('disabled', false);
             $('#No').prop('disabled', false);
+            $('h2').text('');
             $('h4').text('Would you like to play another match?');
         });
     }
