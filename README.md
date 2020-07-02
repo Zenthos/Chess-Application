@@ -32,6 +32,7 @@ The game can be played at https://chessrooms.herokuapp.com/
 - [X] Add QOL improvements
 - [ ] More functional Chat
 - [ ] Make pages more appealing
+- [ ] AI Programs
 
 ### How to help
 

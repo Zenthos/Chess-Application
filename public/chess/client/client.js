@@ -1,3 +1,5 @@
+// Client Side JS - Sends and Recieves Data from the Server
+
 document.addEventListener('DOMContentLoaded', function() {
     var socket = io({transports: ['websocket'], upgrade: false});
     chatFunctions(socket);
@@ -8,6 +10,15 @@ document.addEventListener('DOMContentLoaded', function() {
     $('#address').focus(handlers.focus);
     $('#address').blur(handlers.blur);
     $('#address').on('keypress', handlers.whiteSpace);
+    
+    $('#aicheckbox').click(function(event) {
+        console.log($('#aicheckbox').prop('checked'));
+        if ($('#aicheckbox').prop('checked')) {
+            $('#aiLevel').show();
+        } else {
+            $('#aiLevel').hide();
+        }
+    });
 
     $('#usermsg').focus(function() {
         if ($('#usermsg').val().trim() === 'Start Typing Here...') {

@@ -7,6 +7,8 @@ html, body {
     height: 98%;
 }
 
+/* Join Container Customizes the Box in which player joins the rooms*/
+
 #JoinContainer {
     left: 0px;
     top: 0px;
@@ -134,8 +136,15 @@ html, body {
     height: 10%;
 }
 
+#JoinContainer #aicheckbox {
+    width: 15px;
+    height: 15px;
+    margin-top: 10px;
+    margin-left: 35%;
+}
+
 #JoinContainer form button {
-    left: 5%;
+    left: 5%; 
     width: 40%;
     height: 20%;
     position: fixed;
@@ -153,6 +162,8 @@ html, body {
     margin-top: 30px;
     text-align: center;
 }
+
+/* Wrapper Customizes the Actual Playing Page*/
 
 #wrapper {
     left: 0px;

@@ -1,13 +1,20 @@
 
+// File Containing the Functions for the Chat System
+
 module.exports = class Chat {
+
+    // Function that runs when Chat first starts
     start = function(io, rooms, people, modules) {
-        var _this_Chat = this;
+        
+        // When a Player First Connects to the Chat
         io.on('connection', function(client){
             people[client.id] = {ID: client.id};
 
             client.on('Send Message', function(msg){
                 try {
                     let clientRoom = rooms[people[client.id].room];
+
+                    // Filter
                     if (!/\b(fuck|bitch|ass|motherfucker|fucker|bitchy)\b/.test(msg)) {
                         io.to(clientRoom.roomName).emit('Emit Message', people[client.id], msg);
                     } else {
@@ -28,6 +35,7 @@ module.exports = class Chat {
 
                 if (clientRoom.players.length == 0) delete rooms[clientRoom.roomName];
 
+                // Ensures Unique Usernames, Room Names, and Player Colors
                 if (people[client.id].hasOwnProperty('username')) delete people[client.id].username;
                 if (people[client.id].hasOwnProperty('room')) delete people[client.id].room;
                 if (people[client.id].hasOwnProperty('side')) delete people[client.id].side;

@@ -1,3 +1,4 @@
+// The Home Page - Redirects to the game page, or to the Github Repository
 
 document.getElementById('button1').addEventListener('click', function(event) {
     let currentLink = window.location.href;
