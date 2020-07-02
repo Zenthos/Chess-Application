@@ -1,9 +1,5 @@
 
 module.exports = class Chat {
-    filter = function() {
-
-    }
-
     start = function(io, rooms, people, modules) {
         var _this_Chat = this;
         io.on('connection', function(client){
