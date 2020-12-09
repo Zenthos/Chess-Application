@@ -39,8 +39,11 @@ This is a solo side project i'd like to work on by myself, but I would like for 
 ## Features
 
 [X] - Login System
+
 [X] - Database to store account data
+
 [X] - Fully working chess engine and user interface
+
 [X] - Chat system to interact with other players or spectators
 
 ### License
