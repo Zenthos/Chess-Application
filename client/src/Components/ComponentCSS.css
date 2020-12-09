@@ -1,0 +1,39 @@
+.block-content {
+  width: 100%;
+  height: 100%;   
+  background-color: #000; 
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.canvas-modal{
+  position: absolute;
+  top: 50%;
+  left: 50%; 
+  width: 60%; 
+  height: 30%; 
+  transform: translate(-50%, -50%);
+}
+
+.chat-messages{
+  height: 88% !important;
+  overflow-y: auto;
+}
+
+.chat-size {
+  height: 620px !important;
+}
+
+.modal-65w {
+  width: 65% !important;
+  max-width: none !important;
+}
+
+.jumbotron-test {
+  height: 100%;
+  min-height: 300px;
+  background: black;  /* fallback colour. Make sure this is just one solid colour. */
+  background: -webkit-linear-gradient(rgba(52, 232, 158, 0.4), rgba(15, 52, 67, 0.9)), url("/chess-images/jumbo-image.jpg");
+  background: linear-gradient(rgba(52, 232, 158, 0.4), rgba(15, 52, 67, 0.9)), url("/chess-images/jumbo-image.jpg");
+  background-size: cover;
+}
