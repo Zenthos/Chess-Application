@@ -3,6 +3,7 @@ const http = require("http");
 const mongoose = require("mongoose");
 const socketIO = require("socket.io");
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 const PORT = process.env.PORT || 5000;
 const app = express();
