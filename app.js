@@ -29,6 +29,11 @@ app.use(passport.session());
 
 app.use('/user', require('./routes/user'));
 
+app.use(express.static(path.join(__dirname, '../build')))
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../build'))
+})
+
 server.listen(PORT, () => {
   console.log(`Now listening on Port: ${PORT}`)
 });
