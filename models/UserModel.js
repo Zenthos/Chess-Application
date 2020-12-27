@@ -8,6 +8,8 @@ const UserSchema = new mongoose.Schema({
   friends: [mongoose.Types.ObjectId],
   stats: {
     wins: { type: Number, default: 0 },
+    whiteWins: { type: Number, default: 0},
+    blackWins: { type: Number, default: 0},
   },
 });
 

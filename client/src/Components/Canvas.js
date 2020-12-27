@@ -4,6 +4,15 @@ import { SocketContext } from '../Context/SocketContext';
 import useImage from 'use-image';
 import './ComponentCSS.css';
 
+const getScale = (windowWidth, imageWidth) => {
+  let scale = ((windowWidth * 0.85) / 2) / imageWidth;
+
+  if (scale > 0.75) 
+    return scale;
+  else
+    return 0.75;
+}
+
 const Canvas = ({ role, windowWidth, windowHeight }) => {
   const canvasRef = useRef(null);
   const { socket } = useContext(SocketContext);
@@ -16,9 +25,10 @@ const Canvas = ({ role, windowWidth, windowHeight }) => {
   const [playerWaitingFor, setPlayerWaitingFor] = useState('');
   const [pieces, setPieces] = useState([]);
   const [currentPlayer, setCurrentPlayer] = useState('White');
+  const [kingInCheck, setKingInCheck] = useState({ inCheck: false, color: "None" });
 
   const clickHandler = ({ nativeEvent }) => {
-    const scale = ((windowWidth * 0.85) / 2) / boardImg.width;
+    const scale = getScale(windowWidth, boardImg.width);
     const sourceSide = 56;
     const side = sourceSide * scale;
     const xOffset = 28 * scale;
@@ -43,9 +53,10 @@ const Canvas = ({ role, windowWidth, windowHeight }) => {
 
   // Initial Render
   useEffect(() => {
-    socket.on('update', (pieces, color) => {
+    socket.on('update', (pieces, color, kingState) => {
       setPieces(pieces);
       setCurrentPlayer(color);
+      setKingInCheck(kingState);
     });
 
     socket.on('wait', (ready, playerMissing) => {
@@ -101,7 +112,7 @@ const Canvas = ({ role, windowWidth, windowHeight }) => {
     }
 
     if (pieces.length !== 0 && boardImg !== undefined && figureImg !== undefined) {
-      const scale = ((windowWidth * 0.85) / 2) / boardImg.width;
+      const scale = getScale(windowWidth, boardImg.width);
       const sourceSide = 56;
       const side = sourceSide * scale;
       const xOffset = 28 * scale;
@@ -154,7 +165,7 @@ const Canvas = ({ role, windowWidth, windowHeight }) => {
   return (
     <div align="center">
       <div className={`${showBoard ? '' : 'block-content'} ${showPromotion ? 'block-content' : ''}`}>
-        <h1>It is {currentPlayer}'s Turn!</h1>
+        <h1>{(kingInCheck ? kingInCheck.inCheck : false) ? `${kingInCheck.color} King is in Check. `: ``}It is {currentPlayer}'s Turn!</h1>
         <canvas className="m-2" ref={canvasRef} onClick={clickHandler} />
       </div>
       <div className={showBoard ? 'd-none' : 'canvas-modal'}>

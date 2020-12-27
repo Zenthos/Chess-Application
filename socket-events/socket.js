@@ -51,15 +51,15 @@ module.exports = class WebSocket {
         const { roomName, role } = this.clients[socket.client.id];
         const { game } = this.lobbies[roomName];
 
-        // if(role === game.color && !this.lobbies[roomName].isGameOver()) {
+        if(role === game.color && !this.lobbies[roomName].isGameOver()) {
           if (game.selectedPiece) {
             game.handleClick(clickX, clickY, this.lobbies[roomName], socket, this.io, promoteSelection);
-            this.io.in(roomName).emit('update', game.pieces, game.color);
+            this.io.in(roomName).emit('update', game.pieces, game.color, game.getKingStates());
           } else {
             game.select(clickX, clickY);
-            socket.emit('update', game.pieces, game.color);
+            socket.emit('update', game.pieces, game.color, game.getKingStates());
           }
-        // }
+        }
 
       });
     
@@ -100,7 +100,7 @@ module.exports = class WebSocket {
         const { roomName } = this.clients[socket.client.id];
         const { game } = this.lobbies[roomName];
 
-        socket.emit('update', game.pieces, game.color);
+        socket.emit('update', game.pieces, game.color, game.getKingStates());
 
         const { status, playerMissing } = this.lobbies[roomName].BlackAndWhitePresent();
         this.io.in(roomName).emit('wait', status, playerMissing);

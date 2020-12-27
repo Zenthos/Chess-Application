@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar, Tutorial, Home, About, Play, Login, Logout, Register } from './Components';
+import { Navbar, Tutorial, Home, About, Play, Profile, Login, Logout, Register } from './Components';
 import { Route } from 'react-router-dom';
 import PrivateRoute from './HOCs/PrivateRoute';
 import PublicRoute from './HOCs/PublicRoute';
@@ -18,10 +18,12 @@ function App() {
         <PublicRoute path="/login" component={Login} />
         <PrivateRoute path="/logout" component={Logout} />
         <PublicRoute path="/register" component={Register} />
+
         <Route path="/play" component={Play} />
         <Route path="/about" component={About} />
         <Route path="/how-to-play" component={Tutorial} />
-        <PrivateRoute path="/protected" component={() => <h1>Protected Content</h1>} />
+
+        <Route path="/profile/:username" component={Profile} />
       </Switch>
     </>
   );

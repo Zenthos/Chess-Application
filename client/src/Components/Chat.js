@@ -50,8 +50,7 @@ const Chat = ({ username, role }) => {
           })}
         </ScrollToBottom>
         <form className="row m-2" onSubmit={submitHandler}>
-          <input type="text" className="col-md-9 form-control" value={message} placeholder={"Click here to send a message!"} onChange={messageHandler} />
-          <button type="submit" className="col-md-3 btn btn-primary">Send</button>
+          <input type="text" className="form-control" value={message} placeholder={"Click here to send a message!"} onChange={messageHandler} />
         </form>
       </div>
     </div>

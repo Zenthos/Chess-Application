@@ -8,5 +8,6 @@ import Play from './Pages/Play';
 import Login from './Pages/Login';
 import Logout from './Pages/Logout';
 import Register from './Pages/Register';
+import Profile from './Pages/Profile';
 
-export { Canvas, Chat, Navbar, Tutorial, Home, About, Play, Login, Logout, Register };
+export { Canvas, Chat, Navbar, Tutorial, Home, About, Play, Profile, Login, Logout, Register };

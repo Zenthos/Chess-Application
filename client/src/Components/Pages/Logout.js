@@ -3,15 +3,17 @@ import { Redirect } from 'react-router-dom';
 import { AuthContext } from '../../Context/AuthContext';
 
 const Logout = () => {
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setUser, setIsAuthenticated } = useContext(AuthContext);
   const [ redirectReady, setRedirectReady ] = useState(false);
 
   useEffect(() => {
-    setIsAuthenticated(false);
-
     fetch('/user/logout')
       .then(data => data.json())
-      .then(res => setRedirectReady(true))
+      .then(res => {
+        setUser({ username: "No Username" });
+        setIsAuthenticated(false);
+        setRedirectReady(true);
+      })
       .catch(err => console.log(err));
   })
 

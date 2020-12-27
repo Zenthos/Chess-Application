@@ -62,7 +62,7 @@ Chess.prototype.handleClick = function(clickX, clickY, lobby, socket, io, select
         io.in(lobby.name).emit('set moves', this.moveHistory);
       }
 
-      // this.switchColor();
+      this.switchColor();
     }
 
     if (this.kingIsInCheck()) {
@@ -120,7 +120,7 @@ Chess.prototype.promotion = function(selected, option) {
 
 Chess.prototype.select = function(clickX, clickY) {
   for (let piece of this.pieces) {
-    if (piece.x === clickX && piece.y === clickY /*&& piece.player === this.color*/) {
+    if (piece.x === clickX && piece.y === clickY && piece.player === this.color) {
       this.selectedPiece = piece;
       piece.selected = true;
       piece.availableTiles = piece.listOfMoves(this.pieces)
@@ -155,6 +155,16 @@ Chess.prototype.kingIsInCheck = function() {
     }
   }
   return false;
+}
+
+Chess.prototype.getKingStates = function() {
+  for (let piece of this.pieces) {
+    if (piece.pieceType === 'King') {
+      if (piece.kingChecked(this.pieces))
+        return { inCheck: true, color: piece.player };
+    }
+  }
+  return { inCheck: false, color: "None" };
 }
 
 Chess.prototype.getPieceAtPoint = function(pointX, pointY) {

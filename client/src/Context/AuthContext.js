@@ -1,18 +1,18 @@
 import React, { createContext, useState, useEffect } from 'react';
+import AuthService from '../Service/AuthService';
 
 export const AuthContext = createContext();
 
 export default ({ children }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [user, setUser] =  useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const [isLoaded, setIsLoaded] = useState(false);
+  
   useEffect(() => {
-    fetch('/user/authenticate')
-      .then(data => data.json())
+    AuthService.isAuthenticated()
       .then(res => {
-        if (res.username !== '')
-          setIsAuthenticated(true);
-
+        setUser(res.user);
+        setIsAuthenticated(res.isAuthenticated);
         setIsLoaded(true);
       })
       .catch(err => console.log(err));
@@ -20,8 +20,8 @@ export default ({ children }) => {
 
   return (
     <div>
-      { !isLoaded ? <h1>Server is not operating...</h1> : 
-      <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }} >
+      { !isLoaded ? null : 
+      <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser }} >
         { children }
       </AuthContext.Provider>}
     </div>

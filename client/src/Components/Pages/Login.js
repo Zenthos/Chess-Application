@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Alert from '../Alert';
+import AuthService from '../../Service/AuthService';
 import { AuthContext } from '../../Context/AuthContext';
 
 const Login = ({ history }) => {
@@ -8,7 +9,7 @@ const Login = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setUser, setIsAuthenticated } = useContext(AuthContext);
 
   const handleEmail = event => setEmail(event.target.value);
   const handlePassword = event => setPassword(event.target.value);
@@ -17,17 +18,12 @@ const Login = ({ history }) => {
     event.preventDefault();
 
     if(email !== '' && password !== '') {
-      fetch('/user/login', { 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      })
-      .then(data => data.json())
+      AuthService.login({ email, password })
       .then(res => {
-        if (res.messages.length === 1 && res.messages[0].type === "success")
+        if (res.messages.length === 1 && res.messages[0].type === "success") {
+          setUser(res.user);
           setIsAuthenticated(true);
+        }
   
         setAlerts(res.messages)
       })

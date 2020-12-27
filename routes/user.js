@@ -5,6 +5,10 @@ const passport = require('passport');
 const keys = require('../config/keys').module;
 const jwt = require('jsonwebtoken');
 
+const getPublicUserData = function(user) {
+  return { username: user.username, friends: user.friends, stats: user.stats };
+}
+
 router.post('/login', (req, res, next) => {
   let messages = [];
   let token = '';
@@ -20,7 +24,7 @@ router.post('/login', (req, res, next) => {
     }
 
     messages.push(info);
-    res.status(200).json({ messages, token });
+    res.status(200).json({ messages, user: getPublicUserData(user), token });
   })(req, res, next);
 });
 
@@ -48,21 +52,31 @@ router.post('/register', (req, res) => {
   });
 });
 
+router.post('/profile', (req, res) => {
+  User.findOne({ username: req.body.username })
+  .then(user => {
+    if (user)
+      res.status(200).json({ userExists: true, user: getPublicUserData(user) });
+    else
+      res.status(401).json({ userExists: false, user: null });
+  })
+  .catch(err => console.log(err));
+});
+
 router.get('/logout', (req, res) => {
   res.clearCookie('access_token');
   res.status(200).json({ msg: "Successfully Logged Out!" });
 });
 
-router.get('/authenticate', (req, res) => {
+router.get('/authenticated', (req, res) => {
   if (req.cookies.access_token)  {
     jwt.verify(req.cookies.access_token, keys.JWTKey, (err, decoded) => {
       if (err) console.log(err);
 
-      let { username } = decoded;
-      res.status(200).json({ username });
+      res.status(200).json({ isAuthenticated: true, user: getPublicUserData(decoded) });
     });
   } else {
-    res.status(200).json({ username: "" });
+    res.status(200).json({ isAuthenticated: false, user: {username: ""} });
   }
 });
 

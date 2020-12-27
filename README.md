@@ -28,6 +28,7 @@ In one terminal enter,
 
 In the other terminal, run these two commands
 >cd client
+
 >npm start
 
 The React client should automatically open a web browser and you can see the website locally
