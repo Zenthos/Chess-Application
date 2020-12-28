@@ -8,6 +8,7 @@ const Chess = function() {
   this.gameOver = false;
   this.moveHistory = [];
   this.promoting = false;
+  this.playingAgainstComputer = false;
 }
 
 Chess.prototype.init = function() {
@@ -127,6 +128,16 @@ Chess.prototype.select = function(clickX, clickY) {
       break;
     }
   }
+}
+
+Chess.prototype.getListOfPossibleMoves = function() {
+  let listOfMoves = [];
+  for (let piece of this.pieces) {
+    let pieceMoveList = piece.listOfMoves(this.pieces);
+    if (pieceMoveList.length !== 0 && piece.player === this.color)
+      listOfMoves.concat(pieceMoveList);
+  }
+  return listOfMoves;
 }
  
 Chess.prototype.mergeMoves = function() {

@@ -7,10 +7,10 @@ import './ComponentCSS.css';
 const getScale = (windowWidth, imageWidth) => {
   let scale = ((windowWidth * 0.85) / 2) / imageWidth;
 
-  if (scale > 0.75) 
+  if (scale > 0.70) 
     return scale;
   else
-    return 0.75;
+    return 0.70;
 }
 
 const Canvas = ({ role, windowWidth, windowHeight }) => {
@@ -65,7 +65,7 @@ const Canvas = ({ role, windowWidth, windowHeight }) => {
           socket.emit('request update');
         }, 1000);
 
-        setShowBoard(true);
+        setShowBoard(false);
         setPlayerWaitingFor(playerMissing);
       } else {
         setShowBoard(true);

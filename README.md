@@ -12,6 +12,7 @@ The game can be played at https://chessrooms.herokuapp.com/
 
 #### Other important libraries used
 - Socket.io
+- React-Bootstrap
 
 ## How to run the program locally
 

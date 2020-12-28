@@ -10,7 +10,7 @@ const app = express();
 
 const keys = require('./config/keys').module;
 
-mongoose.connect(keys.MongoURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }, () => {
+mongoose.connect(process.env.MONGODB_URI || keys.MongoURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }, () => {
   console.log('Connection to Mongo Database Established');
 });
 
@@ -32,8 +32,8 @@ app.use('/user', require('./routes/user'));
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')))
-}
+} 
 
 server.listen(PORT, () => {
-  console.log(`Now listening on Port: ${PORT}`)
+  console.log(`Now listening on Port: ${PORT}`);
 });

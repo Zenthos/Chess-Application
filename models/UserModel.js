@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+  username: { type: String, required: true, unique: true, trim: true, minlength: 5 },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   friends: [mongoose.Types.ObjectId],
@@ -10,7 +10,12 @@ const UserSchema = new mongoose.Schema({
     wins: { type: Number, default: 0 },
     whiteWins: { type: Number, default: 0},
     blackWins: { type: Number, default: 0},
+    dateCreated: { type: Date, default: Date.now},
+    lastActive: { type: Date, default: Date.now },
   },
+  settings: {
+    theme: { type: String },
+  }
 });
 
 UserSchema.pre('save', function(next) {

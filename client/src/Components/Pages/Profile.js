@@ -63,17 +63,15 @@ const Profile = () => {
   // A Guest is viewing the profile
   const ProfileType2 = () => {
     return(
-      <>
-        <div className="card m-4">
-          <div className="card-body">
-            <h1>{`Welcome to ${profileData.username}'s profile!`}</h1>
-            <h3>{`Friends: ${profileData.friends.length}`}</h3>
-            <h3>{`Total Wins: ${profileData.stats.wins}`}</h3>
-            <h3>{`Wins As White: ${profileData.stats.whiteWins}`}</h3>
-            <h3>{`Wins AS Black: ${profileData.stats.blackWins}`}</h3>
-          </div>
+      <div className="card m-4">
+        <div className="card-body">
+          <h1>{`Welcome to ${profileData.username}'s profile!`}</h1>
+          <h3>{`Friends: ${profileData.friends.length}`}</h3>
+          <h3>{`Total Wins: ${profileData.stats.wins}`}</h3>
+          <h3>{`Wins as White: ${profileData.stats.whiteWins}`}</h3>
+          <h3>{`Wins as Black: ${profileData.stats.blackWins}`}</h3>
         </div>
-      </>
+      </div>
     )
   }
 

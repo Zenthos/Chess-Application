@@ -13,7 +13,7 @@ const Navbar = () => {
     return (
       <>
         <Link className="nav-item nav-link text-white" to="/">Home</Link>
-        <Link className="nav-item nav-link text-white" to="/about">About</Link>
+        <Link className="nav-item nav-link text-white" to="/about">About Me</Link>
         <Link className="nav-item nav-link text-white" to="/how-to-play">Learn</Link>
         <Link className="nav-item nav-link text-white" to="/play">Play Chess</Link>
         <Link className="nav-item nav-link text-white" to="/login">Login</Link>
@@ -25,8 +25,6 @@ const Navbar = () => {
     return (
       <>
         <Link className="nav-item nav-link text-white" to="/">Home</Link>
-        <Link className="nav-item nav-link text-white" to="/about">About</Link>
-        <Link className="nav-item nav-link text-white" to="/how-to-play">Learn</Link>
         <Link className="nav-item nav-link text-white" to="/play">Play Chess</Link>
         <Dropdown alignRight>
           <Dropdown.Toggle className="nav-item nav-link text-white py-1 px-2">
@@ -34,7 +32,11 @@ const Navbar = () => {
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <Link className="dropdown-item" to={`/profile/${user.username}`}>Profile</Link>
+            <Link className="dropdown-item" to="/friends">Friends</Link>
             <Link className="dropdown-item" to="/settings">Settings</Link>
+            <Dropdown.Divider />
+            <Link className="dropdown-item" to="/about">About Me</Link>
+            <Link className="dropdown-item" to="/how-to-play">Learn</Link>
             <Dropdown.Divider />
             <Link className="dropdown-item" to="/logout">Logout</Link>
           </Dropdown.Menu>

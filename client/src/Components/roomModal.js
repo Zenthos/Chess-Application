@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
 import Alert from './Alert';
 import { SocketContext } from '../Context/SocketContext';
 import { Modal, Form, Button } from 'react-bootstrap';
@@ -16,7 +15,8 @@ const getScale = (windowWidth, imageWidth) => {
     return 0.75;
 }
 
-const LobbyItem = ({ index, name, white, black, spectators }) => {
+const LobbyItem = ({ index, lobbyData }) => {
+  const { name, white, black, spectators } = lobbyData;
   return (
     <FadeIn>
       <div className={`border border-dark rounded mx-2 ${ index % 2 === 1 ? 'bg-primary' : 'bg-secondary' }`}>
@@ -31,7 +31,7 @@ const LobbyItem = ({ index, name, white, black, spectators }) => {
   )
 }
 
-const Join = ({ setReady, username, setUsername, roomName, setRoomName, role, setRole, windowWidth, windowHeight }) => {
+const SelectRoom = ({ setSetupState, username, setUsername, roomName, setRoomName, role, setRole, opponent, windowWidth }) => {
   const [show, setShow] = useState(true);
   const [alerts, setAlerts] = useState([]);
   const [disabled, setDisabled] = useState(false);
@@ -41,7 +41,8 @@ const Join = ({ setReady, username, setUsername, roomName, setRoomName, role, se
   const handleRole = (event) => setRole(event.target.value);
   const { socket } = useContext(SocketContext);
 
-  const handleClose = () => {
+  const handleBack = () => {
+    setSetupState(0);
     setShow(false);
   }
 
@@ -62,7 +63,7 @@ const Join = ({ setReady, username, setUsername, roomName, setRoomName, role, se
       if (responseData.status === 'Success') {
         setDisabled(true);
         setTimeout(() => {
-          setReady(true);
+          setSetupState(2);
           setUsername(name);
         }, 1000)
       }
@@ -89,7 +90,7 @@ const Join = ({ setReady, username, setUsername, roomName, setRoomName, role, se
 
   return (
     <>
-      <Modal dialogClassName={getScale(windowWidth, 504) === 0.75 ? "" : "modal-join"} show={show} onHide={handleClose} backdrop="static" keyboard={false} animation={false} centered>
+      <Modal dialogClassName={getScale(windowWidth, 504) === 0.75 ? "" : "modal-join"} show={show} backdrop="static" keyboard={false} animation={false} centered>
         <div className="row no-gutters">
           <form className="col" onSubmit={handleJoin}>
             <Modal.Header>
@@ -112,7 +113,7 @@ const Join = ({ setReady, username, setUsername, roomName, setRoomName, role, se
             </Modal.Body>
             
             <Modal.Footer>
-              <Link to="/"><Button variant="secondary" type="Submit" onClick={handleClose} disabled={disabled}>Back</Button></Link>
+              <Button variant="secondary" type="Submit" onClick={handleBack} disabled={disabled}>Back</Button>
               <Button variant="primary" type="Submit" disabled={disabled}>Join</Button>
             </Modal.Footer>
           </form>
@@ -122,13 +123,10 @@ const Join = ({ setReady, username, setUsername, roomName, setRoomName, role, se
             </Modal.Header>
 
             <Modal.Body>
-              { 
-              lobbies.length === 0 ?
-              <h3>No Lobbies Currently Open</h3>
-              :
-              lobbies.map((value, index) => {
-                return <LobbyItem key={index} index={index} name={value.name} white={value.white} black={value.black} spectators={value.spectators} />
-              })
+              { lobbies.length === 0 ? <h3>No Lobbies Currently Open</h3>:
+                lobbies.map((lobby, index) => {
+                  return <LobbyItem key={index} index={index} lobbyData={lobby}/>
+                })
               }
             </Modal.Body>
           </div>
@@ -139,4 +137,4 @@ const Join = ({ setReady, username, setUsername, roomName, setRoomName, role, se
   );
 }
 
-export default withWindowDimensions(Join);
+export default withWindowDimensions(SelectRoom);

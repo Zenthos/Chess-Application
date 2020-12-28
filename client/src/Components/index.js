@@ -9,5 +9,7 @@ import Login from './Pages/Login';
 import Logout from './Pages/Logout';
 import Register from './Pages/Register';
 import Profile from './Pages/Profile';
+import Friends from './Pages/Friends';
+import Settings from './Pages/Settings';
 
-export { Canvas, Chat, Navbar, Tutorial, Home, About, Play, Profile, Login, Logout, Register };
+export { Canvas, Chat, Navbar, Tutorial, Home, About, Play, Profile, Friends, Settings, Login, Logout, Register };

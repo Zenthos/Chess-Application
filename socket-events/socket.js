@@ -7,8 +7,8 @@ module.exports = class WebSocket {
     this.lobbies = {};
   }
 
-  getCondensedLobbies = () => {
-    let condensedLobbies = [];
+  getLobbiesData = () => {
+    let lobbies = [];
     for (let property in this.lobbies) {
       let lobby = this.lobbies[property];
       let newLobby = { name: lobby.name, white: 0, black: 0, spectators: 0 };
@@ -20,9 +20,9 @@ module.exports = class WebSocket {
         if (player.role === 'Spectator')
           newLobby.spectators += 1;
       }
-      condensedLobbies.push(newLobby);
+      lobbies.push(newLobby);
     }
-    return condensedLobbies;
+    return lobbies;
   }
 
   start = () => {
@@ -42,7 +42,7 @@ module.exports = class WebSocket {
         this.io.in(roomName).emit('Chat Update', this.lobbies[roomName].logs);
 
         callback(this.lobbies[roomName].addPlayer(client));
-        this.io.emit('Update Lobbies', this.getCondensedLobbies());
+        this.io.emit('Update Lobbies', this.getLobbiesData());
       });
 
       socket.on("click", (clickX, clickY, promoteSelection) => {
@@ -91,7 +91,7 @@ module.exports = class WebSocket {
       })
 
       socket.on('Get Lobbies', () => {
-        socket.emit('Update Lobbies', this.getCondensedLobbies());
+        socket.emit('Update Lobbies', this.getLobbiesData());
       })
     
       socket.on('request update', () => {
@@ -127,7 +127,7 @@ module.exports = class WebSocket {
         }
 
         socket.leave(roomName);
-        this.io.emit('Update Lobbies', this.getCondensedLobbies());
+        this.io.emit('Update Lobbies', this.getLobbiesData());
         delete this.clients[socket.client.id];
       });
     });

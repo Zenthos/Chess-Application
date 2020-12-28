@@ -1,12 +1,12 @@
 import React from 'react';
 import "../ComponentCSS.css";
 
-const About = () => {
+const Friends = () => {
   return (
     <div className="container align-center">
-      <h1>About Me Page</h1>
+      <h1>Friends Page</h1>
     </div>
   )
 }
 
-export default About;
+export default Friends;
