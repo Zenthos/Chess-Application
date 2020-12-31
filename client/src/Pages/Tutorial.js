@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tabs, Tab, Carousel } from 'react-bootstrap';
-import FadeIn from '../../Animations/fade-in';
+import { FadeIn } from '../Components';
+import placeholder from '../assets/placeholder.png';
 
 const Pawn = () => {
   return (
@@ -8,7 +9,7 @@ const Pawn = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col d-flex align-items-center justify-content-center">
-            <img src="/placeholder.png" alt=""></img>
+            <img src={placeholder} alt=""></img>
           </div>
           <div className="col">
             <h5>Pawn</h5>
@@ -40,7 +41,7 @@ const Rook = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col d-flex align-items-center justify-content-center">
-            <img src="/placeholder.png" alt=""></img>
+            <img src={placeholder} alt=""></img>
           </div>
           <div className="col">
             <h5>Rook</h5>
@@ -63,7 +64,7 @@ const Knight = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col d-flex align-items-center justify-content-center">
-            <img src="/placeholder.png" alt=""></img>
+            <img src={placeholder} alt=""></img>
           </div>
           <div className="col">
             <h5>Knight</h5>
@@ -102,7 +103,7 @@ const Bishop = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col d-flex align-items-center justify-content-center">
-            <img src="/placeholder.png" alt=""></img>
+            <img src={placeholder} alt=""></img>
           </div>
           <div className="col">
             <h5>Bishop</h5>
@@ -126,7 +127,7 @@ const Queen = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col d-flex align-items-center justify-content-center">
-            <img src="/placeholder.png" alt=""></img>
+            <img src={placeholder} alt=""></img>
           </div>
           <div className="col">
             <h5>Queen</h5>
@@ -150,7 +151,7 @@ const King = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col d-flex align-items-center justify-content-center">
-            <img src="/placeholder.png" alt=""></img>
+            <img src={placeholder} alt=""></img>
           </div>
           <div className="col">
             <h5>King</h5>
@@ -179,10 +180,10 @@ const Promotion = () => {
           <div className="col d-flex align-items-center justify-content-center">
             <Carousel interval={null} wrap={false}>
               <Carousel.Item>
-                <img src="/placeholder.png" alt="Third slide"/>
+                <img src={placeholder} alt="Third slide"/>
               </Carousel.Item>
               <Carousel.Item>
-                <img src="/placeholder.png" alt="Third slide"/>
+                <img src={placeholder} alt="Third slide"/>
               </Carousel.Item>
             </Carousel>
           </div>
@@ -219,10 +220,10 @@ const Enpassant = () => {
           <div className="col d-flex align-items-center justify-content-center">
             <Carousel interval={null} wrap={false}>
               <Carousel.Item>
-                <img src="/placeholder.png" alt="Third slide"/>
+                <img src={placeholder} alt="Third slide"/>
               </Carousel.Item>
               <Carousel.Item>
-                <img src="/placeholder.png" alt="Third slide"/>
+                <img src={placeholder} alt="Third slide"/>
               </Carousel.Item>
             </Carousel>
           </div>
@@ -259,10 +260,10 @@ const Castling = () => {
           <div className="col d-flex align-items-center justify-content-center">
             <Carousel interval={null} wrap={false}>
               <Carousel.Item>
-                <img src="/placeholder.png" alt="Third slide"/>
+                <img src={placeholder} alt="Third slide"/>
               </Carousel.Item>
               <Carousel.Item>
-                <img src="/placeholder.png" alt="Third slide"/>
+                <img src={placeholder} alt="Third slide"/>
               </Carousel.Item>
             </Carousel>
           </div>
@@ -348,7 +349,7 @@ const Tutorial = () => {
           </p>
         </div>
         <div className="col d-flex align-items-center justify-content-center">
-          <img src="/placeholder.png" alt=""></img>
+          <img src={placeholder} alt=""></img>
         </div>
       </div>
       
@@ -412,7 +413,7 @@ const Tutorial = () => {
           </p>
         </div>
         <div className="col d-flex align-items-center justify-content-center">
-          <img src="/placeholder.png" alt=""></img>
+          <img src={placeholder} alt=""></img>
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Navbar, Tutorial, Home, About, Play, Profile, Friends, Settings, Login, Logout, Register } from './Components';
+import { Navbar } from './Components';
+import * as pages from './Pages';
 import { Route } from 'react-router-dom';
 import PrivateRoute from './HOCs/PrivateRoute';
 import PublicRoute from './HOCs/PublicRoute';
@@ -14,18 +15,18 @@ function App() {
     <>
       <Navbar />
       <Switch component={Fader}>
-        <Route exact path="/" component={Home} />
-        <PublicRoute path="/login" component={Login} />
-        <PublicRoute path="/register" component={Register} />
+        <Route exact path="/" component={pages.Home} />
+        <PublicRoute path="/login" component={pages.Login} />
+        <PublicRoute path="/register" component={pages.Register} />
 
-        <Route path="/play" component={Play} />
-        <Route path="/about" component={About} />
-        <Route path="/how-to-play" component={Tutorial} />
+        <Route path="/play" component={pages.Play} />
+        <Route path="/about" component={pages.About} />
+        <Route path="/how-to-play" component={pages.Tutorial} />
 
-        <Route path="/profile/:username" component={Profile} />
-        <PrivateRoute path="/logout" component={Logout} />
-        <PrivateRoute path="/friends" component={Friends} />
-        <PrivateRoute path="/settings" component={Settings} />
+        <Route path="/profile/:username" component={pages.Profile} />
+        <PrivateRoute path="/logout" component={pages.Logout} />
+        <PrivateRoute path="/friends" component={pages.Friends} />
+        <PrivateRoute path="/settings" component={pages.Settings} />
       </Switch>
     </>
   );

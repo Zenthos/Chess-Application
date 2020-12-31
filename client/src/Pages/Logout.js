@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Redirect } from 'react-router-dom';
-import { AuthContext } from '../../Context/AuthContext';
+import { AuthContext } from '../Context/AuthContext';
 
 const Logout = () => {
   const { setUser, setIsAuthenticated } = useContext(AuthContext);

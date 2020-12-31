@@ -1,4 +1,4 @@
-export default {
+const Service = {
   login: user => {
     return fetch('/user/login',{
       method: "post",
@@ -47,3 +47,5 @@ export default {
       });
   }
 }
+
+export default Service;

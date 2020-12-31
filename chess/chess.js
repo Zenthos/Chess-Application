@@ -1,14 +1,15 @@
 const { Rook, Knight, Bishop, Queen, King, Pawn } = require('./pieces');
 
-const Chess = function() {
+const Chess = function(playingNpc) {
   this.pieces = [];
   this.toDelete = [];
   this.color = 'White';
   this.selectedPiece = null;
   this.gameOver = false;
   this.moveHistory = [];
+  this.piecesToDelete = [];
   this.promoting = false;
-  this.playingAgainstComputer = false;
+  this.playingNpc = playingNpc;
 }
 
 Chess.prototype.init = function() {
@@ -43,7 +44,7 @@ Chess.prototype.handleClick = function(clickX, clickY, lobby, socket, io, select
   let selected = this.selectedPiece;
   
   if (((selected.x !== newSpot.x || selected.y !== newSpot.y) && selected.legalMove(this.pieces, newSpot)) || this.promoting) {
-    selected.moveOrCapture(this.pieces, newSpot, lobby, io);
+    selected.moveOrCapture(this.pieces, newSpot, lobby);
     selected.availableTiles.splice(0, selected.availableTiles.length);
 
     if (this.promoting) {
@@ -59,7 +60,7 @@ Chess.prototype.handleClick = function(clickX, clickY, lobby, socket, io, select
       }
 
       if (this.color === 'Black') {
-        this.mergeMoves();
+        this.generateMoveSyntax();
         io.in(lobby.name).emit('set moves', this.moveHistory);
       }
 
@@ -94,6 +95,13 @@ Chess.prototype.handleClick = function(clickX, clickY, lobby, socket, io, select
   if (!this.promoting) {
     this.selectedPiece.selected = false;
     this.selectedPiece = null;
+  }
+
+  if (this.piecesToDelete.length > 0) {
+    for (let index of this.piecesToDelete)
+      this.pieces.splice(index, 1);
+
+    this.piecesToDelete.splice(0, this.piecesToDelete.length);
   }
 }
 
@@ -139,8 +147,8 @@ Chess.prototype.getListOfPossibleMoves = function() {
   }
   return listOfMoves;
 }
- 
-Chess.prototype.mergeMoves = function() {
+
+Chess.prototype.generateMoveSyntax = function() {
   let secondLast = this.moveHistory[this.moveHistory.length - 2];
   let last = this.moveHistory[this.moveHistory.length - 1];
 

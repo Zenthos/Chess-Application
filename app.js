@@ -16,8 +16,9 @@ mongoose.connect(process.env.MONGODB_URI || keys.MongoURI, { useNewUrlParser: tr
 
 const server = http.createServer(app);
 const io = socketIO(server);
-const WebSocket = require('./socket-events/socket');
-const listeners = new WebSocket(io);
+const SocketListeners = require('./sockets/listeners');
+const listeners = new SocketListeners(io);
+
 listeners.start();
 
 app.use(express.json());

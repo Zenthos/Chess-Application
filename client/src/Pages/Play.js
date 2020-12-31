@@ -1,28 +1,29 @@
 import React, { useState, useEffect, useContext } from 'react';
-import SelectRoom from '../roomModal.js';
-import SelectOpponent from '../opponentModal.js';
-import Canvas from '../Canvas';
-import useImage from 'use-image';
-import SocketProvider, { SocketContext } from '../../Context/SocketContext';
-import FadeIn from '../../Animations/fade-in';
-import ChatInterface from '../ChatInterface';
-import '../ComponentCSS.css';
+import { Canvas, SelectRoom, SelectOpponent, /*ChatInterface,*/ FadeIn } from '../Components';
+import SocketProvider, { SocketContext } from '../Context/SocketContext';
+// import WindowProvider, { WindowContext } from '../Context/WindowContext';
+import '../styles/ComponentCSS.css';
 
 const Page = () => {
   const [setupState, setSetupState] = useState(0);
-  const [username, setUsername] = useState('');
-  const [roomName, setRoomName] = useState('');
   const [opponent, setOpponent] = useState('');
-  const [role, setRole] = useState('White');
+  const [width, setWidth] = useState(window.innerWidth);
+
   const { socket } = useContext(SocketContext);
   
-  const [boardImg] = useImage('/chess-images/board.png');
-  const [figureImg] = useImage('/chess-images/figures.png');
-  
+  // Disconnect socket when component unmounts
   useEffect(() => {
-    // Disconnect socket when component unmounts
     return () => socket.close();
   }, [socket]);
+
+  // Get Window Size
+  useEffect(() => {
+    const resizeListener = () => setWidth(window.innerWidth);
+
+    window.addEventListener('resize', resizeListener);
+
+    return () => window.removeEventListener('resize', resizeListener);
+  }, [width]);
 
   const ChooseOpponent = () => {
 
@@ -31,8 +32,7 @@ const Page = () => {
         <SelectOpponent
           setSetupState={setSetupState} 
           setOpponent={setOpponent}
-          setUsername={setUsername} 
-          setRoomName={setRoomName} 
+          windowWidth={width}
         />
       </>
     )
@@ -43,13 +43,8 @@ const Page = () => {
       <>
         <SelectRoom
           setSetupState={setSetupState} 
-          username={username} 
-          setUsername={setUsername} 
-          roomName={roomName} 
-          setRoomName={setRoomName} 
-          role = {role}
-          setRole={setRole}
           opponent={opponent}
+          windowWidth={width}
           />
       </>
     )
@@ -58,8 +53,8 @@ const Page = () => {
   const ReadyToPlay = () => {
     return (
       <FadeIn className="container">
-        <Canvas role={role} boardImg={boardImg} figureImg={figureImg} />
-        <ChatInterface username={username} role={role} />
+        <Canvas windowWidth={width} />
+        {/* <ChatInterface username={username} /> */}
       </FadeIn>
     )
   }
@@ -82,7 +77,7 @@ const Play = () => {
     <SocketProvider>
       <Page />
     </SocketProvider>
-  );
+  )
 }
 
 export default Play;

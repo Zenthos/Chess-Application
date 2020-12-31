@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 import { SocketContext } from '../Context/SocketContext';
 import Chat from './Chat';
-import './ComponentCSS.css';
+import '../styles/ComponentCSS.css';
 
 const MoveHistory = () => {
   const { socket } = useContext(SocketContext);

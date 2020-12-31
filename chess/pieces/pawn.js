@@ -2,6 +2,7 @@ const { Piece, linearMove } = require('./base');
 
 function Pawn(name, color, px, py, notation)  {
   Piece.call(this, name, color, px, py, notation); 
+  this.oldposition = { x: px, y: py };
   this.moveCount = 0;
 }
 
@@ -55,8 +56,32 @@ Pawn.prototype.verticalMove = function(pieces, spotClicked) {
   return false;
 }
 
+Pawn.prototype.enPassant = function(pieces, spotClicked) {
+  let dx = this.x - spotClicked.x;
+  let dy = this.y - spotClicked.y;
+
+  if (this.pieceType === 'Pawn' && Math.abs(dx) == 1 && Math.abs(dy) == 1) {
+    for (let piece of pieces) {
+      if (piece.pieceType === 'Pawn' && piece.player !== this.player) {
+        dx = piece.oldposition.x - piece.x;
+        dy = piece.oldposition.y - piece.y;
+        if (Math.abs(dx) === 0 && Math.abs(dy) === 2) {
+          if (this.player == 'White') {
+            if (piece.x === spotClicked.x && piece.y - 1 === spotClicked.y) return true;
+          }
+          if (this.player == 'Black') {
+            if (piece.x === spotClicked.x && piece.y + 1 === spotClicked.y) return true;
+          }
+        } 
+      }
+    }
+  }
+  return false;
+}
+
 Pawn.prototype.legalMove = function(pieces, spotClicked) {
   if (!Piece.prototype.legalMove.call(this, pieces, spotClicked)) return false;
+  if (this.enPassant(pieces, spotClicked)) return true;
   return this.verticalMove(pieces, spotClicked);
 }
 

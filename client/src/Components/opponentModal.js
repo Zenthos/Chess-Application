@@ -3,16 +3,10 @@ import Alert from './Alert';
 import { SocketContext } from '../Context/SocketContext';
 import { Link } from 'react-router-dom';
 import { Modal, Button, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
-import withWindowDimensions from '../Service/WindowSizeService';
-import './ComponentCSS.css';
+import '../styles/ComponentCSS.css';
 
 const getScale = (windowWidth, imageWidth) => {
-  let scale = ((windowWidth * 0.50) / 2) / imageWidth;
-
-  if (scale > 0.75) 
-    return scale;
-  else
-    return 0.75;
+  return ((windowWidth * 0.50) / 2) / imageWidth;
 }
 
 const randomString = (length) => {
@@ -24,7 +18,7 @@ const randomString = (length) => {
   return `${id}`;
 }
 
-const SelectOpponent = ({ setSetupState, setUsername, setRoomName, windowWidth }) => {
+const SelectOpponent = ({ setSetupState, windowWidth }) => {
   const [show, setShow] = useState(true);
   const [alerts, setAlerts] = useState([]);
   const [opponent, setOpponent] = useState(0);
@@ -37,7 +31,6 @@ const SelectOpponent = ({ setSetupState, setUsername, setRoomName, windowWidth }
     setShow(false);
   }
 
-
   const handleNext = (event) => {
     event.preventDefault();
     if (opponent === 1) {
@@ -48,22 +41,20 @@ const SelectOpponent = ({ setSetupState, setUsername, setRoomName, windowWidth }
       let username = randomString(10);
       let room = randomString(10);
       socket.emit('join room', username, room, 'White', function (responseData) {
+        setAlerts(responseData.responses);
         if (responseData.status === 'Success') {
           setDisabled(true);
           setTimeout(() => {
             setSetupState(2);
-            setUsername(username);
-            setRoomName(room);
           }, 1000)
         }
-        setAlerts(responseData.responses);
       });
     }
   }
 
   return (
     <>
-      <Modal dialogClassName={getScale(windowWidth, 504) === 0.75 ? "" : "modal-join"} show={show} onHide={handleClose} backdrop="static" keyboard={false} animation={false} centered>
+      <Modal dialogClassName={getScale(windowWidth, 504) < 0.75 ? "":"modal-join"} show={show} onHide={handleClose} backdrop="static" keyboard={false} animation={false} centered>
         <form onSubmit={handleNext}>
           <Modal.Header>
             <Modal.Title>Select an Opponent</Modal.Title>
@@ -102,4 +93,4 @@ const SelectOpponent = ({ setSetupState, setUsername, setRoomName, windowWidth }
   );
 }
 
-export default withWindowDimensions(SelectOpponent);
+export default SelectOpponent;

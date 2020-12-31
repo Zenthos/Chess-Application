@@ -32,8 +32,8 @@
 .jumbotron-test {
   height: 100%;
   min-height: 300px;
-  background: black;  /* fallback colour. Make sure this is just one solid colour. */
-  background: -webkit-linear-gradient(rgba(52, 232, 158, 0.4), rgba(15, 52, 67, 0.9)), url("/chess-images/jumbo-image.jpg");
-  background: linear-gradient(rgba(52, 232, 158, 0.4), rgba(15, 52, 67, 0.9)), url("/chess-images/jumbo-image.jpg");
+  background: black;
+  background: -webkit-linear-gradient(rgba(52, 232, 158, 0.4), rgba(15, 52, 67, 0.9)), url("../assets/chess-images/jumbo-image.jpg");
+  background: linear-gradient(rgba(52, 232, 158, 0.4), rgba(15, 52, 67, 0.9)), url("../assets/chess-images/jumbo-image.jpg");
   background-size: cover;
 }

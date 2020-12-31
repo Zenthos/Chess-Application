@@ -1,11 +1,28 @@
 const Chess = require("./chess")
 
-const Lobby = function(name) {
-  this.game = new Chess();
+const Lobby = function(name, playingNpc) {
+  this.game = new Chess(playingNpc);
   this.name = name;
   this.players = [];
   this.logs = [];
 }
+
+//////////////////////////////////////////////////////////////////
+// Chat Functions
+/////////////////////////////////////////////////////////////////
+
+Lobby.prototype.addMessage = function(io, { name, role, msg }) {
+  this.logs.push({ name, msg, role });
+  this.sendLogs(io);
+}
+
+Lobby.prototype.sendLogs = function(io) {
+  io.in(this.name).emit('Chat Update', this.logs);
+}
+
+//////////////////////////////////////////////////////////////////
+// Chess Functions
+/////////////////////////////////////////////////////////////////
 
 Lobby.prototype.init = function() {
   this.game.init();
@@ -17,6 +34,18 @@ Lobby.prototype.isGameOver = function() {
 
 Lobby.prototype.playAgain = function() {
   this.game = new Chess();
+}
+
+Lobby.prototype.updateGame = function(socket, io, role, clickX, clickY, promoteSelection) {
+  // if(role === this.game.color && !this.isGameOver()) {
+    if (this.game.selectedPiece) {
+      this.game.handleClick(clickX, clickY, this, socket, io, promoteSelection);
+      io.in(this.name).emit('update', this.game.pieces, this.game.color, this.game.getKingStates());
+    } else {
+      this.game.select(clickX, clickY);
+      socket.emit('update', this.game.pieces, this.game.color, this.game.getKingStates());
+    }
+  // }
 }
 
 Lobby.prototype.BlackAndWhitePresent = function() {
@@ -39,6 +68,10 @@ Lobby.prototype.BlackAndWhitePresent = function() {
     return { status: false, playerMissing: 'White' };
 }
 
+//////////////////////////////////////////////////////////////////
+// Lobby Functions
+/////////////////////////////////////////////////////////////////
+
 Lobby.prototype.addPlayer = function(player) {
   const { username, role } = player;
   const responses = [];
@@ -58,6 +91,12 @@ Lobby.prototype.addPlayer = function(player) {
   }
 
   return { status: "Failed", responses };
+}
+
+Lobby.prototype.removePlayer = function(username){
+  let indexOfPlayerToRemove = this.players.findIndex(item => item.username === username);
+  if (indexOfPlayerToRemove !== -1)
+    this.players.splice(indexOfPlayerToRemove, 1);
 }
 
 module.exports = Lobby;

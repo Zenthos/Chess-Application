@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import Alert from '../Alert';
-import AuthService from '../../Service/AuthService';
-import { AuthContext } from '../../Context/AuthContext';
+import { Alert } from '../Components';
+import AuthService from '../Service/AuthService';
+import { AuthContext } from '../Context/AuthContext';
 
 const Login = ({ history }) => {
   const [alerts, setAlerts] = useState([]);

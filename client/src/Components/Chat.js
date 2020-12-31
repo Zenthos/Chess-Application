@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { SocketContext } from '../Context/SocketContext';
 import ScrollToBottom from 'react-scroll-to-bottom';
-import FadeIn from '../Animations/fade-in';
-import './ComponentCSS.css';
+import FadeIn from './fade-in';
+import '../styles/ComponentCSS.css';
 
 const Message = ({name, msg, role, index}) => {
   return (

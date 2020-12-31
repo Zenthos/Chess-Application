@@ -18,6 +18,10 @@ Piece.prototype.spotOccupied = function(pieces, spotClicked) {
 
 Piece.prototype.move = function(pieces, spotClicked, lobby) {
   let dx = this.x - spotClicked.x;
+
+  if (this.pieceType === 'Pawn')
+    this.oldposition = { x: this.x, y: this.y };
+
   this.x = spotClicked.x;
   this.y = spotClicked.y;
 
@@ -55,7 +59,35 @@ Piece.prototype.capture = function(pieces, spotClicked, lobby) {
       const number = Math.abs(7 - this.y) + 1;    
       lobby.game.moveHistory.push(`${notation}x${letter[this.x]}${number}`);
 
-      pieces.splice(index, 1);
+      lobby.game.piecesToDelete.push(index);
+      return;
+    }
+  }
+}
+
+Piece.prototype.enPassantCapture = function(pieces, spotClicked, lobby) {
+  let pieceBeingCaptured;
+
+  if (this.player === 'White') {
+    pieceBeingCaptured = lobby.game.getPieceAtPoint(spotClicked.x, spotClicked.y + 1);
+  } else {
+    pieceBeingCaptured = lobby.game.getPieceAtPoint(spotClicked.x, spotClicked.y - 1);
+  }
+
+  if (pieceBeingCaptured) {
+    if (!pieceBeingCaptured.captured && pieceBeingCaptured.pieceType !== 'King') {
+      const letter = { '0': 'a', '1': 'b', '2': 'c', '3': 'd', '4': 'e', '5': 'f', '6': 'g', '7': 'h' }; 
+      let notation = (this.pieceType === 'Pawn' ? letter[this.x] : this.notation);
+
+      this.x = spotClicked.x;
+      this.y = spotClicked.y;
+      this.moveCount++;
+
+      const number = Math.abs(7 - this.y) + 1;    
+      lobby.game.moveHistory.push(`${notation}x${letter[this.x]}${number}`);
+
+      let index = pieces.findIndex(item => item.x === pieceBeingCaptured.x && item.y === pieceBeingCaptured.y);
+      lobby.game.piecesToDelete.push(index);
       return;
     }
   }
@@ -96,15 +128,23 @@ Piece.prototype.doesMoveCheckSelf = function(pieces, spotClicked) {
   return result;
 }
 
-Piece.prototype.moveOrCapture = function(pieces, spotClicked, lobby, io) {
+Piece.prototype.moveOrCapture = function(pieces, spotClicked, lobby) {
   let legal = this.legalMove(pieces, spotClicked);
   let occupied = this.spotOccupied(pieces, spotClicked);
 
   if (legal) {
-    if (occupied)
-      this.capture(pieces, spotClicked, lobby, io);   // Move is legal and Tile is Occupied
-    else
-      this.move(pieces, spotClicked, lobby, io);      // Move is legal but not piece to capture
+    if (occupied) {
+      this.capture(pieces, spotClicked, lobby);
+    } else {
+      if (this.pieceType === 'Pawn') {
+        if (this.enPassant(pieces, spotClicked))
+          this.enPassantCapture(pieces, spotClicked, lobby);
+        else
+          this.move(pieces, spotClicked, lobby);
+      } else {
+        this.move(pieces, spotClicked, lobby);
+      }
+    }
   }
 }
 

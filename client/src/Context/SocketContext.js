@@ -3,7 +3,7 @@ import * as io from 'socket.io-client';
 
 export const SocketContext = createContext();
 
-export default ({ children }) => {
+const ContextProvider = ({ children }) => {
   const socket = io();
 
   return (
@@ -12,3 +12,5 @@ export default ({ children }) => {
     </SocketContext.Provider>
   )
 };
+
+export default ContextProvider;

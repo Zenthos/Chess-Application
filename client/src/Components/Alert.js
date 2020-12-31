@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert as ReactBSAlert } from 'react-bootstrap';
-import FadeIn from '../Animations/fade-in';
+import FadeIn from './fade-in';
 
 const Alert = ({ status, message }) => {
   return (

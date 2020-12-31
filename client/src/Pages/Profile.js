@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import "../ComponentCSS.css";
-import AuthService from '../../Service/AuthService';
-import { AuthContext } from '../../Context/AuthContext';
+import "../styles/ComponentCSS.css";
+import AuthService from '../Service/AuthService';
+import { AuthContext } from '../Context/AuthContext';
 
 const Profile = () => {
   let { user, isAuthenticated } = useContext(AuthContext);
