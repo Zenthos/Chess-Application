@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Canvas, SelectRoom, SelectOpponent, /*ChatInterface,*/ FadeIn } from '../Components';
+import { Canvas, SelectRoom, SelectOpponent, ChatInterface, FadeIn } from '../Components';
 import SocketProvider, { SocketContext } from '../Context/SocketContext';
-// import WindowProvider, { WindowContext } from '../Context/WindowContext';
 import '../styles/ComponentCSS.css';
 
 const Page = () => {
@@ -54,7 +53,7 @@ const Page = () => {
     return (
       <FadeIn className="container">
         <Canvas windowWidth={width} />
-        {/* <ChatInterface username={username} /> */}
+        <ChatInterface />
       </FadeIn>
     )
   }

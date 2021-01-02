@@ -9,16 +9,36 @@ const getScale = (windowWidth, imageWidth) => {
   return ((windowWidth * 0.85) / 2) / imageWidth;
 }
 
-const LobbyItem = ({ index, lobbyData }) => {
+const randomString = (min, max) => {
+  let chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
+  let id = '';
+  let size = Math.random() * (max - min) + min;
+  for (let i = 0; i < size; i++) 
+    id += chars[Math.floor(Math.random() * chars.length)];
+
+  return `${id}`;
+}
+
+const LobbyItem = ({ index, setRoomName, setRole, lobbyData }) => {
   const { name, white, black, spectators } = lobbyData;
+
+  const handleNameClick = () => {
+    setRoomName(name);
+
+    if (white === 1 && black === 0) setRole('Black');
+    if (white === 0 && black === 1) setRole('White');
+    if (white === 1 && black === 1) setRole('Spectator');
+  }
+
   return (
     <FadeIn>
       <div className={`border border-dark rounded mx-2 ${ index % 2 === 1 ? 'bg-primary' : 'bg-secondary' }`}>
         <div className="p-2">
-          <strong className="text-white">Room Name: {name}</strong>
-          <p className="m-0">White: {white}/1</p>
-          <p className="m-0">Black: {black}/1</p>
-          <p className="m-0">Spectators: {spectators}</p>
+          <strong className="text-dark">Room Name: </strong>
+          <button className="btn btn-primary btn-sm" onClick={handleNameClick}>{name}</button>
+          <p className="m-0 text-dark">White: {white}/1</p>
+          <p className="m-0 text-dark">Black: {black}/1</p>
+          <p className="m-0 text-dark">Spectators: {spectators}</p>
         </div>
       </div>
     </FadeIn>
@@ -48,18 +68,10 @@ const SelectRoom = ({ setSetupState, opponent, windowWidth }) => {
 
   const handleJoin = (event) => {
     event.preventDefault();
-    let name = username;
+    let name = (username === '') ? randomString(6, 10):username;
+    let room = (roomName === '') ? randomString(6, 10):roomName;
 
-    if (name === '') {
-      let chars = '0123456789'.split('');
-      let id = '';
-      for (let i = 0; i < Math.floor(Math.random() * 5) + 3; i++) 
-        id += chars[Math.floor(Math.random() * chars.length)];
-
-      name = `User${id}`;
-    }
-
-    socket.emit('join room', name, roomName, role, function (responseData) {
+    socket.emit('join room', name, room, role, function (responseData) {
       setUsername(name);
       setAlerts(responseData.responses);
       if (responseData.status === 'Success') {
@@ -93,7 +105,7 @@ const SelectRoom = ({ setSetupState, opponent, windowWidth }) => {
 
   return (
     <>
-      <Modal dialogClassName={getScale(windowWidth, 504) < 0.70 ? "":"modal-join"} show={show} backdrop="static" keyboard={false} animation={false} centered>
+      <Modal dialogClassName={getScale(windowWidth, 504) < 0.70 ? "":"width-70"} show={show} backdrop="static" keyboard={false} animation={false} centered>
         <div className="row no-gutters">
           <form className="col" onSubmit={handleJoin}>
             <Modal.Header>
@@ -128,7 +140,7 @@ const SelectRoom = ({ setSetupState, opponent, windowWidth }) => {
             <Modal.Body>
               { lobbies.length === 0 ? <h3>No Lobbies Currently Open</h3>:
                 lobbies.map((lobby, index) => {
-                  return <LobbyItem key={index} index={index} lobbyData={lobby}/>
+                  return <LobbyItem key={index} index={index} setRoomName={setRoomName} setRole={setRole} lobbyData={lobby}/>
                 })
               }
             </Modal.Body>

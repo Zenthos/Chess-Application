@@ -14,7 +14,7 @@ const getScale = (windowWidth, imageWidth) => {
     return 0.70;
 }
 
-const Canvas = ({ role, windowWidth }) => {
+const Canvas = ({ windowWidth }) => {
   const canvasRef = useRef(null);
   const { socket } = useContext(SocketContext);
 
@@ -22,6 +22,7 @@ const Canvas = ({ role, windowWidth }) => {
   const [figureImg] = useImage(figures);
 
   const [gameReady, setGameReady] = useState(false);
+  const [clientColor, setClientColor] = useState('White');
   const [pieces, setPieces] = useState([]);
   const [lastMove, setLastMove] = useState({});
   const [needToPromote, setNeedToPromote] = useState(false);
@@ -39,7 +40,7 @@ const Canvas = ({ role, windowWidth }) => {
     const { offsetX, offsetY } = nativeEvent;
     let x = Math.floor((offsetX - xOffset) / side);
     let y = Math.floor((offsetY - yOffset) / side);
-    if (role === 'Black') {
+    if (clientColor === 'Black') {
       socket.emit('Update Game', x, (7 - y));
       setLastMove({ x, y: (7 - y) });
     } else {
@@ -52,7 +53,7 @@ const Canvas = ({ role, windowWidth }) => {
     setNeedToPromote(false);
     socket.emit('Update Game', lastMove.x, lastMove.y, event.target.value);
   }
-
+  // Initial Render
   useEffect(() => {
     socket.on('update', (pieces, color, kingState) => {
       setPieces(pieces);
@@ -66,7 +67,7 @@ const Canvas = ({ role, windowWidth }) => {
           socket.emit('Get Game');
         }, 1000);
 
-        setGameReady(true);
+        setGameReady(false);
         setWaitingForOpponent(playerMissing);
       } else {
         setGameReady(true);
@@ -74,9 +75,8 @@ const Canvas = ({ role, windowWidth }) => {
       }
     });
 
-    socket.on('select a piece', () => {
-      setNeedToPromote(true);
-    });
+    socket.on('set client color', (role) => setClientColor(role));
+    socket.on('set need to promote', () => setNeedToPromote(true));
 
     socket.emit('Get Game');
   }, [socket]);
@@ -85,7 +85,7 @@ const Canvas = ({ role, windowWidth }) => {
     useEffect(() => {
       const drawPiece = (ctx, pieceData, xOffset, yOffset, side, sourceSide) => {
         var x, y;
-        if (role === 'Black') {
+        if (clientColor === 'Black') {
           x = xOffset + (side * pieceData.x);
           y = yOffset + (side * (7 - pieceData.y));
         } else {
@@ -135,7 +135,7 @@ const Canvas = ({ role, windowWidth }) => {
           var x = xOffset + (side * selectedPiece.x);
           var y;
   
-          if (role === 'Black')
+          if (clientColor === 'Black')
             y = yOffset + (side * (7 - selectedPiece.y));
           else
             y = yOffset + (side * selectedPiece.y);
@@ -148,7 +148,7 @@ const Canvas = ({ role, windowWidth }) => {
             for (let possibleTile of selectedPiece.availableTiles) {
               let possibleX = xOffset + side / 2 + (side * possibleTile[0]);
               let possibleY;
-              if (role === 'Black')
+              if (clientColor === 'Black')
                 possibleY = yOffset + side / 2 + (side * (7 - possibleTile[1]));
               else
                 possibleY = yOffset + side / 2 + (side * possibleTile[1]);
@@ -162,7 +162,7 @@ const Canvas = ({ role, windowWidth }) => {
         }
       }
   
-    }, [pieces, boardImg, figureImg, role, windowWidth]);
+    }, [pieces, boardImg, figureImg, clientColor, windowWidth]);
 
   return (
     <div align="center">

@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Alert } from '../Components';
 import AuthService from '../Service/AuthService';
 import { AuthContext } from '../Context/AuthContext';
 
-const Login = ({ history }) => {
+const Login = () => {
   const [alerts, setAlerts] = useState([]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [readyToRedirect, setReadyToRedirect] = useState(false);
 
-  const { setUser, setIsAuthenticated } = useContext(AuthContext);
+  const { setUser, setIsAuthenticated, isLoggingIn, setIsLoggingIn } = useContext(AuthContext);
 
   const handleEmail = event => setEmail(event.target.value);
   const handlePassword = event => setPassword(event.target.value);
@@ -23,6 +24,11 @@ const Login = ({ history }) => {
         if (res.messages.length === 1 && res.messages[0].type === "success") {
           setUser(res.user);
           setIsAuthenticated(true);
+          setIsLoggingIn(true);
+          setTimeout(() => {
+            setReadyToRedirect(true);
+            setIsLoggingIn(false);
+          }, 3000)
         }
   
         setAlerts(res.messages)
@@ -37,7 +43,7 @@ const Login = ({ history }) => {
     if (alerts.length > 0) {
       let timer = setTimeout(() => {
         setAlerts([]);
-      }, 5000)
+      }, 3000)
 
       return () => clearTimeout(timer);
     }
@@ -51,16 +57,18 @@ const Login = ({ history }) => {
             <img className="m-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="108" height="108" />
             <h1 className="h3 mb-3 font-weight-normal">Sign in</h1>
 
-            <input className="form-control my-3" type="email" onChange={handleEmail} placeholder="Email address"/>
-            <input className="form-control my-3" type="password" onChange={handlePassword} placeholder="Password"/>
+            <input className="form-control my-3" type="email" onChange={handleEmail} disabled={isLoggingIn} placeholder="Email address"/>
+            <input className="form-control my-3" type="password" onChange={handlePassword} disabled={isLoggingIn} placeholder="Password"/>
 
-            <button className="btn btn-primary btn-block my-3" onClick={handleSubmit} type="submit">Sign in</button>
+            <button className="btn btn-primary btn-block my-3" onClick={handleSubmit} disabled={isLoggingIn} type="submit">Sign in</button>
             
             { alerts.map((value, index) => {
               return <Alert key={index} status={value.type} message={value.msg} />
             })}
 
-            <Link className='text-decoration-none' to='/register'>Need an Account? Register</Link>
+            { readyToRedirect ? <Redirect to={{ pathname: '/' }} />: ""}
+
+            <Link className={`text-decoration-none ${isLoggingIn ? "disabled":""}`} to='/register'>Need an Account? Register</Link>
             <p className="my-3 text-muted">© 2019-2020</p>
           </form>
         </div>

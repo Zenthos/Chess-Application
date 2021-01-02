@@ -55,7 +55,7 @@ Chess.prototype.handleClick = function(clickX, clickY, lobby, socket, io, select
 
     } else {
       if ([0, 7].includes(newSpot.y) && selected.pieceType === 'Pawn') {
-        socket.emit('select a piece');
+        socket.emit('set need to promote');
         this.promoting = true;
       }
 

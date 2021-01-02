@@ -20,7 +20,7 @@ router.post('/login', (req, res, next) => {
         expiresIn: "2h",
       })
 
-      res.cookie("access_token", token, { SameSite: true, httpOnly: true, secure: true });
+      res.cookie("access_token", token, { SameSite: "Lax", httpOnly: true, secure: true });
     }
 
     messages.push(info);
@@ -65,14 +65,14 @@ router.post('/profile', (req, res) => {
 
 router.get('/logout', (req, res) => {
   res.clearCookie('access_token');
-  res.status(200).json({ msg: "Successfully Logged Out!" });
+  res.status(200).json({ success: true, msg: "Successfully Logged Out!" });
 });
 
 router.get('/authenticated', (req, res) => {
   if (req.cookies.access_token)  {
     jwt.verify(req.cookies.access_token, keys.JWTKey, (err, decoded) => {
       if (err) console.log(err);
-
+  
       res.status(200).json({ isAuthenticated: true, user: getPublicUserData(decoded) });
     });
   } else {

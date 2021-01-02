@@ -9,10 +9,11 @@ const getScale = (windowWidth, imageWidth) => {
   return ((windowWidth * 0.50) / 2) / imageWidth;
 }
 
-const randomString = (length) => {
+const randomString = (min, max) => {
   let chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
   let id = '';
-  for (let i = 0; i < length + 3; i++) 
+  let size = Math.random() * (max - min) + min;
+  for (let i = 0; i < size; i++) 
     id += chars[Math.floor(Math.random() * chars.length)];
 
   return `${id}`;
@@ -33,13 +34,13 @@ const SelectOpponent = ({ setSetupState, windowWidth }) => {
 
   const handleNext = (event) => {
     event.preventDefault();
-    if (opponent === 1) {
-      setSetupState(opponent);
+    if (opponent === "player") {
+      setSetupState(1);
       setDisabled(true);
       setShow(false);
     } else {
-      let username = randomString(10);
-      let room = randomString(10);
+      let username = randomString(6, 10);
+      let room = randomString(6, 10);
       socket.emit('join room', username, room, 'White', function (responseData) {
         setAlerts(responseData.responses);
         if (responseData.status === 'Success') {
@@ -54,7 +55,7 @@ const SelectOpponent = ({ setSetupState, windowWidth }) => {
 
   return (
     <>
-      <Modal dialogClassName={getScale(windowWidth, 504) < 0.75 ? "":"modal-join"} show={show} onHide={handleClose} backdrop="static" keyboard={false} animation={false} centered>
+      <Modal dialogClassName={getScale(windowWidth, 504) < 0.75 ? "":"width-50"} show={show} onHide={handleClose} backdrop="static" keyboard={false} animation={false} centered>
         <form onSubmit={handleNext}>
           <Modal.Header>
             <Modal.Title>Select an Opponent</Modal.Title>
@@ -62,11 +63,11 @@ const SelectOpponent = ({ setSetupState, windowWidth }) => {
 
           <Modal.Body>
             <ToggleButtonGroup className="d-flex" type="checkbox" value={opponent} onChange={([a, b]) => setOpponent(b)}>
-              <ToggleButton value={1} disabled={opponent === 1 ? true:false}>Human</ToggleButton>
-              <ToggleButton value={2} disabled={opponent === 2 ? true:false}>Computer (Not Working)</ToggleButton>
+              <ToggleButton value={"player"} disabled={opponent === "player" ? true:false}>Human</ToggleButton>
+              <ToggleButton value={"npc"} disabled={opponent === "npc" ? true:false}>Computer (Not Working)</ToggleButton>
             </ToggleButtonGroup>
 
-            <div className={opponent !== 2 ? 'd-none':'my-3'}>
+            <div className={opponent !== "npc" ? 'd-none':'my-3'}>
               <h5 className="text-center my-3">Choose Opponent Difficulty</h5>
               <ToggleButtonGroup className="d-flex" type="checkbox" value={difficulty} onChange={([a, b]) => setDifficulty(b)}>
                 <ToggleButton value={1} disabled={difficulty === 1 ? true:false}>Easy</ToggleButton>
@@ -85,7 +86,7 @@ const SelectOpponent = ({ setSetupState, windowWidth }) => {
             <Link to="/">
               <Button variant="secondary" type="Submit" onClick={handleClose} disabled={disabled}>Back</Button>
             </Link>
-            <Button variant="primary" type="Submit" disabled={((opponent === 2 && [1,2,3,4].includes(difficulty))||opponent === 1)? false:true}>Next</Button>
+            <Button variant="primary" type="Submit" disabled={((opponent === "npc" && [1,2,3,4].includes(difficulty))||opponent === "player")? false:true}>Next</Button>
           </Modal.Footer>
         </form>
       </Modal>

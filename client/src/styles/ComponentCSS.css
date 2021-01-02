@@ -6,7 +6,7 @@
   pointer-events: none;
 }
 
-.canvas-modal{
+.canvas-modal {
   position: absolute;
   top: 50%;
   left: 50%; 
@@ -15,7 +15,37 @@
   transform: translate(-50%, -50%);
 }
 
-.chat-messages{
+.navbar-link {
+  background-image: none !important;
+  color: white;
+  
+  display:block;
+  padding: 0.75rem 0.5rem;
+  margin: 0.25rem 0.2rem;
+  text-decoration:none !important;
+  transition:color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+
+.navbar-active {
+  color: white;
+  background-color: #212529;
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: calc(.25rem - 1px);
+  pointer-events: none;
+}
+
+.disabled {
+  pointer-events: none;
+}
+
+.dropdown-active {
+  background-color: #212529 !important;
+  border: 1px solid rgba(0,0,0,.125) !important;
+  border-radius: calc(.25rem - 1px) !important;
+  pointer-events: none;
+}
+
+.chat-messages {
   height: 88% !important;
   overflow-y: auto;
 }
@@ -24,12 +54,27 @@
   height: 620px !important;
 }
 
-.modal-join {
-  width: 65% !important;
+.width-40 {
+  width: 40% !important;
   max-width: none !important;
 }
 
-.jumbotron-test {
+.width-50 {
+  width: 50% !important;
+  max-width: none !important;
+}
+
+.width-60 {
+  width: 60% !important;
+  max-width: none !important;
+}
+
+.width-70 {
+  width: 70% !important;
+  max-width: none !important;
+}
+
+.jumbotron-chess {
   height: 100%;
   min-height: 300px;
   background: black;

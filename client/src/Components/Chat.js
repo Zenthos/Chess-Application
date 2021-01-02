@@ -4,21 +4,21 @@ import ScrollToBottom from 'react-scroll-to-bottom';
 import FadeIn from './fade-in';
 import '../styles/ComponentCSS.css';
 
-const Message = ({name, msg, role, index}) => {
+const Message = ({msgData, index}) => {
   return (
     <FadeIn>
       <div className={`border border-dark rounded mx-2 ${ index % 2 === 1 ? 'bg-primary' : 'bg-secondary' }`}>
         <div className="p-2">
-          <strong className="text-white">{name} <i>( {role} )</i></strong>
+          <strong className="text-white">{msgData.name} <i>( {msgData.role} )</i></strong>
           <hr className="my-1"/>
-          <p className="text-white">{msg}</p>
+          <p className="text-white">{msgData.msg}</p>
         </div>
       </div>
     </FadeIn>
   )
 }
 
-const Chat = ({ username, role }) => {
+const Chat = () => {
   const [message, setMessage] = useState('');
   const [msgList, setMsgList] = useState([]);
   const { socket } = useContext(SocketContext);
@@ -33,7 +33,7 @@ const Chat = ({ username, role }) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    socket.emit('Send Message', username, message, role);
+    socket.emit('Send Message', message);
     setMessage('');
   }
 
@@ -43,10 +43,10 @@ const Chat = ({ username, role }) => {
 
   return (
     <div className="chat-size">
-      <div className="m-2 h-100">
-        <ScrollToBottom className="chat-messages py-0 mt-3 mb-auto">
+      <div className="mx-2 h-100">
+        <ScrollToBottom className="chat-messages py-0 pt-3 mb-auto">
           {msgList.map((value, index) => {
-            return <Message key={index} name={value.name} msg={value.msg} role={value.role} index={index}/>
+            return <Message key={value.id} msgData={value} index={index}/>
           })}
         </ScrollToBottom>
         <form className="row m-2" onSubmit={submitHandler}>

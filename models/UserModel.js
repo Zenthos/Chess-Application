@@ -36,7 +36,7 @@ UserSchema.methods.comparePassword = function(password, hash, done) {
     if (!matching)
       return done(null, false, { msg: 'Incorrect Password', type: 'danger' });
     else
-      return done(null, this, { msg: "Successfully Logged In!", type: "success" });
+      return done(null, this, { msg: "Successfully Logged In! Please Wait...", type: "success" });
   });
 }
 

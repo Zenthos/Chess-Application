@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../Context/AuthContext';
 import "../styles/ComponentCSS.css";
 
 const Home = () => {
+  const { user, isAuthenticated } = useContext(AuthContext);
+
+  useEffect(() => {
+    
+  }, [user, isAuthenticated])
+
   return (
     <div className="container align-center">
 
-      <div className="jumbotron-test my-3 p-3 p-md-5 text-white rounded bg-primary">
+      <div className="jumbotron-chess my-3 p-3 p-md-5 text-white rounded bg-primary">
         <div className="col-md-6 px-0">
           <h1 className="display-4 font-italic">Play Chess Free!</h1>
           <p className="lead my-3">Welcome to the home page of this Chess Website built using the Full Stack MERN Framework. Find out about who made this website in the About Section, or figure out the basics of chess in the Learn Section, or just click below to play a game of chess.</p>

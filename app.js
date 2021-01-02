@@ -1,11 +1,12 @@
 const express = require("express");
 const http = require("http");
+const fs = require("fs");
 const mongoose = require("mongoose");
 const socketIO = require("socket.io");
 const cookieParser = require('cookie-parser');
 const path = require('path');
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 const app = express();
 
 const keys = require('./config/keys').module;
@@ -15,7 +16,7 @@ mongoose.connect(process.env.MONGODB_URI || keys.MongoURI, { useNewUrlParser: tr
 });
 
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIO(server, { cookie: false });
 const SocketListeners = require('./sockets/listeners');
 const listeners = new SocketListeners(io);
 

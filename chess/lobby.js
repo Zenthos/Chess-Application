@@ -11,8 +11,9 @@ const Lobby = function(name, playingNpc) {
 // Chat Functions
 /////////////////////////////////////////////////////////////////
 
-Lobby.prototype.addMessage = function(io, { name, role, msg }) {
-  this.logs.push({ name, msg, role });
+Lobby.prototype.addMessage = function(io, name, role, msg) {
+  let log = { id: this.logs.length, name, msg, role };
+  this.logs.push(log);
   this.sendLogs(io);
 }
 
@@ -37,7 +38,7 @@ Lobby.prototype.playAgain = function() {
 }
 
 Lobby.prototype.updateGame = function(socket, io, role, clickX, clickY, promoteSelection) {
-  // if(role === this.game.color && !this.isGameOver()) {
+  if(role === this.game.color && !this.isGameOver()) {
     if (this.game.selectedPiece) {
       this.game.handleClick(clickX, clickY, this, socket, io, promoteSelection);
       io.in(this.name).emit('update', this.game.pieces, this.game.color, this.game.getKingStates());
@@ -45,7 +46,7 @@ Lobby.prototype.updateGame = function(socket, io, role, clickX, clickY, promoteS
       this.game.select(clickX, clickY);
       socket.emit('update', this.game.pieces, this.game.color, this.game.getKingStates());
     }
-  // }
+  }
 }
 
 Lobby.prototype.BlackAndWhitePresent = function() {

@@ -25,8 +25,8 @@ module.exports = class SocketListeners {
         
         let lobby = this.getLobby(roomName);
         socket.join(roomName);
-        lobby.addMessage(this.io, { name: 'System', msg: `${username} (${role}) has joined!`, role: 'Admin'});
-        
+        lobby.addMessage(this.io, 'System', 'Admin', `${username} (${role}) has joined!`);
+
         // This callback is used to send the client a message if connection was successful or rejected
         callback(lobby.addPlayer(client));
 
@@ -39,7 +39,7 @@ module.exports = class SocketListeners {
         const { username, roomName, role } = this.getClient(socket.client.id);
         const lobby = this.getLobby(roomName);
         
-        lobby.addMessage(this.io, { name: 'System', msg: `${username} (${role}) has disconnected!`, role: 'Admin'})
+        lobby.addMessage(this.io, 'System', 'Admin', `${username} (${role}) has disconnected!`)
         lobby.removePlayer(username);
         
         if (lobby.players.length === 0) {
@@ -67,13 +67,14 @@ module.exports = class SocketListeners {
         lobby.updateGame(socket, this.io, role, clickX, clickY, promoteSelection);
       });
       
-      socket.on('Send Message', (name, msg, role) => {
+      socket.on('Send Message', (msg) => {
         if (!this.clients.hasOwnProperty(socket.client.id)) return;
         
+        const { username, role } = this.getClient(socket.client.id);
         const roomName =  this.getRoomName(socket.client.id);
         const lobby = this.getLobby(roomName);
         
-        lobby.addMessage(this.io, { name, msg, role });
+        lobby.addMessage(this.io, username, role, msg);
       });
       
       //////////////////////////////////////////////////////////////////
@@ -84,12 +85,14 @@ module.exports = class SocketListeners {
         if (!this.clients.hasOwnProperty(socket.client.id)) return;
         
         const roomName =  this.getRoomName(socket.client.id);
+        const { role } = this.getClient(socket.client.id);
         const { game } = this.lobbies[roomName];
         
-        socket.emit('update', game.pieces, game.color, game.getKingStates());
+        socket.emit('set client color', role);
         
         const { status, playerMissing } = this.lobbies[roomName].BlackAndWhitePresent();
         this.io.in(roomName).emit('wait', status, playerMissing);
+        socket.emit('update', game.pieces, game.color, game.getKingStates());
       });
       
       socket.on('Get Logs', () => {

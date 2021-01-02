@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const Service = {
   login: user => {
     return fetch('/user/login',{
@@ -38,13 +40,11 @@ const Service = {
       .then(data => data);
   },
   isAuthenticated: () => {
-    return fetch('/user/authenticated')
-      .then(res=>{
-        if(res.status !== 401)
-          return res.json().then(data => data);
-        else
-          return { isAuthenticated: false, user: null };
-      });
+    return axios.get('/user/authenticated')
+      .then((res) => {
+        return res.data;
+      })
+      .catch(err => console.log(err));
   }
 }
 

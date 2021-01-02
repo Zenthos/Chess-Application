@@ -16,7 +16,7 @@ const MoveHistory = () => {
   }, [socket]);
 
   return (
-    <ol className="chat-size pl-4">
+    <ol className="chat-size border-top-0">
       {history.map((value, index) => {
         return <li key={index}>{value}</li>;
       })}
@@ -26,7 +26,7 @@ const MoveHistory = () => {
 
 const UserList = () => {
   return (
-    <div className="chat-size">
+    <div className="chat-size border-top-0">
       
     </div>
   )
@@ -34,8 +34,8 @@ const UserList = () => {
 
 const ChatInterface = ({ username, role }) => {
   return (
-    <div className="m-2 p-2">
-      <Tabs defaultActiveKey="chat">
+    <div className="m-2 p-2 border-top-0">
+      <Tabs className="border-0" defaultActiveKey="chat" transition={false}>
         <Tab className="card" eventKey="chat" title="Chat">
           <Chat username={username} role={role} />
         </Tab>
