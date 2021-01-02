@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, Redirect } from 'react-router-dom';
 import { Alert } from '../Components';
+import { AuthContext } from '../Context/AuthContext';
 
 const Register = () => {
   const [alerts, setAlerts] = useState([]);
@@ -8,6 +9,9 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [readyToRedirect, setReadyToRedirect] = useState(false);
+
+  const { isSubmitting, setIsSubmitting } = useContext(AuthContext);
 
   const handleUsername = event => setUsername(event.target.value);
   const handleEmail = event => setEmail(event.target.value);
@@ -26,7 +30,14 @@ const Register = () => {
         body: JSON.stringify({ username, email, password })
       })
       .then(data => data.json())
-      .then(res => setAlerts(res.messages))
+      .then(res => {
+        setAlerts(res.messages)
+        setIsSubmitting(true);
+        setTimeout(() => {
+          setReadyToRedirect(true);
+          setIsSubmitting(false);
+        }, 3000)
+      })
       .catch(err => console.log(err));
     } else {
       if (password !== confirmPassword)
@@ -50,22 +61,24 @@ const Register = () => {
     <div className="container">
       <div className="row mt-3">
         <div className="card col-md-6 m-auto">
-          <form className="text-center">
+          <form className="text-center" onSubmit={handleSubmit}>
             <img className="m-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="108" height="108" />
             <h1 className="h3 mb-3 font-weight-normal">Register</h1>
 
-            <input className="form-control my-3" type="text" onChange={handleUsername} placeholder="Username"/>
-            <input className="form-control my-3" type="email" onChange={handleEmail} placeholder="Email address"/>
-            <input className="form-control my-3" type="password" onChange={handlePassword} placeholder="Password"/>
-            <input className="form-control my-3" type="password" onChange={handleConfirmPassword} placeholder="Confirm Password"/>
+            <input className="form-control my-3" type="text" onChange={handleUsername} disabled={isSubmitting} placeholder="Username"/>
+            <input className="form-control my-3" type="email" onChange={handleEmail} disabled={isSubmitting} placeholder="Email address"/>
+            <input className="form-control my-3" type="password" onChange={handlePassword} disabled={isSubmitting} placeholder="Password"/>
+            <input className="form-control my-3" type="password" onChange={handleConfirmPassword} disabled={isSubmitting} placeholder="Confirm Password"/>
 
-            <button className="btn btn-primary btn-block my-3" onClick={handleSubmit} type="submit">Register</button>
+            <button className="btn btn-primary btn-block my-3" type="submit" disabled={isSubmitting}>Register</button>
 
             { alerts.map((value, index) => {
               return <Alert key={index} status={value.type} message={value.msg} />
             })}
 
-            <Link className='text-decoration-none' to='/login'>Already have an Account? Login</Link>
+            { readyToRedirect ? <Redirect to={{ pathname: '/' }} />: ""}
+
+            <Link className={`text-decoration-none ${isSubmitting ? "disabled":""}`} to='/login'>Already have an Account? Login</Link>
 
             <p className="my-3 text-muted">© 2019-2020</p>
           </form>

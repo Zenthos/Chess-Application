@@ -10,7 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [readyToRedirect, setReadyToRedirect] = useState(false);
 
-  const { setUser, setIsAuthenticated, isLoggingIn, setIsLoggingIn } = useContext(AuthContext);
+  const { setUser, setIsAuthenticated, isSubmitting, setIsSubmitting } = useContext(AuthContext);
 
   const handleEmail = event => setEmail(event.target.value);
   const handlePassword = event => setPassword(event.target.value);
@@ -24,10 +24,10 @@ const Login = () => {
         if (res.messages.length === 1 && res.messages[0].type === "success") {
           setUser(res.user);
           setIsAuthenticated(true);
-          setIsLoggingIn(true);
+          setIsSubmitting(true);
           setTimeout(() => {
             setReadyToRedirect(true);
-            setIsLoggingIn(false);
+            setIsSubmitting(false);
           }, 3000)
         }
   
@@ -57,10 +57,10 @@ const Login = () => {
             <img className="m-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="108" height="108" />
             <h1 className="h3 mb-3 font-weight-normal">Sign in</h1>
 
-            <input className="form-control my-3" type="email" onChange={handleEmail} disabled={isLoggingIn} placeholder="Email address"/>
-            <input className="form-control my-3" type="password" onChange={handlePassword} disabled={isLoggingIn} placeholder="Password"/>
+            <input className="form-control my-3" type="email" onChange={handleEmail} disabled={isSubmitting} placeholder="Email address"/>
+            <input className="form-control my-3" type="password" onChange={handlePassword} disabled={isSubmitting} placeholder="Password"/>
 
-            <button className="btn btn-primary btn-block my-3" onClick={handleSubmit} disabled={isLoggingIn} type="submit">Sign in</button>
+            <button className="btn btn-primary btn-block my-3" onClick={handleSubmit} disabled={isSubmitting} type="submit">Sign in</button>
             
             { alerts.map((value, index) => {
               return <Alert key={index} status={value.type} message={value.msg} />
@@ -68,7 +68,7 @@ const Login = () => {
 
             { readyToRedirect ? <Redirect to={{ pathname: '/' }} />: ""}
 
-            <Link className={`text-decoration-none ${isLoggingIn ? "disabled":""}`} to='/register'>Need an Account? Register</Link>
+            <Link className={`text-decoration-none ${isSubmitting ? "disabled":""}`} to='/register'>Need an Account? Register</Link>
             <p className="my-3 text-muted">© 2019-2020</p>
           </form>
         </div>

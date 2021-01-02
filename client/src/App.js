@@ -26,7 +26,7 @@ function App() {
         <PrivateRoute path="/friends" component={pages.Friends} />
         <PrivateRoute path="/settings" component={pages.Settings} />
 
-        <Route path="*" component={() => "404 NOT FOUND"} />
+        <Route path="*" component={() => <h1 className="m-3">ERROR 404 NOT FOUND</h1>} />
       </Switch>
     </>
   );

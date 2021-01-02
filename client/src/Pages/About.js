@@ -1,11 +1,123 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
+import { AuthContext } from '../Context/AuthContext';
+import { Alert } from '../Components';
 import "../styles/ComponentCSS.css";
 
 const About = () => {
+  const [email, setEmail] = useState('');
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+
+  const { isSubmitting, setIsSubmitting } = useContext(AuthContext);
+
+  const emailHandler = (event) => setEmail(event.target.value);
+  const subjectHandler = (event) => setSubject(event.target.value);
+  const messageHandler = (event) => setMessage(event.target.value);
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+    setShowAlert(true);
+
+    //No Purpose, delete later, just here to remove warnings
+    setIsSubmitting(false);
+    let data = `${email}\n${subject}\n${message}`;
+    data.slice(0, data.length);
+  }
+
   return (
-    <div className="container align-center">
-      <h1>About Me Page</h1>
-    </div>
+    <>
+      <div className="text-center text-white mast-container">
+        <div className="mast d-flex h-100 p-5 mx-auto flex-column">    
+          <div className="mt-auto">
+            <h1>Alex Nguyen</h1>
+            <p className="lead">Junior Software Engineer & Full-Stack Developer.</p>
+            <p className="lead">
+              <a className="btn btn-lg btn-secondary mx-2" href="#learnmore" >Learn more about Alex</a>
+              <a className="btn btn-lg btn-secondary mx-2" href="#futureplans" >See planned updates</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="container my-3">
+        <div className="row mb-5" id="learnmore">
+          <div className="col">
+            <h1>Who is Alex?</h1>
+            <p className="text-large">
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
+              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure 
+              dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit 
+              anim id est laborum."
+            </p>
+          </div>
+
+          <div className="col">
+            <h1>Skills</h1>
+            <p className="text-large">
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
+              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure 
+              dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit 
+              anim id est laborum."
+            </p>
+          </div>
+        </div>
+
+        <div className="row mb-5" id="futureplans">
+          <div className="col">
+            <h1>Planned Updates</h1>
+            <ul className="list-group">
+              <li className="list-item list-group-item-success">&#x2713; Implement Login/Register System</li>
+              <li className="list-item list-group-item-warning">... Complete the About Page</li>
+              <li className="list-item list-group-item-danger">&#x2613; Complete the Tutorial Page</li>
+              <li className="list-item list-group-item-danger">&#x2613; Create Chess AI</li>
+              <li className="list-item list-group-item-danger">&#x2613; Finish Chat Interface</li>
+              <li className="list-item list-group-item-danger">&#x2613; Design and Implement User Profiles</li>
+              <li className="list-item list-group-item-danger">&#x2613; Implement Friend System</li>
+              <li className="list-item list-group-item-danger">&#x2613; Implement User Settings</li>
+            </ul> 
+          </div>
+
+          <div className="col">
+            <h1>About this Application</h1>
+            <p className="text-large">
+              This Chess Application was built using the MERN (MongoDB, Express, React, Node.js) Full-Stack Framework.
+              In addition, communication between the server and clients, happen through the Socket.IO library. 
+            </p>
+            <p className="text-large">
+              All work has been done by one person, the sole contributor of this project, Alex. Criticisms and Issues are always welcome,
+              as I am always looking to improve my programming and make every single line of code of write, the most efficient one.
+            </p>
+            <p className="text-large">
+              To the left is everything I plan to add to the website. I don't have a deadline, so each item will be added at some point
+              in the future.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div className="row m-0">
+        <div className="col-3"></div>
+
+        <div className="col-6 text-center">
+          <h1>Contact</h1>
+          <form className="form-group" onSubmit={submitHandler}>
+            <input type="email" className="form-control mb-2" disabled={isSubmitting} onChange={emailHandler} placeholder="name@example.com" />
+            <input type="text" className="form-control mb-2" disabled={isSubmitting} onChange={subjectHandler} placeholder="Subject" />
+            <textarea className="form-control mb-3" disabled={isSubmitting} onChange={messageHandler} rows="3" placeholder="Write your message here..." />
+            { showAlert ? <Alert status={"success"} message={"Successfully Sent"}/>: "" }
+            <button type="submit" className="btn btn-primary mb-3" disabled={isSubmitting}>Submit</button>
+          </form>
+        </div>
+
+        <div className="col-3"></div>
+      </div>
+    </>
   )
 }
 

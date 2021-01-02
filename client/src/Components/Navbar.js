@@ -8,7 +8,7 @@ import AuthService from '../Service/AuthService';
 import '../styles/ComponentCSS.css';
 
 const Navbar = () => {
-  const { user, setUser, isAuthenticated, setIsAuthenticated, isLoggingIn } = useContext(AuthContext);
+  const { user, setUser, isAuthenticated, setIsAuthenticated, isSubmitting } = useContext(AuthContext);
   const [expanded, setExpanded] = useState(false);
   const [readyToRedirect, setReadyToRedirect] = useState(false);
 
@@ -41,7 +41,7 @@ const Navbar = () => {
     return (
       <>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} exact to="/">Home</NavLink>
-        <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/about">About Me</NavLink>
+        <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/about">About</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/how-to-play">How to Play</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/play">Play Chess</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/login">Login</NavLink>
@@ -62,7 +62,7 @@ const Navbar = () => {
             <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to="/friends">Friends</NavLink>
             <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to="/settings">Settings</NavLink>
             <Dropdown.Divider />
-            <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to="/about">About Me</NavLink>
+            <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to="/about">About</NavLink>
             <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to="/how-to-play">Learn Chess</NavLink>
             <Dropdown.Divider />
             <button className={`dropdown-item`} onClick={LogoutHandler}>Logout</button>
@@ -88,7 +88,7 @@ const Navbar = () => {
   return (
     <>
       { readyToRedirect ? <Redirect to="/login" />: "" }
-      <NavComponent className={ isLoggingIn ? "disabled":"" } onToggle={navToggle} expanded={expanded} bg="primary" expand="lg">
+      <NavComponent className={ isSubmitting ? "disabled":"" } onToggle={navToggle} expanded={expanded} bg="primary" expand="lg">
         <Link className="text-decoration-none" to="/">Chess App</Link>
         <NavComponent.Toggle aria-controls="responsive-navbar-nav" />
         <NavComponent.Collapse id="responsive-navbar-nav" >
