@@ -1,6 +1,5 @@
 const express = require("express");
 const http = require("http");
-const fs = require("fs");
 const mongoose = require("mongoose");
 const socketIO = require("socket.io");
 const cookieParser = require('cookie-parser');

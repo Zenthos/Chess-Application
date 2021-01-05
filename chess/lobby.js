@@ -1,10 +1,11 @@
 const Chess = require("./chess")
 
-const Lobby = function(name, playingNpc) {
-  this.game = new Chess(playingNpc);
+const Lobby = function(name, playingNPC) {
+  this.game = new Chess();
   this.name = name;
   this.players = [];
   this.logs = [];
+  this.opponentIsNPC = playingNPC;
 }
 
 //////////////////////////////////////////////////////////////////
@@ -13,6 +14,9 @@ const Lobby = function(name, playingNpc) {
 
 Lobby.prototype.addMessage = function(io, name, role, msg) {
   let log = { id: this.logs.length, name, msg, role };
+
+  if (msg === "!logdata") console.log(this);
+
   this.logs.push(log);
   this.sendLogs(io);
 }
@@ -70,8 +74,26 @@ Lobby.prototype.BlackAndWhitePresent = function() {
 }
 
 //////////////////////////////////////////////////////////////////
+// AI Functions
+/////////////////////////////////////////////////////////////////
+
+Lobby.prototype.simulateClick = function(socket, io) {
+  if (!this.opponentIsNPC) throw new Error("Function Called Without Proper Conditions!");
+
+  let aiObject = this.players.find((player) => player.hasOwnProperty('difficulty') && player.username === 'AIOpponent');
+
+  if (!aiObject) throw new Error("AI Object has not been initialized!");
+
+  if (this.game.color === aiObject.role) {
+    this.game.AIMove(this, io);
+    io.in(this.name).emit('update', this.game.pieces, this.game.color, this.game.getKingStates());
+  }
+}
+
+//////////////////////////////////////////////////////////////////
 // Lobby Functions
 /////////////////////////////////////////////////////////////////
+
 
 Lobby.prototype.addPlayer = function(player) {
   const { username, role } = player;
@@ -79,25 +101,39 @@ Lobby.prototype.addPlayer = function(player) {
   
   for (let user of this.players) {
     if (user.username === username)
-      responses.push({ msg: "Cannot Join, Username Already Taken", type: "danger" });
+    responses.push({ msg: "Cannot Join, Username Already Taken", type: "danger" });
     
     if (user.role === role && role !== "Spectator")
-      responses.push({ msg: "Cannot Join, Color Already Taken", type: "danger" });
+    responses.push({ msg: "Cannot Join, Color Already Taken", type: "danger" });
   }
-
+  
   if (responses.length === 0) {
     this.players.push({ username, role });
+    
+    if (this.opponentIsNPC)
+    this.players.push({ username: 'AIOpponent', role: `${this.players[0].role === 'White'? 'Black':'White'}`, difficulty: "easy" });
+    
     responses.push({ msg: "Success! Joining Room...", type: "success" });
     return { status: "Success", responses };
   }
-
+  
   return { status: "Failed", responses };
 }
 
 Lobby.prototype.removePlayer = function(username){
   let indexOfPlayerToRemove = this.players.findIndex(item => item.username === username);
   if (indexOfPlayerToRemove !== -1)
-    this.players.splice(indexOfPlayerToRemove, 1);
+  this.players.splice(indexOfPlayerToRemove, 1);
+}
+
+Lobby.prototype.onlyContainsAI = function() {
+  if (this.players.length === 1) {
+    let lastPlayer = this.players[0];
+
+    if (lastPlayer.username === 'AIOpponent' && lastPlayer.hasOwnProperty('difficulty'))
+      return true;
+  }
+  return false;
 }
 
 module.exports = Lobby;

@@ -1,6 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../Context/AuthContext';
-import { Alert } from '../Components';
+import { FadeIn, Alert } from '../Components';
+import { Carousel } from 'react-bootstrap';
+import placeholder from '../assets/placeholder.png';
 import "../styles/ComponentCSS.css";
 
 const About = () => {
@@ -25,6 +27,14 @@ const About = () => {
     data.slice(0, data.length);
   }
 
+  const Caption = React.forwardRef(({ children, text, subtext }, ref) => (
+    <div className={"mt-1"} ref={ref} >
+      <h2>{text}</h2>
+      <p>{subtext}</p>
+      {children}
+    </div>
+  ));
+
   return (
     <>
       <div className="text-center text-white mast-container">
@@ -33,16 +43,16 @@ const About = () => {
             <h1>Alex Nguyen</h1>
             <p className="lead">Junior Software Engineer & Full-Stack Developer.</p>
             <p className="lead">
-              <a className="btn btn-lg btn-secondary mx-2" href="#learnmore" >Learn more about Alex</a>
-              <a className="btn btn-lg btn-secondary mx-2" href="#futureplans" >See planned updates</a>
+              <a className="btn btn-lg btn-secondary m-2" href="#learnmore" >Learn more about Alex</a>
+              <a className="btn btn-lg btn-secondary m-2" href="#futureplans" >See planned updates</a>
             </p>
           </div>
         </div>
       </div>
 
       <div className="container my-3">
-        <div className="row mb-5" id="learnmore">
-          <div className="col">
+        <div className="row mb-3" id="learnmore">
+          <div className="col-sm">
             <h1>Who is Alex?</h1>
             <p className="text-large">
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
@@ -54,7 +64,7 @@ const About = () => {
             </p>
           </div>
 
-          <div className="col">
+          <div className="col-sm">
             <h1>Skills</h1>
             <p className="text-large">
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
@@ -67,23 +77,23 @@ const About = () => {
           </div>
         </div>
 
-        <div className="row mb-5" id="futureplans">
-          <div className="col">
+        <div className="row mb-3" id="futureplans">
+          <div className="col-sm">
             <h1>Planned Updates</h1>
-            <ul className="list-group">
-              <li className="list-item list-group-item-success">&#x2713; Implement Login/Register System</li>
-              <li className="list-item list-group-item-warning">... Complete the About Page</li>
-              <li className="list-item list-group-item-danger">&#x2613; Complete the Tutorial Page</li>
-              <li className="list-item list-group-item-danger">&#x2613; Create Chess AI</li>
+            <ul className="list-group mb-3">
+              <li className="list-item list-group-item-warning">... Implement Login/Register System</li>
+              <li className="list-item list-group-item-warning">... Create Chess AI</li>
               <li className="list-item list-group-item-danger">&#x2613; Finish Chat Interface</li>
               <li className="list-item list-group-item-danger">&#x2613; Design and Implement User Profiles</li>
               <li className="list-item list-group-item-danger">&#x2613; Implement Friend System</li>
               <li className="list-item list-group-item-danger">&#x2613; Implement User Settings</li>
+              <li className="list-item list-group-item-danger">&#x2613; Complete the About Page</li>
+              <li className="list-item list-group-item-danger">&#x2613; Complete the Tutorial Page</li>
             </ul> 
           </div>
 
-          <div className="col">
-            <h1>About this Application</h1>
+          <div className="col-sm">
+            <h1>About this App</h1>
             <p className="text-large">
               This Chess Application was built using the MERN (MongoDB, Express, React, Node.js) Full-Stack Framework.
               In addition, communication between the server and clients, happen through the Socket.IO library. 
@@ -99,23 +109,52 @@ const About = () => {
           </div>
         </div>
 
-      </div>
-
-      <div className="row m-0">
-        <div className="col-3"></div>
-
-        <div className="col-6 text-center">
-          <h1>Contact</h1>
-          <form className="form-group" onSubmit={submitHandler}>
-            <input type="email" className="form-control mb-2" disabled={isSubmitting} onChange={emailHandler} placeholder="name@example.com" />
-            <input type="text" className="form-control mb-2" disabled={isSubmitting} onChange={subjectHandler} placeholder="Subject" />
-            <textarea className="form-control mb-3" disabled={isSubmitting} onChange={messageHandler} rows="3" placeholder="Write your message here..." />
-            { showAlert ? <Alert status={"success"} message={"Successfully Sent"}/>: "" }
-            <button type="submit" className="btn btn-primary mb-3" disabled={isSubmitting}>Submit</button>
-          </form>
+        <div align="center">
+          <h1>Other Projects</h1>
+          <Carousel indicators={false} interval={null} slide={false} wrap={true}>
+            <Carousel.Item>
+              <FadeIn>
+                <img src={placeholder} className="img-fluid" alt="first slide"/>
+                <Carousel.Caption as={Caption} text={"First Slide"} />
+              </FadeIn>
+            </Carousel.Item>
+            <Carousel.Item>
+              <FadeIn>
+                <img src={placeholder} className="img-fluid" alt="second slide"/>
+                <Carousel.Caption as={Caption} text={"Second Slide"} />
+              </FadeIn>
+            </Carousel.Item>
+            <Carousel.Item>
+              <FadeIn>
+                <img src={placeholder} className="img-fluid" alt="third slide"/>
+                <Carousel.Caption as={Caption} text={"Third Slide"} />
+              </FadeIn>
+            </Carousel.Item>
+            <Carousel.Item>
+              <FadeIn>
+                <img src={placeholder} className="img-fluid" alt="fourth slide"/>
+                <Carousel.Caption as={Caption} text={"Fourth Slide"} />
+              </FadeIn>
+            </Carousel.Item>
+          </Carousel>
         </div>
 
-        <div className="col-3"></div>
+        <div className="row m-0">
+          <div className="col-1"></div>
+
+          <div className="col-10 text-center">
+            <h1 className="mt-3">Contact</h1>
+            <form className="form-group" onSubmit={submitHandler}>
+              <input type="email" className="form-control mb-2" disabled={isSubmitting} onChange={emailHandler} placeholder="name@example.com" />
+              <input type="text" className="form-control mb-2" disabled={isSubmitting} onChange={subjectHandler} placeholder="Subject" />
+              <textarea className="form-control mb-3" disabled={isSubmitting} onChange={messageHandler} rows="3" placeholder="Write your message here..." />
+              { showAlert ? <Alert status={"warning"} message={"Feature Currently in Development! No Message Sent."}/>: "" }
+              <button type="submit" className="btn btn-primary mb-3" disabled={isSubmitting}>Submit</button>
+            </form>
+          </div>
+
+          <div className="col-1"></div>
+        </div>
       </div>
     </>
   )

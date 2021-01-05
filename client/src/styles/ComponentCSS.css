@@ -119,3 +119,8 @@ html {
 .text-large {
   font-size: large;
 }
+
+.toggle-button-active {
+  background-image: linear-gradient(#4e5052,#4e5052 60%,#51565c) !important;
+  pointer-events: none;
+}

@@ -22,6 +22,7 @@ const randomString = (min, max) => {
 const SelectOpponent = ({ setSetupState, windowWidth }) => {
   const [show, setShow] = useState(true);
   const [alerts, setAlerts] = useState([]);
+  const [role, setRole] = useState('');
   const [opponent, setOpponent] = useState(0);
   const [difficulty, setDifficulty] = useState(0);
   const [disabled, setDisabled] = useState(false);
@@ -41,7 +42,7 @@ const SelectOpponent = ({ setSetupState, windowWidth }) => {
     } else {
       let username = randomString(6, 10);
       let room = randomString(6, 10);
-      socket.emit('join room', username, room, 'White', function (responseData) {
+      socket.emit('join room', username, room, role, true, (responseData) => {
         setAlerts(responseData.responses);
         if (responseData.status === 'Success') {
           setDisabled(true);
@@ -63,17 +64,23 @@ const SelectOpponent = ({ setSetupState, windowWidth }) => {
 
           <Modal.Body>
             <ToggleButtonGroup className="d-flex" type="checkbox" value={opponent} onChange={([a, b]) => setOpponent(b)}>
-              <ToggleButton value={"player"} disabled={opponent === "player" ? true:false}>Human</ToggleButton>
-              <ToggleButton value={"npc"} disabled={opponent === "npc" ? true:false}>Computer (Not Working)</ToggleButton>
+              <ToggleButton value={"player"} className={opponent === "player" ? "toggle-button-active":""}>Human</ToggleButton>
+              <ToggleButton value={"npc"} className={opponent === "npc" ? "toggle-button-active":""}>Computer</ToggleButton>
             </ToggleButtonGroup>
 
             <div className={opponent !== "npc" ? 'd-none':'my-3'}>
-              <h5 className="text-center my-3">Choose Opponent Difficulty</h5>
+              <h5 className="text-center my-3">Choose Opponent Difficulty (Not Fully Complete, Difficulty Won't Change) </h5>
               <ToggleButtonGroup className="d-flex" type="checkbox" value={difficulty} onChange={([a, b]) => setDifficulty(b)}>
-                <ToggleButton value={1} disabled={difficulty === 1 ? true:false}>Easy</ToggleButton>
-                <ToggleButton value={2} disabled={difficulty === 2 ? true:false}>Medium</ToggleButton>
-                <ToggleButton value={3} disabled={difficulty === 3 ? true:false}>Hard</ToggleButton>
-                <ToggleButton value={4} disabled={difficulty === 4 ? true:false}>Impossible</ToggleButton>
+                <ToggleButton value={1} className={difficulty === 1 ? "toggle-button-active":""}>Easy</ToggleButton>
+                <ToggleButton value={2} className={difficulty === 2 ? "toggle-button-active":""}>Medium</ToggleButton>
+                <ToggleButton value={3} className={difficulty === 3 ? "toggle-button-active":""}>Hard</ToggleButton>
+                <ToggleButton value={4} className={difficulty === 4 ? "toggle-button-active":""}>Impossible</ToggleButton>
+              </ToggleButtonGroup>
+
+              <h5 className="text-center my-3">Select A Color to Play As</h5>
+              <ToggleButtonGroup className="d-flex" type="checkbox" value={difficulty} onChange={([a, b]) => setRole(b)}>
+                <ToggleButton value={"White"} className={role === "White" ? "toggle-button-active":""}>White</ToggleButton>
+                <ToggleButton value={"Black"} className={role === "Black" ? "toggle-button-active":""}>Black</ToggleButton>
               </ToggleButtonGroup>
             </div>
 
@@ -86,7 +93,7 @@ const SelectOpponent = ({ setSetupState, windowWidth }) => {
             <Link to="/">
               <Button variant="secondary" type="Submit" onClick={handleClose} disabled={disabled}>Back</Button>
             </Link>
-            <Button variant="primary" type="Submit" disabled={((opponent === "npc" && [1,2,3,4].includes(difficulty))||opponent === "player")? false:true}>Next</Button>
+            <Button variant="primary" type="Submit" disabled={((['White', 'Black'].includes(role) && opponent === "npc" && [1,2,3,4].includes(difficulty))||opponent === "player")? false:true}>Next</Button>
           </Modal.Footer>
         </form>
       </Modal>

@@ -8,10 +8,10 @@ import '../styles/ComponentCSS.css';
 const getScale = (windowWidth, imageWidth) => {
   let scale = ((windowWidth * 0.85) / 2) / imageWidth;
 
-  if (scale > 0.70) 
+  if (scale > 0.60) 
     return scale;
   else
-    return 0.70;
+    return 0.60;
 }
 
 const Canvas = ({ windowWidth }) => {
@@ -165,7 +165,7 @@ const Canvas = ({ windowWidth }) => {
     }, [pieces, boardImg, figureImg, clientColor, windowWidth]);
 
   return (
-    <div align="center">
+    <div className="col-sm-8 p-2" align="center">
       <div className={`${gameReady ? '' : 'block-content'} ${needToPromote ? 'block-content' : ''}`}>
         <h1>{(aKingIsInCheck ? aKingIsInCheck.inCheck : false) ? `${aKingIsInCheck.color} King is in Check. `: ``}It is {currentPlayer}'s Turn!</h1>
         <canvas className="m-2" ref={canvasRef} onClick={handleClick} />

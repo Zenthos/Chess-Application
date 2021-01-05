@@ -1,6 +1,6 @@
 const { Rook, Knight, Bishop, Queen, King, Pawn } = require('./pieces');
 
-const Chess = function(playingNpc) {
+const Chess = function() {
   this.pieces = [];
   this.toDelete = [];
   this.color = 'White';
@@ -9,8 +9,11 @@ const Chess = function(playingNpc) {
   this.moveHistory = [];
   this.piecesToDelete = [];
   this.promoting = false;
-  this.playingNpc = playingNpc;
 }
+
+//////////////////////////////////////////////////////////////////
+// Init Functions
+/////////////////////////////////////////////////////////////////
 
 Chess.prototype.init = function() {
   for (let color of ['White', 'Black']) {
@@ -39,6 +42,10 @@ Chess.prototype.init = function() {
   }
 }
 
+//////////////////////////////////////////////////////////////////
+// Chess Functions
+/////////////////////////////////////////////////////////////////
+
 Chess.prototype.handleClick = function(clickX, clickY, lobby, socket, io, selection) {
   let newSpot = { x: clickX, y: clickY };
   let selected = this.selectedPiece;
@@ -48,67 +55,58 @@ Chess.prototype.handleClick = function(clickX, clickY, lobby, socket, io, select
     selected.availableTiles.splice(0, selected.availableTiles.length);
 
     if (this.promoting) {
-      let promotionLetter = { 'Rook' : 'R', 'Knight': 'N', 'Bishop': 'B', 'Queen': 'Q' };
       this.promotion(selected, selection);
-      this.promoting = false;
-      this.moveHistory[this.moveHistory.length - 1] += `=${promotionLetter[selection]}`
-
     } else {
       if ([0, 7].includes(newSpot.y) && selected.pieceType === 'Pawn') {
         socket.emit('set need to promote');
         this.promoting = true;
       }
-
-      if (this.color === 'Black') {
-        this.generateMoveSyntax();
-        io.in(lobby.name).emit('set moves', this.moveHistory);
-      }
-
+      this.generateMoveSyntax(lobby, io);
       this.switchColor();
     }
-
-    if (this.kingIsInCheck()) {
-      if (this.kingIsInCheckMate()) {
-        lobby.logs.push({ 
-          name: 'System', 
-          msg: `${this.color} has been Checkmated! ${this.color === 'White' ? 'Black' : 'White'} has won!`, 
-          role: 'Admin'
-        });
-  
-        this.moveHistory[this.moveHistory.length - 1] += '++';
-        io.in(lobby.name).emit('Chat Update', lobby.logs);
-        io.in(lobby.name).emit('set moves', this.moveHistory);
-        this.gameOver = true;
-      } else {
-        lobby.logs.push({ 
-          name: 'System', 
-          msg: `${this.color} King is in Check!`, 
-          role: 'Admin'
-        });
-  
-        this.moveHistory[this.moveHistory.length - 1] += '+';
-        io.in(lobby.name).emit('Chat Update', lobby.logs);
-      }
-    }
+    this.isGameEnding(lobby, io);
   }
-  
+
   if (!this.promoting) {
     this.selectedPiece.selected = false;
     this.selectedPiece = null;
   }
+  this.deleteObsoletePieces();
+}
 
-  if (this.piecesToDelete.length > 0) {
-    for (let index of this.piecesToDelete)
-      this.pieces.splice(index, 1);
+Chess.prototype.isGameEnding = function(lobby, io) {
+  let count = 0;
+  let allyPieces = this.pieces.filter((piece) => piece.player === this.color);
 
-    this.piecesToDelete.splice(0, this.piecesToDelete.length);
+  for (let piece of allyPieces) {
+    if (piece.listOfMoves(this.pieces).length > 0) {
+      // console.log(piece.pieceType, piece.player, piece.x, piece.y);
+      count += piece.listOfMoves(this.pieces).length;
+    }
+  }
+
+  if (count === 0) {
+    if (this.kingIsInCheck())
+      this.endGame(lobby, io, `${this.color} has been Checkmated! ${this.color === 'White' ? 'Black' : 'White'} has won!`);
+    else
+      this.endGame(lobby, io, `${this.color} has no more legal moves! The King is not in check however, so the game ends in a Stalemate!`);
+  } else {
+    if (this.kingIsInCheck()) {
+      lobby.logs.push({ 
+        name: 'System', 
+        msg: `${this.color} King is in Check!`, 
+        role: 'Admin'
+      });
+
+      this.moveHistory[this.moveHistory.length - 1] += '+';
+      io.in(lobby.name).emit('Chat Update', lobby.logs); 
+    }
   }
 }
 
 Chess.prototype.promotion = function(selected, option) {
-  let otherColor = (this.color === 'White' ? 'Black' : 'White');
   for (let [index, piece] of this.pieces.entries()) {
-    if (piece.pieceType === 'Pawn' &&  piece.player === otherColor && piece.x === selected.x && piece.y === selected.y) {
+    if (piece.pieceType === 'Pawn' &&  piece.player === this.color && piece.x === selected.x && piece.y === selected.y) {
       switch(option) {
         case 'Rook':
           this.pieces[index] = new Rook('Rook', selected.player, selected.x, selected.y, 'R');
@@ -125,6 +123,10 @@ Chess.prototype.promotion = function(selected, option) {
       }
     }
   }
+
+  let promotionLetter = { 'Rook' : 'R', 'Knight': 'N', 'Bishop': 'B', 'Queen': 'Q' };
+  this.promoting = false;
+  this.moveHistory[this.moveHistory.length - 1] += `=${promotionLetter[option]}`
 }
 
 Chess.prototype.select = function(clickX, clickY) {
@@ -132,48 +134,95 @@ Chess.prototype.select = function(clickX, clickY) {
     if (piece.x === clickX && piece.y === clickY && piece.player === this.color) {
       this.selectedPiece = piece;
       piece.selected = true;
-      piece.availableTiles = piece.listOfMoves(this.pieces)
+      piece.availableTiles = piece.listOfMoves(this.pieces);
       break;
     }
   }
 }
 
-Chess.prototype.getListOfPossibleMoves = function() {
-  let listOfMoves = [];
-  for (let piece of this.pieces) {
-    let pieceMoveList = piece.listOfMoves(this.pieces);
-    if (pieceMoveList.length !== 0 && piece.player === this.color)
-      listOfMoves.concat(pieceMoveList);
-  }
-  return listOfMoves;
+//////////////////////////////////////////////////////////////////
+// AI Functions
+/////////////////////////////////////////////////////////////////
+
+Chess.prototype.getRandomPiece = function() {
+  let allyPieces = this.pieces.filter((piece) => piece.player === this.color && piece.listOfMoves(this.pieces).length > 0);
+
+  return allyPieces[Math.floor(Math.random() * allyPieces.length)];
 }
 
-Chess.prototype.generateMoveSyntax = function() {
-  let secondLast = this.moveHistory[this.moveHistory.length - 2];
-  let last = this.moveHistory[this.moveHistory.length - 1];
+Chess.prototype.AIMove = function(lobby, io) {
+  if (!this.gameOver) {
+    let piece = this.getRandomPiece();
 
-  let newMove = `${secondLast} ${last}`;
-  this.moveHistory.splice((this.moveHistory.length - 2), 2);
-  this.moveHistory.push(newMove);
+    if (piece) {
+      let possibleMoves = piece.listOfMoves(this.pieces);
+    
+      let position = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+      let [ x, y ] = position;
+    
+      piece.moveOrCapture(this.pieces, { x, y }, lobby);
+      this.switchColor();
+      
+      this.isGameEnding(lobby, io);
+      
+      this.deleteObsoletePieces();
+    }
+  }
 }
 
-Chess.prototype.kingIsInCheckMate = function() {
-  let noAvailableMoves = true;
-  for (let piece of this.pieces) {
-    if (piece.listOfMoves(this.pieces).length !== 0)
-      noAvailableMoves = false;
-  }
-  return noAvailableMoves;
+//////////////////////////////////////////////////////////////////
+// Helper Functions
+/////////////////////////////////////////////////////////////////
+
+Chess.prototype.endGame = function(lobby, io, message) {
+  lobby.logs.push({ name: 'System', msg: message, role: 'Admin' });
+  this.moveHistory[this.moveHistory.length - 1] += '++';
+  io.in(lobby.name).emit('Chat Update', lobby.logs);
+  io.in(lobby.name).emit('set moves', this.moveHistory);
+  this.gameOver = true;
 }
 
 Chess.prototype.kingIsInCheck = function() {
-  for (let piece of this.pieces) {
-    if (piece.pieceType === 'King' && piece.player === this.color) {
-      if (piece.kingChecked(this.pieces))
-        return true;
-    }
+  let allyPieces = this.pieces.filter((piece) => piece.player === this.color);
+
+  for (let piece of allyPieces) {
+    if (piece.pieceType === 'King' && piece.kingChecked(this.pieces))
+      return true;
   }
   return false;
+}
+
+Chess.prototype.generateMoveSyntax = function(lobby, io) {
+  if (this.color === 'Black') {
+    let secondLast = this.moveHistory[this.moveHistory.length - 2];
+    let last = this.moveHistory[this.moveHistory.length - 1];
+
+    let newMove = `${secondLast} ${last}`;
+    this.moveHistory.splice((this.moveHistory.length - 2), 2);
+    this.moveHistory.push(newMove);
+    io.in(lobby.name).emit('set moves', this.moveHistory);
+  }
+}
+
+Chess.prototype.deleteObsoletePieces = function() {
+  if (this.piecesToDelete.length > 0) {
+    for (let index of this.piecesToDelete)
+      this.pieces.splice(index, 1);
+
+    this.piecesToDelete.splice(0, this.piecesToDelete.length);
+  }
+}
+
+Chess.prototype.getListOfPossibleMoves = function() {
+  let allyPieces = this.pieces.filter((piece) => piece.player === this.color);
+
+  var listOfMoves = [];
+  for (let piece of allyPieces) {
+    let pieceMoveList = piece.listOfMoves(this.pieces);
+    if (piece.listOfMoves(this.pieces).length > 0)
+      listOfMoves = listOfMoves.concat(pieceMoveList);
+  }
+  return listOfMoves;
 }
 
 Chess.prototype.getKingStates = function() {

@@ -8,11 +8,11 @@ const Pawn = () => {
     <FadeIn>
       <div className="card border-top-0">
         <div className="row m-3">
-          <div className="col d-flex align-items-center justify-content-center">
-            <img src={placeholder} alt=""></img>
+          <div className="col-sm d-flex align-items-center justify-content-center">
+            <img src={placeholder} className="img-fluid" alt=""></img>
           </div>
           <div className="col">
-            <h5>Pawn</h5>
+            <h5 className="mt-3">Pawn</h5>
             <p> Pawns move one square forward in a straight line. They cannot move horizontally, diagonally or backwards.</p>
     
             <p>
@@ -40,11 +40,11 @@ const Rook = () => {
     <FadeIn>
       <div className="card border-top-0">
         <div className="row m-3">
-          <div className="col d-flex align-items-center justify-content-center">
-            <img src={placeholder} alt=""></img>
+          <div className="col-sm d-flex align-items-center justify-content-center">
+            <img src={placeholder} className="img-fluid" alt=""></img>
           </div>
           <div className="col">
-            <h5>Rook</h5>
+            <h5 className="mt-3">Rook</h5>
             <p> 
             The rook, sometimes called the castle, can move any number of squares horizontally 
             along its current row (rank) or column (file). It cannot pass through pieces of the 
@@ -63,11 +63,11 @@ const Knight = () => {
     <FadeIn>
       <div className="card border-top-0">
         <div className="row m-3">
-          <div className="col d-flex align-items-center justify-content-center">
-            <img src={placeholder} alt=""></img>
+          <div className="col-sm d-flex align-items-center justify-content-center">
+            <img src={placeholder} className="img-fluid" alt=""></img>
           </div>
           <div className="col">
-            <h5>Knight</h5>
+            <h5 className="mt-3">Knight</h5>
   
             <p>
               Knights are the only chess piece that may be moved ‘through’ other pieces by ‘jumping’ over them. It 
@@ -102,11 +102,11 @@ const Bishop = () => {
     <FadeIn>
       <div className="card border-top-0">
         <div className="row m-3">
-          <div className="col d-flex align-items-center justify-content-center">
-            <img src={placeholder} alt=""></img>
+          <div className="col-sm d-flex align-items-center justify-content-center">
+            <img src={placeholder} className="img-fluid" alt=""></img>
           </div>
           <div className="col">
-            <h5>Bishop</h5>
+            <h5 className="mt-3">Bishop</h5>
             <p>
               The bishop can move any number of squares diagonally - this means it 
               always moves along the diagonal line of squares matching the current colour of its square. 
@@ -126,11 +126,11 @@ const Queen = () => {
     <FadeIn>
       <div className="card border-top-0">
         <div className="row m-3">
-          <div className="col d-flex align-items-center justify-content-center">
-            <img src={placeholder} alt=""></img>
+          <div className="col-sm d-flex align-items-center justify-content-center">
+            <img src={placeholder} className="img-fluid" alt=""></img>
           </div>
           <div className="col">
-            <h5>Queen</h5>
+            <h5 className="mt-3">Queen</h5>
             <p>
               The queen may move any number of squares horizontally, vertically or diagonally. These 
               movements must be made in a single straight line during a single turn. (In other words, 
@@ -150,11 +150,11 @@ const King = () => {
     <FadeIn>
       <div className="card border-top-0">
         <div className="row m-3">
-          <div className="col d-flex align-items-center justify-content-center">
-            <img src={placeholder} alt=""></img>
+          <div className="col-sm d-flex align-items-center justify-content-center">
+            <img src={placeholder} className="img-fluid" alt=""></img>
           </div>
           <div className="col">
-            <h5>King</h5>
+            <h5 className="mt-3">King</h5>
             <p>  
               The king moves a single space horizontally, vertically or diagonally. 
               The king cannot move into a space that would grant a check or checkmate to the opponent player.
@@ -177,18 +177,18 @@ const Promotion = () => {
     <FadeIn>
       <div className="card border-top-0">
         <div className="row m-3">
-          <div className="col d-flex align-items-center justify-content-center">
+          <div className="col-sm d-flex align-items-center justify-content-center">
             <Carousel interval={null} wrap={false}>
               <Carousel.Item>
-                <img src={placeholder} alt="Third slide"/>
+                <img src={placeholder} className="img-fluid" alt="Third slide"/>
               </Carousel.Item>
               <Carousel.Item>
-                <img src={placeholder} alt="Third slide"/>
+                <img src={placeholder} className="img-fluid" alt="Third slide"/>
               </Carousel.Item>
             </Carousel>
           </div>
           <div className="col">
-            <h5>Promotion</h5>
+            <h5 className="mt-3">Promotion</h5>
             <p>  
               If a pawn reaches the opposite edge of the board - the farthest row (rank) from the controlling
               player - it is promoted to another piece: a rook, knight, bishop or queen. The new piece replaces 
@@ -217,18 +217,18 @@ const Enpassant = () => {
     <FadeIn>
       <div className="card border-top-0">
         <div className="row m-3">
-          <div className="col d-flex align-items-center justify-content-center">
+          <div className="col-sm d-flex align-items-center justify-content-center">
             <Carousel interval={null} wrap={false}>
               <Carousel.Item>
-                <img src={placeholder} alt="Third slide"/>
+                <img src={placeholder} className="img-fluid" alt="Third slide"/>
               </Carousel.Item>
               <Carousel.Item>
-                <img src={placeholder} alt="Third slide"/>
+                <img src={placeholder} className="img-fluid" alt="Third slide"/>
               </Carousel.Item>
             </Carousel>
           </div>
           <div className="col">
-            <h5>En Passant</h5>
+            <h5 className="mt-3">En Passant</h5>
             <p>  
               En passant - French for ‘in passing’ - is one of the most famous moves in chess. 
               En passant occurs when a pawn moves two squares forward as the result of its optional starting move.
@@ -257,18 +257,18 @@ const Castling = () => {
     <FadeIn>
       <div className="card border-top-0">
         <div className="row m-3">
-          <div className="col d-flex align-items-center justify-content-center">
+          <div className="col-sm d-flex align-items-center justify-content-center">
             <Carousel interval={null} wrap={false}>
               <Carousel.Item>
-                <img src={placeholder} alt="Third slide"/>
+                <img src={placeholder} className="img-fluid" alt="Third slide"/>
               </Carousel.Item>
               <Carousel.Item>
-                <img src={placeholder} alt="Third slide"/>
+                <img src={placeholder} className="img-fluid" alt="Third slide"/>
               </Carousel.Item>
             </Carousel>
           </div>
           <div className="col">
-            <h5>Castling</h5>
+            <h5 className="mt-3">Castling</h5>
             <p>  
             Castling is perhaps the most complicated basic rule in chess, and a rule that many 
             beginners often overlook as a result.
@@ -348,8 +348,8 @@ const Tutorial = () => {
           the first player to run out of time forfeits the game. 
           </p>
         </div>
-        <div className="col d-flex align-items-center justify-content-center">
-          <img src={placeholder} alt=""></img>
+        <div className="col-sm d-flex align-items-center justify-content-center">
+          <img src={placeholder} className="img-fluid" alt=""></img>
         </div>
       </div>
       
@@ -383,37 +383,41 @@ const Tutorial = () => {
         <div className="col">
           <h3>Check, Checkmate, or Stalemate</h3>
           <p>
-          Chess is played by two players on a chess board measuring eight-by-eight squares. 
-          The 64 squares alternate between light and dark colours - traditionally, black and white. 
-          When properly set up, a white square should be the rightmost square along the edge closest to each player. 
+          When a piece moves in a way that would allow a player to capture the opponent’s 
+          king on their next turn, the attacking player typically announces “check”.
           </p>
-    
+
           <p>
-          Players’ pieces are set up in the two horizontal rows (known as ranks) closest to each player. 
-          The second rank - ie. the second row from the player’s perspective - consists of a line of eight pawns, 
-          each placed on a single square. 
+          The player placed into check must move their king or move another piece to stop the 
+          attack on their next turn - either by blocking the move or capturing the attacking piece.
           </p>
-    
+
           <p>
-          The closer rank is nearly symmetrical, with rooks (also known as castles) placed on the two leftmost and 
-          rightmost corner squares, followed by knights on the inside space next to them, then bishops. 
+          If a player creates a situation where their opponent cannot stop their king from 
+          being captured on the next turn, the attacking player announces “checkmate” and 
+          immediately wins the game. The king is never captured - a game of chess is won when 
+          a successful checkmate is announced. 
           </p>
-    
+
           <p>
-          The two central squares of the rank are occupied by the king and queen. The queen is 
-          placed on the square matching her colour (for example, the black queen on the black square), with the king 
-          occupying the remaining square of the opposite colour. This means that the king and queen of each colour face 
-          each other, making the correct setup symmetrical between the two players.
+          A player can also choose to resign, granting their opponent the victory. Matches can also end 
+          in an agreed draw - for example, as the result of stalemate leaving a player without any legal 
+          moves, or if no player can win using available legal moves, a situation known as a “dead position”. 
+          One example of a dead position is when both players are left with their king as their only remaining 
+          piece on the board.
           </p>
-    
+
           <p>
-          The white player takes the first move, with players alternating single turns until a player is defeated 
-          via checkmate or resigns. A draw can also be agreed. If playing with an optional timer, as in tournaments, 
-          the first player to run out of time forfeits the game. 
+          Draws can also occur as the result of advanced rules typically used in professional tournaments, 
+          including identical board positions occurring three or five times - rules known respectively as 
+          threefold repetition and fivefold repetition - or no captures or pawn moves taking place within 
+          the last 50 or 75 moves. The exact rules used can depend on the tournament and agreement between 
+          the players. 
           </p>
+
         </div>
-        <div className="col d-flex align-items-center justify-content-center">
-          <img src={placeholder} alt=""></img>
+        <div className="col-sm d-flex align-items-center justify-content-center">
+          <img src={placeholder} className="img-fluid" alt=""></img>
         </div>
       </div>
 

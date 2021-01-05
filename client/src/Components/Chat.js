@@ -42,17 +42,15 @@ const Chat = () => {
   }
 
   return (
-    <div className="chat-size">
-      <div className="mx-2 h-100">
-        <ScrollToBottom className="chat-messages py-0 pt-3 mb-auto">
-          {msgList.map((value, index) => {
-            return <Message key={value.id} msgData={value} index={index}/>
-          })}
-        </ScrollToBottom>
-        <form className="row m-2" onSubmit={submitHandler}>
-          <input type="text" className="form-control" value={message} placeholder={"Click here to send a message!"} onChange={messageHandler} />
-        </form>
-      </div>
+    <div className="mx-2" style={{ height: 'calc(100vh - 80px)' }}>
+      <ScrollToBottom className="chat-messages py-0 pt-3 mb-auto">
+        {msgList.map((value, index) => {
+          return <Message key={index} msgData={value} index={index}/>
+        })}
+      </ScrollToBottom>
+      <form className="px-2" onSubmit={submitHandler}>
+        <input type="text" className="form-control" value={message} placeholder={"Click here to send a message!"} onChange={messageHandler} />
+      </form>
     </div>
   )
 }

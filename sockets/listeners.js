@@ -14,12 +14,12 @@ module.exports = class SocketListeners {
       // Joining And Leaving
       /////////////////////////////////////////////////////////////////
 
-      socket.on('join room', (username, roomName, role, callback) => {
+      socket.on('join room', (username, roomName, role, playingNPC, callback) => {
         const client = { username, roomName, role };
         this.clients[socket.client.id] = client;
 
         if (!this.lobbies.hasOwnProperty(roomName)) {
-          this.lobbies[roomName] = new Lobby(roomName);
+          this.lobbies[roomName] = new Lobby(roomName, playingNPC);
           this.lobbies[roomName].init();
         } 
         
@@ -42,7 +42,7 @@ module.exports = class SocketListeners {
         lobby.addMessage(this.io, 'System', 'Admin', `${username} (${role}) has disconnected!`)
         lobby.removePlayer(username);
         
-        if (lobby.players.length === 0) {
+        if (lobby.players.length === 0 || lobby.onlyContainsAI()) {
           delete this.lobbies[roomName];
         } else {
           const { status, playerMissing } = lobby.BlackAndWhitePresent();
@@ -65,6 +65,9 @@ module.exports = class SocketListeners {
         const lobby = this.lobbies[roomName];
         
         lobby.updateGame(socket, this.io, role, clickX, clickY, promoteSelection);
+
+        if (lobby.opponentIsNPC)
+          setTimeout(() => lobby.simulateClick(socket, this.io), 2000);
       });
       
       socket.on('Send Message', (msg) => {
