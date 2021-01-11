@@ -1,192 +1,166 @@
-import React, { useRef, useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { SocketContext } from '../Context/SocketContext';
 import board from '../assets/chess-images/board.png';
 import figures from '../assets/chess-images/figures.png';
 import useImage from 'use-image';
+import { Circle, Text, Image } from 'react-konva';
+import { Stage, Layer, Portal } from 'react-konva-portal'
+import { useMeasure } from "react-use";
 import '../styles/ComponentCSS.css';
 
-const getScale = (windowWidth, imageWidth) => {
-  let scale = ((windowWidth * 0.85) / 2) / imageWidth;
-
-  if (scale > 0.60) 
-    return scale;
-  else
-    return 0.60;
-}
-
-const Canvas = ({ windowWidth }) => {
-  const canvasRef = useRef(null);
+const Canvas = () => {
   const { socket } = useContext(SocketContext);
-
+  const [ref, { width, height }] = useMeasure();
+  const [maxSize, setMaxSize] = useState(1000);
+  
   const [boardImg] = useImage(board);
   const [figureImg] = useImage(figures);
 
-  const [gameReady, setGameReady] = useState(false);
-  const [clientColor, setClientColor] = useState('White');
+  const [ready, setReady] = useState(false);
+  const [missing, setMissing] = useState('');
   const [pieces, setPieces] = useState([]);
-  const [lastMove, setLastMove] = useState({});
-  const [needToPromote, setNeedToPromote] = useState(false);
-  const [waitingForOpponent, setWaitingForOpponent] = useState(true);
-  const [currentPlayer, setCurrentPlayer] = useState('White');
-  const [aKingIsInCheck, setAKingIsInCheck] = useState({ inCheck: false, color: "None" });
+  const [message, setMessage] = useState('Waiting...');
+  const [role, setRole] = useState('White');
 
-  const handleClick = ({ nativeEvent }) => {
-    const scale = getScale(windowWidth, boardImg.width);
-    const sourceSide = 56;
-    const side = sourceSide * scale;
-    const xOffset = 28 * scale;
-    const yOffset = 28 * scale;
+  const getScale = () => {
+    let scale = 1;
+    if (boardImg) 
+      scale = Math.min(Math.floor(width)/boardImg.width, 1.25);
+  
+    return { x: scale, y: scale };
+  }
 
-    const { offsetX, offsetY } = nativeEvent;
-    let x = Math.floor((offsetX - xOffset) / side);
-    let y = Math.floor((offsetY - yOffset) / side);
-    if (clientColor === 'Black') {
-      socket.emit('Update Game', x, (7 - y));
-      setLastMove({ x, y: (7 - y) });
+  const calcPosition = (tile, flag) => {
+    let charMap = ['a','b','c','d','e','f','g','h'];
+    if (charMap.includes(tile)) {
+      tile = charMap.findIndex((value) => value === tile);
     } else {
-      socket.emit('Update Game', x, y);
-      setLastMove({ x, y });
+      tile = parseInt(tile) - 1;
     }
+
+    if (role === 'Black' && flag) {
+      tile = 7 - tile;
+    }
+
+    return 28 + ( 56 * tile );
   }
 
-  const handlePromotion = (event) => {
-    setNeedToPromote(false);
-    socket.emit('Update Game', lastMove.x, lastMove.y, event.target.value);
+  const calcTile = (offset) => Math.round((offset - 28) / 56);
+
+  const Piece = ({ socket, image, data }) => {
+    const [isDragging, setIsDragging] = useState(false);
+    const [position, setPosition] = useState({ x: calcPosition(data.position.charAt(0)), y: calcPosition(data.position.charAt(1), true) });
+
+    const dragStart = () => {
+      setIsDragging(true);
+      setPosition({ x: 0, y: 0 });
+    }
+
+    const dragEnd = (event) => {
+      setIsDragging(false);
+      let tileX = calcTile(event.target.x()) + 1;
+      let tileY = calcTile(event.target.y()) + 1;
+      let charMap = ['a','b','c','d','e','f','g','h'];
+
+      let newTile = `${charMap[tileX - 1]}${role === 'White'? tileY: 9 - tileY}`;
+      
+      if (data.availableMoves.includes(newTile)) {
+        setPosition({ x: calcPosition(tileX), y: calcPosition(tileY) });
+        socket.emit('Update Game', { from: data.position, to: newTile });
+      } else 
+        setPosition({ x: calcPosition(data.position.charAt(0)), y: calcPosition(data.position.charAt(1), true) });
+    }
+
+    const calcCrop = function(type, color) {
+      let x = 0;
+      switch(type.toLowerCase()) {
+        case 'r': x = 0; break;
+        case 'n': x = 56; break;
+        case 'b': x = 56*2; break;
+        case 'q': x = 56*3; break;
+        case 'k': x = 56*4; break;
+        default: x = 56*5; 
+      }
+
+      return { x, y: color === "White" ? 56:0, width: 56, height: 56 };
+    }
+
+    return (
+      <Portal zIndex={isDragging? 100:0}>
+        {data.availableMoves ? data.availableMoves.map(([x, y], index) => {
+          return isDragging ? <Circle 
+          key={index} 
+          x={calcPosition(x) + 28}
+          y={calcPosition(y, true) + 28}
+          radius={6}
+          fill={'black'}
+          />:null
+        }):null}
+
+        <Image image={image} 
+        x={position.x} y={position.y} width={56} height={56}
+        crop={calcCrop(data.type, data.color)}
+        scaleX={isDragging? 1.1 : 1}
+        scaleY={isDragging? 1.1 : 1}
+        onDragStart={dragStart}
+        onDragEnd={dragEnd}
+        draggable={role === data.color? true:false}
+        />
+      </Portal>
+    )
   }
+
   // Initial Render
   useEffect(() => {
-    socket.on('update', (pieces, color, kingState) => {
+    socket.on('update', (pieces, title) => {
       setPieces(pieces);
-      setCurrentPlayer(color);
-      setAKingIsInCheck(kingState);
+      setMessage(title);
     });
 
-    socket.on('wait', (ready, playerMissing) => {
-      if (!ready) {
+    socket.on('wait', (start, playerMissing) => {
+      if (!start) {
         setTimeout(() => {
           socket.emit('Get Game');
         }, 1000);
 
-        setGameReady(false);
-        setWaitingForOpponent(playerMissing);
+        setReady(false);
+        setMissing(playerMissing);
       } else {
-        setGameReady(true);
-        setWaitingForOpponent('');
+        setReady(true);
+        setMissing('');
       }
     });
 
-    socket.on('set client color', (role) => setClientColor(role));
-    socket.on('set need to promote', () => setNeedToPromote(true));
+    socket.on('set client color', (server_role) => setRole(server_role));
 
     socket.emit('Get Game');
   }, [socket]);
 
-    // Later Renders
-    useEffect(() => {
-      const drawPiece = (ctx, pieceData, xOffset, yOffset, side, sourceSide) => {
-        var x, y;
-        if (clientColor === 'Black') {
-          x = xOffset + (side * pieceData.x);
-          y = yOffset + (side * (7 - pieceData.y));
-        } else {
-          x = xOffset + (side * pieceData.x);
-          y = yOffset + (side * pieceData.y);
-        }
-  
-        const tileOffset = pieceID[pieceData.pieceType] * sourceSide;
-  
-        if (pieceData.player === 'White')
-          ctx.drawImage(figureImg, tileOffset, sourceSide, sourceSide, sourceSide, x, y, side, side);
-        else
-          ctx.drawImage(figureImg, tileOffset, 0, sourceSide, sourceSide, x, y, side, side);
-      }
-  
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      const pieceID = {
-        "Rook": 0,
-        "Knight": 1,
-        "Bishop": 2,
-        "Queen": 3,
-        "King": 4,
-        "Pawn": 5
-      }
-  
-      if (pieces.length !== 0 && boardImg !== undefined && figureImg !== undefined) {
-        const scale = getScale(windowWidth, boardImg.width);
-        const sourceSide = 56;
-        const side = sourceSide * scale;
-        const xOffset = 28 * scale;
-        const yOffset = 28 * scale;
-  
-        let selectedPiece;
-        canvas.width = boardImg.width * scale;
-        canvas.height = boardImg.height * scale;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(boardImg, 0, 0, canvas.width, canvas.height);
-
-        for (let piece of pieces) {
-          drawPiece(ctx, piece, xOffset, yOffset, side, sourceSide);
-          if (piece.selected)
-            selectedPiece = piece;
-        }
-  
-        if (selectedPiece) {
-          var x = xOffset + (side * selectedPiece.x);
-          var y;
-  
-          if (clientColor === 'Black')
-            y = yOffset + (side * (7 - selectedPiece.y));
-          else
-            y = yOffset + (side * selectedPiece.y);
-  
-          ctx.lineWidth = `${6 * scale}`;
-          ctx.strokeStyle = "#39ff14";
-          ctx.rect(x, y, side, side);
-          ctx.stroke();
-          if (selectedPiece.availableTiles.length > 0) {
-            for (let possibleTile of selectedPiece.availableTiles) {
-              let possibleX = xOffset + side / 2 + (side * possibleTile[0]);
-              let possibleY;
-              if (clientColor === 'Black')
-                possibleY = yOffset + side / 2 + (side * (7 - possibleTile[1]));
-              else
-                possibleY = yOffset + side / 2 + (side * possibleTile[1]);
-  
-              ctx.beginPath();
-              ctx.arc(possibleX, possibleY, 6 * scale, 0, 2 * Math.PI);
-              ctx.fillStyle = 'black';
-              ctx.fill();
-            }
-          }
-        }
-      }
-  
-    }, [pieces, boardImg, figureImg, clientColor, windowWidth]);
+  useEffect(() => {
+    if (boardImg)
+      setMaxSize(boardImg.width * 1.25);
+    
+  }, [boardImg]);
 
   return (
-    <div className="col-sm-8 p-2" align="center">
-      <div className={`${gameReady ? '' : 'block-content'} ${needToPromote ? 'block-content' : ''}`}>
-        <h1>{(aKingIsInCheck ? aKingIsInCheck.inCheck : false) ? `${aKingIsInCheck.color} King is in Check. `: ``}It is {currentPlayer}'s Turn!</h1>
-        <canvas className="m-2" ref={canvasRef} onClick={handleClick} />
-      </div>
+    <div ref={ref} className="container-fluid d-flex flex-column col-sm-8 p-2" align="center">
+      <h3>{message}</h3>
+      <div className="flex-grow-1">
+        <Stage className={`${ready ? '' : 'block-content'}`} width={Math.min(width, height, maxSize)} height={Math.min(width, height, maxSize)} scale={getScale()}>
+          <Layer>
 
-      {/*Popup Modals*/}
-      <div className={gameReady ? 'd-none' : 'canvas-modal'}>
-        <div className="modal-content">
-          <h3 className="modal-title m-3">Waiting for a player to join as {waitingForOpponent}...</h3>
-        </div>
-      </div>
-      <div className={needToPromote ? 'canvas-modal' : 'd-none'}>
-        <div className="p-3 modal-content">
-          <h5 className="modal-title mb-3">Choose a piece to upgrade the Pawn into</h5>
-          <div className="row mx-0">
-            <button className="col btn btn-primary" value="Rook" onClick={handlePromotion}>Rook</button>
-            <button className="col btn btn-primary" value="Knight" onClick={handlePromotion}>Knight</button>
-          </div>
-          <div className="row mx-0">
-            <button className="col btn btn-primary" value="Bishop" onClick={handlePromotion}>Bishop</button>
-            <button className="col btn btn-primary" value="Queen" onClick={handlePromotion}>Queen</button>
+            <Image image={boardImg} />  
+          
+            {!ready ? null:pieces.map((value, index) => {
+              return <Piece key={index} socket={socket} image={figureImg} data={value}/>
+            })}
+      
+            <Text text={`${Math.floor(width)}, ${Math.floor(height)}`} />
+          </Layer>
+        </Stage>
+        <div className={ready ? 'd-none' : 'canvas-modal'}>
+          <div className="modal-content">
+            <h3 className="modal-title m-3">Waiting for a player to join as {missing}...</h3>
           </div>
         </div>
       </div>

@@ -76,7 +76,7 @@ const Register = () => {
               return <Alert key={index} status={value.type} message={value.msg} />
             })}
 
-            { readyToRedirect ? <Redirect to={{ pathname: '/' }} />: ""}
+            { readyToRedirect ? <Redirect to={{ pathname: '/login' }} />: ""}
 
             <Link className={`text-decoration-none ${isSubmitting ? "disabled":""}`} to='/login'>Already have an Account? Login</Link>
 

@@ -50,7 +50,7 @@ const ChatInterface = ({ username, role }) => {
           </Nav.Item>
         </Nav>
 
-        <Tab.Content className="flex-grow-1">
+        <Tab.Content className="">
           <Tab.Pane className="card h-100 border-top-0" eventKey="chat">
             <Chat username={username} role={role} />
           </Tab.Pane>

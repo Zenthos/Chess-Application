@@ -1,4 +1,4 @@
-const Lobby = require('../chess/lobby');
+const Lobby = require('./lobby');
 
 module.exports = class SocketListeners {
   constructor(io) {
@@ -58,16 +58,13 @@ module.exports = class SocketListeners {
       // Functions that Update Server Data
       /////////////////////////////////////////////////////////////////
 
-      socket.on("Update Game", (clickX, clickY, promoteSelection) => {
+      socket.on("Update Game", (move) => {
         if (!this.clients.hasOwnProperty(socket.client.id)) return;
         
         const { roomName, role } = this.getClient(socket.client.id);
         const lobby = this.lobbies[roomName];
         
-        lobby.updateGame(socket, this.io, role, clickX, clickY, promoteSelection);
-
-        if (lobby.opponentIsNPC)
-          setTimeout(() => lobby.simulateClick(socket, this.io), 2000);
+        lobby.updateGame(this.io, role, move);
       });
       
       socket.on('Send Message', (msg) => {
@@ -89,13 +86,17 @@ module.exports = class SocketListeners {
         
         const roomName =  this.getRoomName(socket.client.id);
         const { role } = this.getClient(socket.client.id);
-        const { game } = this.lobbies[roomName];
+        const lobby = this.lobbies[roomName];
+        lobby.game.init();
         
         socket.emit('set client color', role);
         
-        const { status, playerMissing } = this.lobbies[roomName].BlackAndWhitePresent();
+        const { status, playerMissing } = lobby.BlackAndWhitePresent();
         this.io.in(roomName).emit('wait', status, playerMissing);
-        socket.emit('update', game.pieces, game.color, game.getKingStates());
+        socket.emit('update', lobby.game.getBoard(role), lobby.game.getGameState(), lobby.game.currentPlayer);
+
+        if (role === 'Black')
+          lobby.updateGame(this.io, role, null);
       });
       
       socket.on('Get Logs', () => {
@@ -110,16 +111,6 @@ module.exports = class SocketListeners {
       socket.on('Get Lobbies', () => {
         socket.emit('Update Lobbies', this.getAllLobbies());
       });
-      
-      socket.on('Get Moves', () => {
-        if (!this.clients.hasOwnProperty(socket.client.id)) return;
-        
-        const roomName =  this.getRoomName(socket.client.id);
-        const { game } = this.getLobby(roomName);
-        
-        console.log(game.moveHistory);
-      });
-
     });
   }
   

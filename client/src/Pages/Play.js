@@ -52,9 +52,9 @@ const Page = () => {
   const ReadyToPlay = () => {
     return (
       <FadeIn>
-        <div className="container-fluid d-flex vh-100 flex-column">
+        <div className="container-fluid d-flex vh-75 flex-column">
           <div className="row no-gutters flex-grow-1">
-            <Canvas windowWidth={width} />
+            <Canvas />
             <ChatInterface />
           </div>
         </div>

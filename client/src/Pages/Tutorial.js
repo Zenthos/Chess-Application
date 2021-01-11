@@ -356,7 +356,7 @@ const Tutorial = () => {
       <hr />
       <h3>Rules of the Pieces</h3>
       <div className="">
-        <Tabs defaultActiveKey="pawn">
+        <Tabs defaultActiveKey="pawn" transition={false}>
           <Tab eventKey="pawn" title="Pawn">
             <Pawn />
           </Tab>
@@ -424,7 +424,7 @@ const Tutorial = () => {
       <hr />
       <h3>Advanced Moves</h3>
       <div className="">
-        <Tabs defaultActiveKey="promotion">
+        <Tabs defaultActiveKey="promotion" transition={false}>
           <Tab eventKey="promotion" title="Promotion">
             <Promotion />
           </Tab>

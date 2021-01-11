@@ -6,13 +6,19 @@ const keys = require('../config/keys').module;
 const jwt = require('jsonwebtoken');
 
 const getPublicUserData = function(user) {
-  return { username: user.username, friends: user.friends, stats: user.stats };
+  if (user) {
+    let { username, friends, stats } = user;
+    return { username, friends, stats };
+  } else {
+    console.log("Login Successful, but no user found.")
+    return { username: "Error", friends: {}, stats: {} };
+  }
 }
 
 router.post('/login', (req, res, next) => {
   let messages = [];
   let token = '';
-  passport.authenticate('local', { session: false }, function(err, user, info) {
+  passport.authenticate('local', { session: false }, function(err, user, info) {  
     // Sign JSON Web Token if Authentication Passes
     if (user) {
       token = jwt.sign({ username: user.username }, keys.JWTKey, {
@@ -71,7 +77,7 @@ router.get('/logout', (req, res) => {
 router.get('/authenticated', (req, res) => {
   if (req.cookies.access_token)  {
     jwt.verify(req.cookies.access_token, keys.JWTKey, (err, decoded) => {
-      if (err) console.log(err);
+      if (err) res.clearCookie('access_token');
   
       res.status(200).json({ isAuthenticated: true, user: getPublicUserData(decoded) });
     });

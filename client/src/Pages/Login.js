@@ -23,9 +23,9 @@ const Login = () => {
       .then(res => {
         if (res.messages.length === 1 && res.messages[0].type === "success") {
           setUser(res.user);
-          setIsAuthenticated(true);
           setIsSubmitting(true);
           setTimeout(() => {
+            setIsAuthenticated(true);
             setReadyToRedirect(true);
             setIsSubmitting(false);
           }, 3000)

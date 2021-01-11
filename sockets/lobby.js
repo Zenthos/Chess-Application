@@ -1,7 +1,7 @@
-const Chess = require("./chess")
+const ChessEngine = require('../chess/engine');
 
 const Lobby = function(name, playingNPC) {
-  this.game = new Chess();
+  this.game = new ChessEngine();
   this.name = name;
   this.players = [];
   this.logs = [];
@@ -30,28 +30,41 @@ Lobby.prototype.sendLogs = function(io) {
 /////////////////////////////////////////////////////////////////
 
 Lobby.prototype.init = function() {
-  this.game.init();
+  
 }
 
-Lobby.prototype.isGameOver = function() {
-  return this.game.gameOver;
-}
-
-Lobby.prototype.playAgain = function() {
-  this.game = new Chess();
-}
-
-Lobby.prototype.updateGame = function(socket, io, role, clickX, clickY, promoteSelection) {
-  if(role === this.game.color && !this.isGameOver()) {
-    if (this.game.selectedPiece) {
-      this.game.handleClick(clickX, clickY, this, socket, io, promoteSelection);
-      io.in(this.name).emit('update', this.game.pieces, this.game.color, this.game.getKingStates());
-    } else {
-      this.game.select(clickX, clickY);
-      socket.emit('update', this.game.pieces, this.game.color, this.game.getKingStates());
-    }
+Lobby.prototype.updateGame = function(io, role, move) {
+  if (role === this.game.currentPlayer) {
+    this.game.makeMove(role, move);
+    this.game.switchPlayer();
   }
+
+  if (this.opponentIsNPC) {
+    let AIMove = this.chooseRandomMove(this.game.currentPlayer);
+    this.game.makeMove(this.game.currentPlayer, AIMove);
+    this.game.switchPlayer();
+  }
+
+  io.in(this.name).emit('update', this.game.getBoard(role), this.game.getGameState(), this.game.currentPlayer);
 }
+
+
+//////////////////////////////////////////////////////////////////
+// AI Functions
+/////////////////////////////////////////////////////////////////
+
+Lobby.prototype.chooseRandomMove = function(side) {
+  let move;
+  do {
+    move = this.game.randomMove(side);
+  } while (!move && this.game.generateAllMoves(side).length !== 0);
+  
+  return move;
+}
+
+//////////////////////////////////////////////////////////////////
+// Lobby Functions
+/////////////////////////////////////////////////////////////////
 
 Lobby.prototype.BlackAndWhitePresent = function() {
   let containsWhite = false;
@@ -72,28 +85,6 @@ Lobby.prototype.BlackAndWhitePresent = function() {
   else
     return { status: false, playerMissing: 'White' };
 }
-
-//////////////////////////////////////////////////////////////////
-// AI Functions
-/////////////////////////////////////////////////////////////////
-
-Lobby.prototype.simulateClick = function(socket, io) {
-  if (!this.opponentIsNPC) throw new Error("Function Called Without Proper Conditions!");
-
-  let aiObject = this.players.find((player) => player.hasOwnProperty('difficulty') && player.username === 'AIOpponent');
-
-  if (!aiObject) throw new Error("AI Object has not been initialized!");
-
-  if (this.game.color === aiObject.role) {
-    this.game.AIMove(this, io);
-    io.in(this.name).emit('update', this.game.pieces, this.game.color, this.game.getKingStates());
-  }
-}
-
-//////////////////////////////////////////////////////////////////
-// Lobby Functions
-/////////////////////////////////////////////////////////////////
-
 
 Lobby.prototype.addPlayer = function(player) {
   const { username, role } = player;
