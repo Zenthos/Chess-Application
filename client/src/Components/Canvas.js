@@ -3,7 +3,7 @@ import { SocketContext } from '../Context/SocketContext';
 import board from '../assets/chess-images/board.png';
 import figures from '../assets/chess-images/figures.png';
 import useImage from 'use-image';
-import { Circle, Text, Image } from 'react-konva';
+import { Rect, Circle, Text, Image } from 'react-konva';
 import { Stage, Layer, Portal } from 'react-konva-portal'
 import { useMeasure } from "react-use";
 import '../styles/ComponentCSS.css';
@@ -19,6 +19,8 @@ const Canvas = () => {
   const [ready, setReady] = useState(false);
   const [missing, setMissing] = useState('');
   const [pieces, setPieces] = useState([]);
+  const [last, setLast] = useState({ from: '', to: '' });
+  const [needToPromote, setNeedToPromote] = useState(false);
   const [message, setMessage] = useState('Waiting...');
   const [role, setRole] = useState('White');
 
@@ -112,9 +114,11 @@ const Canvas = () => {
 
   // Initial Render
   useEffect(() => {
-    socket.on('update', (pieces, title) => {
+    socket.on('update', (pieces, title, last, need) => {
       setPieces(pieces);
       setMessage(title);
+      setLast(last);
+      setNeedToPromote(need);
     });
 
     socket.on('wait', (start, playerMissing) => {
@@ -142,9 +146,13 @@ const Canvas = () => {
     
   }, [boardImg]);
 
+  const handlePromotion = () => {
+    setNeedToPromote(false);
+  }
+
   return (
     <div ref={ref} className="container-fluid d-flex flex-column col-sm-8 p-2" align="center">
-      <h3>{message}</h3>
+      <h1 className="text-white text-bold">{message}</h1>
       <div className="flex-grow-1">
         <Stage className={`${ready ? '' : 'block-content'}`} width={Math.min(width, height, maxSize)} height={Math.min(width, height, maxSize)} scale={getScale()}>
           <Layer>
@@ -154,6 +162,28 @@ const Canvas = () => {
             {!ready ? null:pieces.map((value, index) => {
               return <Piece key={index} socket={socket} image={figureImg} data={value}/>
             })}
+
+            {last.from === '' ? null:
+            <Rect 
+            x={calcPosition([' ','a','b','c','d','e','f','g','h'].findIndex((item) => item === last.from.charAt(0)))}
+            y={calcPosition(last.from.charAt(1), true)}
+            width={56}
+            height={56}
+            opacity={0.3}
+            fill="brown"
+            />
+            }
+
+            {last.from === '' ? null:
+            <Rect 
+            x={calcPosition([' ','a','b','c','d','e','f','g','h'].findIndex((item) => item === last.to.charAt(0)))}
+            y={calcPosition(last.to.charAt(1), true)}
+            width={56}
+            height={56}
+            opacity={0.5}
+            fill="brown"
+            />
+            }
       
             <Text text={`${Math.floor(width)}, ${Math.floor(height)}`} />
           </Layer>
@@ -161,6 +191,19 @@ const Canvas = () => {
         <div className={ready ? 'd-none' : 'canvas-modal'}>
           <div className="modal-content">
             <h3 className="modal-title m-3">Waiting for a player to join as {missing}...</h3>
+          </div>
+        </div>
+        <div className={needToPromote ? 'canvas-modal' : 'd-none'}>
+          <div className="p-3 modal-content">
+            <h5 className="modal-title mb-3">Choose a piece to upgrade the Pawn into</h5>
+            <div className="row mx-0">
+              <button className="col btn btn-primary" value="Rook" onClick={handlePromotion}>Rook</button>
+              <button className="col btn btn-primary" value="Knight" onClick={handlePromotion}>Knight</button>
+            </div>
+            <div className="row mx-0">
+              <button className="col btn btn-primary" value="Bishop" onClick={handlePromotion}>Bishop</button>
+              <button className="col btn btn-primary" value="Queen" onClick={handlePromotion}>Queen</button>
+            </div>
           </div>
         </div>
       </div>

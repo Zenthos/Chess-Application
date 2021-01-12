@@ -55,6 +55,7 @@ const ChessEngine = function(opponentIsComputer) {
   this.history = [];
   this.gameOver = false;
   this.playingComputer = opponentIsComputer || false;
+  this.lastMove = { from: '', to: ' '};
   this.castles = { 
     'White': { KC: true, QC: true },
     'Black': { KC: true, QC: true }
@@ -422,6 +423,8 @@ ChessEngine.prototype.makeMove = function(role, clientMove) {
     } else {
       this.enpassantTarget = '';
     }
+
+    this.lastMove = { from: newMove.from, to: newMove.to };
   } else {
     console.log('problem');
   }

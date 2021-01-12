@@ -19,6 +19,7 @@ router.post('/login', (req, res, next) => {
   let messages = [];
   let token = '';
   passport.authenticate('local', { session: false }, function(err, user, info) {  
+    if (err) console.log(err);
     // Sign JSON Web Token if Authentication Passes
     if (user) {
       token = jwt.sign({ username: user.username }, keys.JWTKey, {
@@ -55,7 +56,8 @@ router.post('/register', (req, res) => {
     }
 
     res.status(200).json({ messages })
-  });
+  })
+  .catch(err => console.log(err));
 });
 
 router.post('/profile', (req, res) => {

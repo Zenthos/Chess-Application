@@ -45,7 +45,7 @@ Lobby.prototype.updateGame = function(io, role, move) {
     this.game.switchPlayer();
   }
 
-  io.in(this.name).emit('update', this.game.getBoard(role), this.game.getGameState(), this.game.currentPlayer);
+  io.in(this.name).emit('update', this.game.getBoard(role), this.game.getGameState(), this.game.lastMove);
 }
 
 

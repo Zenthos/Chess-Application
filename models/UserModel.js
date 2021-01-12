@@ -30,8 +30,10 @@ UserSchema.pre('save', function(next) {
 
 UserSchema.methods.comparePassword = function(password, hash, done) {
   bcrypt.compare(password, hash, (err, matching) => {
-    if (err)
-      return;
+    if (err) {
+      console.log(err);
+      return done(null, false, { msg: 'An error has occurred during login.', type: 'danger' });
+    }
 
     if (!matching)
       return done(null, false, { msg: 'Incorrect Password', type: 'danger' });

@@ -31,12 +31,14 @@ const Register = () => {
       })
       .then(data => data.json())
       .then(res => {
-        setAlerts(res.messages)
-        setIsSubmitting(true);
-        setTimeout(() => {
-          setReadyToRedirect(true);
-          setIsSubmitting(false);
-        }, 3000)
+        if (res.messages) {
+          setAlerts(res.messages)
+          setIsSubmitting(true);
+          setTimeout(() => {
+            setReadyToRedirect(true);
+            setIsSubmitting(false);
+          }, 3000)
+        }
       })
       .catch(err => console.log(err));
     } else {

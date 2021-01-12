@@ -21,7 +21,8 @@ const Login = () => {
     if(email !== '' && password !== '') {
       AuthService.login({ email, password })
       .then(res => {
-        if (res.messages.length === 1 && res.messages[0].type === "success") {
+        if (res.messages) {
+          if (res.messages.length === 1 && res.messages[0].type === "success") {
           setUser(res.user);
           setIsSubmitting(true);
           setTimeout(() => {
@@ -29,9 +30,11 @@ const Login = () => {
             setReadyToRedirect(true);
             setIsSubmitting(false);
           }, 3000)
+
+          setAlerts(res.messages)}
+        } else {
+          console.log(res);
         }
-  
-        setAlerts(res.messages)
       })
       .catch(err => console.log(err));
     } else {

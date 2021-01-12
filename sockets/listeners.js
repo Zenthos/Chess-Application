@@ -93,7 +93,7 @@ module.exports = class SocketListeners {
         
         const { status, playerMissing } = lobby.BlackAndWhitePresent();
         this.io.in(roomName).emit('wait', status, playerMissing);
-        socket.emit('update', lobby.game.getBoard(role), lobby.game.getGameState(), lobby.game.currentPlayer);
+        socket.emit('update', lobby.game.getBoard(role), lobby.game.getGameState(), lobby.game.lastMove);
 
         if (role === 'Black')
           lobby.updateGame(this.io, role, null);

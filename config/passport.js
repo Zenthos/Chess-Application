@@ -26,7 +26,8 @@ passport.use(new LocalStrategy(
         return done(null, false, { msg: "No User Found", type: "danger" });
 
       user.comparePassword(password, user.password, done);
-    });
+    })
+    .catch(err => console.log(err));
   }
 ));
 
