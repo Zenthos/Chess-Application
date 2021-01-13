@@ -13,6 +13,8 @@ The game can be played at https://chessrooms.herokuapp.com/
 #### Other important libraries used
 - Socket.io
 - React-Bootstrap
+- React-Konva
+- Axios
 
 ## How to run the program locally
 
@@ -47,6 +49,8 @@ This is a solo side project i'd like to work on by myself, but I would like for 
 [X] - Fully working chess engine and user interface
 
 [X] - Chat system to interact with other players or spectators
+
+[ ] - Friend System
 
 ### License
 

@@ -72,7 +72,9 @@ router.post('/profile', (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
-  res.clearCookie('access_token');
+  if (req.cookies.hasOwnProperty('access_token')) 
+    res.clearCookie('access_token');
+
   res.status(200).json({ success: true, msg: "Successfully Logged Out!" });
 });
 

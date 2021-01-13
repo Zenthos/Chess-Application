@@ -17,7 +17,10 @@ const Page = () => {
 
   // Get Window Size
   useEffect(() => {
-    const resizeListener = () => setWidth(window.innerWidth);
+    const resizeListener = () => {
+      if (Math.abs(window.innerWidth - width) > 50)
+        setWidth(window.innerWidth);
+    }
 
     window.addEventListener('resize', resizeListener);
 

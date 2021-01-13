@@ -81,7 +81,7 @@ const About = () => {
           <div className="col-sm">
             <h1>Planned Updates</h1>
             <ul className="list-group mb-3">
-              <li className="list-item list-group-item-warning">... Implement Login/Register System</li>
+              <li className="list-item list-group-item-success">&#x2713; Implement Login/Register System</li>
               <li className="list-item list-group-item-warning">... Create Chess AI</li>
               <li className="list-item list-group-item-danger">&#x2613; Finish Chat Interface</li>
               <li className="list-item list-group-item-danger">&#x2613; Design and Implement User Profiles</li>

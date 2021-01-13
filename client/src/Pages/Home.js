@@ -15,8 +15,12 @@ const Home = () => {
 
       <div className="jumbotron-chess my-3 p-3 p-md-5 text-white rounded bg-primary">
         <div className="col-md-6 px-0">
-          <h1 className="display-4 font-italic">Play Chess Free!</h1>
-          <p className="lead my-3">Welcome to the home page of this Chess Website built using the Full Stack MERN Framework. Find out about who made this website in the About Section, or figure out the basics of chess in the Learn Section, or just click below to play a game of chess.</p>
+          <h1 className="display-4 font-italic">Chessrooms</h1>
+          <p className="lead my-3">
+            Welcome to the home page of this Chess Website. 
+            Find out about who made this website, 
+            figure out the basics of chess, 
+            or just click below to start playing Chess.</p>
           <Link to="/play">
             <p className="lead mb-0"><u>Click Me to Play</u></p>
           </Link>

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Tabs, Tab, Carousel } from 'react-bootstrap';
+import { Nav, Tabs, Tab, Carousel } from 'react-bootstrap';
 import { FadeIn } from '../Components';
 import placeholder from '../assets/placeholder.png';
+import * as imgs from '../assets/tutorial-images';
 
 const Pawn = () => {
   return (
@@ -9,7 +10,18 @@ const Pawn = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
-            <img src={placeholder} className="img-fluid" alt=""></img>
+            <Carousel interval={null} wrap={false} slide={false} indicators={false}>
+              <Carousel.Item>
+                <FadeIn>
+                  <img src={imgs.Pawn2} className="img-fluid" alt=""/>
+                </FadeIn>
+              </Carousel.Item>
+              <Carousel.Item>
+                <FadeIn>
+                  <img src={imgs.Pawn1} className="img-fluid" alt=""/>
+                </FadeIn>
+              </Carousel.Item>
+            </Carousel>
           </div>
           <div className="col">
             <h5 className="mt-3">Pawn</h5>
@@ -41,7 +53,7 @@ const Rook = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
-            <img src={placeholder} className="img-fluid" alt=""></img>
+            <img src={imgs.Rook} className="img-fluid" alt=""></img>
           </div>
           <div className="col">
             <h5 className="mt-3">Rook</h5>
@@ -64,7 +76,7 @@ const Knight = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
-            <img src={placeholder} className="img-fluid" alt=""></img>
+            <img src={imgs.Knight} className="img-fluid" alt=""></img>
           </div>
           <div className="col">
             <h5 className="mt-3">Knight</h5>
@@ -103,7 +115,7 @@ const Bishop = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
-            <img src={placeholder} className="img-fluid" alt=""></img>
+            <img src={imgs.Bishop} className="img-fluid" alt=""></img>
           </div>
           <div className="col">
             <h5 className="mt-3">Bishop</h5>
@@ -127,7 +139,7 @@ const Queen = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
-            <img src={placeholder} className="img-fluid" alt=""></img>
+            <img src={imgs.Queen} className="img-fluid" alt=""></img>
           </div>
           <div className="col">
             <h5 className="mt-3">Queen</h5>
@@ -151,7 +163,7 @@ const King = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
-            <img src={placeholder} className="img-fluid" alt=""></img>
+            <img src={imgs.King} className="img-fluid" alt=""></img>
           </div>
           <div className="col">
             <h5 className="mt-3">King</h5>
@@ -178,12 +190,12 @@ const Promotion = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
-            <Carousel interval={null} wrap={false}>
+            <Carousel interval={null} wrap={false} slide={false} indicators={false}>
               <Carousel.Item>
-                <img src={placeholder} className="img-fluid" alt="Third slide"/>
+                <img src={placeholder} className="img-fluid" alt=""/>
               </Carousel.Item>
               <Carousel.Item>
-                <img src={placeholder} className="img-fluid" alt="Third slide"/>
+                <img src={placeholder} className="img-fluid" alt=""/>
               </Carousel.Item>
             </Carousel>
           </div>
@@ -218,12 +230,12 @@ const Enpassant = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
-            <Carousel interval={null} wrap={false}>
+            <Carousel interval={null} wrap={false} slide={false} indicators={false}>
               <Carousel.Item>
-                <img src={placeholder} className="img-fluid" alt="Third slide"/>
+                <img src={placeholder} className="img-fluid" alt=""/>
               </Carousel.Item>
               <Carousel.Item>
-                <img src={placeholder} className="img-fluid" alt="Third slide"/>
+                <img src={placeholder} className="img-fluid" alt=""/>
               </Carousel.Item>
             </Carousel>
           </div>
@@ -258,12 +270,18 @@ const Castling = () => {
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
-            <Carousel interval={null} wrap={false}>
+            <Carousel interval={null} wrap={false} slide={false} indicators={false}>
               <Carousel.Item>
-                <img src={placeholder} className="img-fluid" alt="Third slide"/>
+                <img src={placeholder} className="img-fluid" alt=""/>
               </Carousel.Item>
               <Carousel.Item>
-                <img src={placeholder} className="img-fluid" alt="Third slide"/>
+                <img src={placeholder} className="img-fluid" alt=""/>
+              </Carousel.Item>
+              <Carousel.Item>
+                <img src={placeholder} className="img-fluid" alt=""/>
+              </Carousel.Item>
+              <Carousel.Item>
+                <img src={placeholder} className="img-fluid" alt=""/>
               </Carousel.Item>
             </Carousel>
           </div>
@@ -349,33 +367,56 @@ const Tutorial = () => {
           </p>
         </div>
         <div className="col-sm d-flex align-items-center justify-content-center">
-          <img src={placeholder} className="img-fluid" alt=""></img>
+          <img src={imgs.Starting} className="img-fluid" alt=""></img>
         </div>
       </div>
       
       <hr />
       <h3>Rules of the Pieces</h3>
       <div className="">
-        <Tabs defaultActiveKey="pawn" transition={false}>
-          <Tab eventKey="pawn" title="Pawn">
-            <Pawn />
-          </Tab>
-          <Tab eventKey="rook" title="Rook">
-            <Rook />
-          </Tab>
-          <Tab eventKey="knight" title="Knight">
-            <Knight />
-          </Tab>
-          <Tab eventKey="bishop" title="Bishop">
-            <Bishop />
-          </Tab>
-          <Tab eventKey="queen" title="Queen">
-            <Queen />
-          </Tab>
-          <Tab eventKey="king" title="King">
-            <King />
-          </Tab>
-        </Tabs>
+        <Tab.Container className="border-0" defaultActiveKey="pawn" transition={false}>
+          <Nav className="nav-tabs">
+            <Nav.Item>
+              <Nav.Link className="px-2" eventKey="pawn">Pawn</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link className="px-1" eventKey="rook">Rook</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link className="px-2" eventKey="knight">Knight</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link className="px-2" eventKey="bishop">Bishop</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link className="px-1" eventKey="queen">King</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link className="px-2" eventKey="king">Queen</Nav.Link>
+            </Nav.Item>
+          </Nav>
+
+          <Tab.Content>
+            <Tab.Pane eventKey="pawn">
+              <Pawn />
+            </Tab.Pane>
+            <Tab.Pane eventKey="rook">
+              <Rook />
+            </Tab.Pane>
+            <Tab.Pane eventKey="knight">
+              <Knight />
+            </Tab.Pane>
+            <Tab.Pane eventKey="bishop">
+              <Bishop />
+            </Tab.Pane>
+            <Tab.Pane eventKey="queen">
+              <Queen />
+            </Tab.Pane>
+            <Tab.Pane eventKey="king">
+              <King />
+            </Tab.Pane>
+          </Tab.Content>
+        </Tab.Container>
       </div>
 
       <hr />
@@ -417,22 +458,33 @@ const Tutorial = () => {
 
         </div>
         <div className="col-sm d-flex align-items-center justify-content-center">
-          <img src={placeholder} className="img-fluid" alt=""></img>
+          <Carousel interval={null} wrap={false} slide={false} indicators={false}>
+            <Carousel.Item>
+              <FadeIn>
+                <img src={imgs.Checkmate} className="img-fluid" alt=""/>
+              </FadeIn>
+            </Carousel.Item>
+            <Carousel.Item>
+              <FadeIn>
+                <img src={imgs.Stalemate} className="img-fluid" alt=""/>
+              </FadeIn>
+            </Carousel.Item>
+          </Carousel>
         </div>
       </div>
 
       <hr />
       <h3>Advanced Moves</h3>
       <div className="">
-        <Tabs defaultActiveKey="promotion" transition={false}>
-          <Tab eventKey="promotion" title="Promotion">
-            <Promotion />
+        <Tabs defaultActiveKey="castling" transition={false}>
+          <Tab eventKey="castling" title="Castling">
+            <Castling />
           </Tab>
           <Tab eventKey="enpassant" title="En Passant">
             <Enpassant />
           </Tab>
-          <Tab eventKey="castling" title="Castling">
-            <Castling />
+          <Tab eventKey="promotion" title="Promotion">
+            <Promotion />
           </Tab>
         </Tabs>
       </div>

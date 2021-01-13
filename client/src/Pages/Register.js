@@ -21,7 +21,7 @@ const Register = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (username !== '' && email !== '' && password !== '' && confirmPassword !== '' && password === confirmPassword) {
+    if (![username, email, password, confirmPassword].some((field) => field === '' || field.length < 5) && password === confirmPassword) {
       fetch('/user/register', { 
         method: 'POST',
         headers: {
@@ -31,19 +31,19 @@ const Register = () => {
       })
       .then(data => data.json())
       .then(res => {
-        if (res.messages) {
-          setAlerts(res.messages)
-          setIsSubmitting(true);
-          setTimeout(() => {
-            setReadyToRedirect(true);
-            setIsSubmitting(false);
-          }, 3000)
-        }
+        setAlerts(res.messages)
+        setIsSubmitting(true);
+        setTimeout(() => {
+          setReadyToRedirect(true);
+          setIsSubmitting(false);
+        }, 3000);
       })
       .catch(err => console.log(err));
     } else {
       if (password !== confirmPassword)
         setAlerts([ { msg: "Passwords do not match", type: "danger" } ]);
+      else if (username.length < 5 || password.length < 5)
+        setAlerts([ { msg: "Username and password must be >5 characters", type: "danger" }]);
       else
         setAlerts([ { msg: "Please fill out all fields", type: "danger" } ]);
     }

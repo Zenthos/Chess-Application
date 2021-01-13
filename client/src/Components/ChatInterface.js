@@ -41,16 +41,16 @@ const ChatInterface = ({ username, role }) => {
             <Nav.Link eventKey="chat">Chat</Nav.Link>
           </Nav.Item>
 
-          <Nav.Item>
+          {/* <Nav.Item>
             <Nav.Link eventKey="history">History</Nav.Link>
           </Nav.Item>
 
           <Nav.Item>
             <Nav.Link eventKey="list">List</Nav.Link>
-          </Nav.Item>
+          </Nav.Item> */}
         </Nav>
 
-        <Tab.Content className="">
+        <Tab.Content style={{ height: "85vh"}}>
           <Tab.Pane className="card h-100 border-top-0" eventKey="chat">
             <Chat username={username} role={role} />
           </Tab.Pane>

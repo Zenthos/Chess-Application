@@ -15,9 +15,9 @@ const Lobby = function(name, playingNPC) {
 Lobby.prototype.addMessage = function(io, name, role, msg) {
   let log = { id: this.logs.length, name, msg, role };
 
-  if (msg === "!logdata") console.log(this);
-
   this.logs.push(log);
+  if (this.logs.length > 30) this.logs.shift();
+
   this.sendLogs(io);
 }
 
@@ -29,25 +29,35 @@ Lobby.prototype.sendLogs = function(io) {
 // Chess Functions
 /////////////////////////////////////////////////////////////////
 
-Lobby.prototype.init = function() {
-  
+Lobby.prototype.init = function(role, playingNPC) {
+  this.game.init();
+  if (playingNPC) {
+    this.game.opponentIsComputer = playingNPC;
+    this.game.computerColor = (role === 'White' ? 'Black' : 'White');
+  }
 }
 
-Lobby.prototype.updateGame = function(io, role, move) {
+Lobby.prototype.updateGame = function(io, socket, role, move) {
   if (role === this.game.currentPlayer) {
-    this.game.makeMove(role, move);
+    this.game.makeMove(socket, role, move);
     this.game.switchPlayer();
+    io.in(this.name).emit('update', this.game.getBoard(role), this.game.getGameState(), this.game.lastMove);
   }
 
-  if (this.opponentIsNPC) {
-    let AIMove = this.chooseRandomMove(this.game.currentPlayer);
-    this.game.makeMove(this.game.currentPlayer, AIMove);
-    this.game.switchPlayer();
-  }
+  setTimeout(() => {
+    if (this.opponentIsNPC) {
+      let AIMove = this.chooseRandomMove(this.game.currentPlayer);
+      this.game.makeMove(socket, this.game.currentPlayer, AIMove);
+      this.game.switchPlayer();
+      io.in(this.name).emit('update', this.game.getBoard(role), this.game.getGameState(), this.game.lastMove);
+    }
+  }, 2000);
+}
 
+Lobby.prototype.updatePiece = function(io, role, newPiece) {
+  this.game.updatePiece(role, newPiece);
   io.in(this.name).emit('update', this.game.getBoard(role), this.game.getGameState(), this.game.lastMove);
 }
-
 
 //////////////////////////////////////////////////////////////////
 // AI Functions
@@ -102,7 +112,7 @@ Lobby.prototype.addPlayer = function(player) {
     this.players.push({ username, role });
     
     if (this.opponentIsNPC)
-    this.players.push({ username: 'AIOpponent', role: `${this.players[0].role === 'White'? 'Black':'White'}`, difficulty: "easy" });
+      this.players.push({ username: 'AIOpponent', role: `${this.players[0].role === 'White'? 'Black':'White'}`, difficulty: "easy" });
     
     responses.push({ msg: "Success! Joining Room...", type: "success" });
     return { status: "Success", responses };

@@ -20,7 +20,7 @@ module.exports = class SocketListeners {
 
         if (!this.lobbies.hasOwnProperty(roomName)) {
           this.lobbies[roomName] = new Lobby(roomName, playingNPC);
-          this.lobbies[roomName].init();
+          this.lobbies[roomName].init(role, playingNPC);
         } 
         
         let lobby = this.getLobby(roomName);
@@ -58,13 +58,22 @@ module.exports = class SocketListeners {
       // Functions that Update Server Data
       /////////////////////////////////////////////////////////////////
 
+      socket.on("Update Piece", (newPiece) => {
+        if (!this.clients.hasOwnProperty(socket.client.id)) return;
+
+        const { roomName, role } = this.getClient(socket.client.id);
+        const lobby = this.lobbies[roomName];
+
+        lobby.updatePiece(this.io, role, newPiece);
+      });
+
       socket.on("Update Game", (move) => {
         if (!this.clients.hasOwnProperty(socket.client.id)) return;
         
         const { roomName, role } = this.getClient(socket.client.id);
         const lobby = this.lobbies[roomName];
         
-        lobby.updateGame(this.io, role, move);
+        lobby.updateGame(this.io, socket, role, move);
       });
       
       socket.on('Send Message', (msg) => {
@@ -87,7 +96,6 @@ module.exports = class SocketListeners {
         const roomName =  this.getRoomName(socket.client.id);
         const { role } = this.getClient(socket.client.id);
         const lobby = this.lobbies[roomName];
-        lobby.game.init();
         
         socket.emit('set client color', role);
         
@@ -96,7 +104,7 @@ module.exports = class SocketListeners {
         socket.emit('update', lobby.game.getBoard(role), lobby.game.getGameState(), lobby.game.lastMove);
 
         if (role === 'Black')
-          lobby.updateGame(this.io, role, null);
+          lobby.updateGame(this.io, socket, role, null);
       });
       
       socket.on('Get Logs', () => {

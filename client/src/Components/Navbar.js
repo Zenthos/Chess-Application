@@ -9,7 +9,6 @@ import '../styles/ComponentCSS.css';
 
 const Navbar = () => {
   const { user, setUser, isAuthenticated, setIsAuthenticated, isSubmitting } = useContext(AuthContext);
-  const [expanded, setExpanded] = useState(false);
   const [readyToRedirect, setReadyToRedirect] = useState(false);
 
   const toggleHandler = (event, onClick) => {
@@ -57,7 +56,7 @@ const Navbar = () => {
         <Dropdown alignRight>
           <Dropdown.Toggle as={CustomToggle}>
           </Dropdown.Toggle>
-          <Dropdown.Menu>
+          <Dropdown.Menu className='mb-2'>
             <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to={`/profile/${user.username}`}>Profile</NavLink>
             <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to="/friends">Friends</NavLink>
             <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to="/settings">Settings</NavLink>
@@ -72,14 +71,6 @@ const Navbar = () => {
     )
   }
 
-  const navToggle = () => {
-    setExpanded(expanded ? false : true);
-  }
-  
-  const navClose = () => {
-    setExpanded(false);
-  }
-
   useEffect(() => {
     if (readyToRedirect)
       setReadyToRedirect(false);
@@ -88,11 +79,11 @@ const Navbar = () => {
   return (
     <>
       { readyToRedirect ? <Redirect to="/login" />: "" }
-      <NavComponent className={ isSubmitting ? "disabled":"" } onToggle={navToggle} expanded={expanded} bg="primary" expand="lg">
-        <Link className="text-decoration-none" to="/">Chess App</Link>
+      <NavComponent className={ isSubmitting ? "disabled":"" } variant="dark" bg="primary" expand="lg">
+        <Link className="text-decoration-none" to="/">Chessrooms</Link>
         <NavComponent.Toggle aria-controls="responsive-navbar-nav" />
         <NavComponent.Collapse id="responsive-navbar-nav" >
-          <Nav variant="pills" className="ml-auto" onClick={navClose}>
+          <Nav variant="pills" className="ml-auto">
             { isAuthenticated ? <Authenticated /> : <NotAuthenticated /> }
           </Nav>
         </NavComponent.Collapse>

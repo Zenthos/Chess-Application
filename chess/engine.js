@@ -45,7 +45,7 @@ const CASTLE_MOVES = {
   queenside: [-2, 3]
 }
 
-const ChessEngine = function(opponentIsComputer) {
+const ChessEngine = function() {
   this.board = new Array(120);
   this.currentPlayer = 'White';
   this.needToPromote = false;
@@ -54,7 +54,6 @@ const ChessEngine = function(opponentIsComputer) {
   this.moveCount = 1;
   this.history = [];
   this.gameOver = false;
-  this.playingComputer = opponentIsComputer || false;
   this.lastMove = { from: '', to: ' '};
   this.castles = { 
     'White': { KC: true, QC: true },
@@ -66,7 +65,7 @@ ChessEngine.prototype.init = function(fen) {
   this.board.fill(-1, 0, this.board.length);
 
   fen = fen || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-  // fen = '4k3/ppppp1pp/8/7Q/8/8/PPPPPPPP/3QK3 w KQkq - 0 1';
+  fen = '7k/Q7/3R4/8/4K3/8/8/8 w KQkq - 0 1';
   const { ranks, headers } = this.readFEN(fen);
 
   Object.values(SQUARES).forEach((item, index) => this.board[item] = ranks[index]);
@@ -111,31 +110,37 @@ ChessEngine.prototype.generateMoves = function(fromLocation) {
     for (let i = 0; i < PAWN_MOVES[piece.color].length; i++) {
       let toIndex = SQUARES[fromLocation] + PAWN_MOVES[piece.color][i]; 
       let tile = this.board[toIndex];
+      let toLocation = this.getTileUsingIndex(toIndex);
 
       // Move Forward 1 Tile
-      if (tile === EMPTY && i === 0)
-        moves.push(this.buildMove(piece.color, fromLocation, this.getTileUsingIndex(toIndex)));
+      if (tile === EMPTY && i === 0) {
+        if (toLocation.charAt(1) === '8' || toLocation.charAt(1) === '1')
+          moves.push(this.buildMove(piece.color, fromLocation, toLocation, { promote: true }));
+        else
+          moves.push(this.buildMove(piece.color, fromLocation, toLocation));
+      }
 
       // Double tile Forward
       let previousTile = this.board[toIndex - PAWN_MOVES[piece.color][0]];
       if (tile === EMPTY && previousTile === EMPTY && i === 1) {
         if (piece.color === 'White' && fromLocation.charAt(1) === RANKS[6].toString())
-          moves.push(this.buildMove(piece.color, fromLocation, this.getTileUsingIndex(toIndex), { double: true }));
+          moves.push(this.buildMove(piece.color, fromLocation, toLocation, { double: true }));
         
         if (piece.color === 'Black' && fromLocation.charAt(1) === RANKS[1].toString())
-          moves.push(this.buildMove(piece.color, fromLocation, this.getTileUsingIndex(toIndex), { double: true }));
+          moves.push(this.buildMove(piece.color, fromLocation, toLocation, { double: true }));
       }
     }
 
     for (let i = 0; i < PAWN_ATTACKS[piece.color].length; i++) {
       let toIndex = SQUARES[fromLocation] + PAWN_ATTACKS[piece.color][i]; 
       let tile = this.board[toIndex];
+      let toLocation = this.getTileUsingIndex(toIndex);
 
       if (tile !== EMPTY && !ILLEGAL.includes(tile) && this.getColor(tile) !== piece.color && tile.toLowerCase() !== KING)
-        moves.push(this.buildMove(piece.color, fromLocation, this.getTileUsingIndex(toIndex)));
+        moves.push(this.buildMove(piece.color, fromLocation, toLocation));
 
       if (this.getTileUsingIndex(toIndex) === this.enpassantTarget)
-        moves.push(this.buildMove(piece.color, fromLocation, this.getTileUsingIndex(toIndex), { enpassant: true }));
+        moves.push(this.buildMove(piece.color, fromLocation, toLocation, { enpassant: true }));
     }
   }
 
@@ -145,23 +150,25 @@ ChessEngine.prototype.generateMoves = function(fromLocation) {
       let loops = 1;
       let toIndex = SQUARES[fromLocation] + PIECE_MOVES[piece.type][i];
       let tile = this.board[toIndex];
+      let toLocation = this.getTileUsingIndex(toIndex);
 
       while (!ILLEGAL.includes(tile)) {
         loops++;
 
         if (tile !== EMPTY) {
           if (tile.toLowerCase() !== KING && this.getColor(tile) !== piece.color)
-            moves.push(this.buildMove(piece.color, fromLocation, this.getTileUsingIndex(toIndex)));
+            moves.push(this.buildMove(piece.color, fromLocation, toLocation));
 
           break;
         } else {
-          moves.push(this.buildMove(piece.color, fromLocation, this.getTileUsingIndex(toIndex)));
+          moves.push(this.buildMove(piece.color, fromLocation, toLocation));
 
           if (piece.type === KNIGHT || piece.type === KING) break;
         }
 
         toIndex = SQUARES[fromLocation] + PIECE_MOVES[piece.type][i] * loops;
         tile = this.board[toIndex];
+        toLocation = this.getTileUsingIndex(toIndex);
       }
     }
   }
@@ -174,21 +181,22 @@ ChessEngine.prototype.generateMoves = function(fromLocation) {
       for (let i = 1; i <= Math.abs(kingOffset); i++) {
         let toIndex = SQUARES[fromLocation] + (i * (kingOffset < 0 ? -1 : 1));
         let tile = this.board[toIndex];
+        let toLocation = this.getTileUsingIndex(toIndex);
 
         // Make Sure Rooks Are present
         if (this.board[SQUARES[(piece.color === 'White'? 'h8':'h1')]].toLowerCase() !== ROOK && side === 'kingside') break;
         if (this.board[SQUARES[(piece.color === 'White'? 'a8':'a1')]].toLowerCase() !== ROOK && side === 'queenside') break;
 
         // King Cannot Travel Through Check
-        if (this.isSquareAttacked(this.getTileUsingIndex(toIndex), this.otherColor(piece.color)))
+        if (this.isSquareAttacked(toLocation, this.otherColor(piece.color)))
           break;
 
         if (!ILLEGAL.includes(tile) && tile === EMPTY) {
           if (side === 'kingside' && i === 2 && this.castles[piece.color].KC)
-            moves.push(this.buildMove(piece.color, fromLocation, this.getTileUsingIndex(toIndex), { castle: 'kingside' }));
+            moves.push(this.buildMove(piece.color, fromLocation, toLocation, { castle: 'kingside' }));
 
           if (side === 'queenside' && i*-1 === -2 && this.castles[piece.color].QC)
-           moves.push(this.buildMove(piece.color, fromLocation, this.getTileUsingIndex(toIndex), { castle: 'queenside' }));
+           moves.push(this.buildMove(piece.color, fromLocation, toLocation, { castle: 'queenside' }));
         }
       }
     }
@@ -272,6 +280,19 @@ ChessEngine.prototype.isKingStaleMated = function(side) {
     return true;
   else
     return false;
+}
+
+ChessEngine.prototype.updatePiece = function(side, newPiece) {
+  for (let square in SQUARES) {
+    let tile = this.board[SQUARES[square]];
+    if (!ILLEGAL.includes(tile) && tile !== EMPTY)
+      if (tile.toLowerCase() === 'p') {
+        this.board[SQUARES[square]] = (side === 'White' ? newPiece.toUpperCase() : newPiece);
+        return;
+      }
+  }
+
+  console.log('Could not update piece');
 }
 
 ChessEngine.prototype.isSquareAttacked = function(location, attackingColor) {
@@ -368,7 +389,7 @@ ChessEngine.prototype.isSquareAttacked = function(location, attackingColor) {
 // Lobby Functions - Used by lobby to send/retrieve game data
 /////////////////////////////////////////////////////////////////
 
-ChessEngine.prototype.makeMove = function(role, clientMove) {
+ChessEngine.prototype.makeMove = function(socket, role, clientMove) {
   if (!clientMove) return;
 
   let validMoves = this.generateMoves(clientMove.from);
@@ -424,9 +445,17 @@ ChessEngine.prototype.makeMove = function(role, clientMove) {
       this.enpassantTarget = '';
     }
 
+    if (newMove.hasOwnProperty('promote')) {
+      if (this.opponentIsComputer && this.computerColor === newMove.color) {
+        let potientialUpgrades = ['q','r','b','n'];
+        let randPiece = potientialUpgrades[Math.floor(Math.random() * potientialUpgrades.length)];
+        this.board[SQUARES[newMove.to]] = (newMove.color === 'White' ? randPiece.toUpperCase():randPiece);
+      } else {
+        socket.emit('promotion');
+      }
+    }
+    
     this.lastMove = { from: newMove.from, to: newMove.to };
-  } else {
-    console.log('problem');
   }
 }
 
@@ -456,12 +485,17 @@ ChessEngine.prototype.getBoard = function(role) {
 ChessEngine.prototype.getGameState = function() {
   let title = '';
   if (this.isKingChecked(this.currentPlayer)) {
-    title += `The ${this.currentPlayer} King is in check. `;
+    title += `The ${this.currentPlayer} King is in check! `;
   }
-  title += `It is ${this.currentPlayer}'s turn to move!`;
+  title += `${this.currentPlayer} Move`;
 
   if (this.isKingCheckMated(this.currentPlayer)) {
     title = `${this.currentPlayer} has been checkmated! ${this.otherColor(this.currentPlayer)} has won!`;
+    this.gameOver = true;
+  }
+
+  if (this.isKingStaleMated(this.currentPlayer)) {
+    title = `${this.currentPlayer} has no legal moves! It's a stalemate!`;
     this.gameOver = true;
   }
 

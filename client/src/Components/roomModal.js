@@ -107,7 +107,7 @@ const SelectRoom = ({ setSetupState, opponent, windowWidth }) => {
     <>
       <Modal dialogClassName={getScale(windowWidth, 504) < 0.70 ? "":"width-70"} show={show} backdrop="static" keyboard={false} animation={false} centered>
         <div className="row no-gutters">
-          <form className="col" onSubmit={handleJoin}>
+          <form className="col-sm" onSubmit={handleJoin}>
             <Modal.Header>
               <Modal.Title>Join A Game</Modal.Title>
             </Modal.Header>
@@ -132,12 +132,12 @@ const SelectRoom = ({ setSetupState, opponent, windowWidth }) => {
               <Button variant="primary" type="Submit" disabled={disabled}>Join</Button>
             </Modal.Footer>
           </form>
-          <div className="col border-left border-dark">
+          <div className="col-sm border-left border-dark">
             <Modal.Header>
               <Modal.Title>Room List</Modal.Title>
             </Modal.Header>
 
-            <Modal.Body>
+            <Modal.Body style={{ maxHeight: '42vh', overflowY: 'auto'}} >
               { lobbies.length === 0 ? <h3>No Lobbies Currently Open</h3>:
                 lobbies.map((lobby, index) => {
                   return <LobbyItem key={index} index={index} setRoomName={setRoomName} setRole={setRole} lobbyData={lobby}/>

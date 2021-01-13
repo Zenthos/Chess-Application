@@ -3,7 +3,7 @@ import { SocketContext } from '../Context/SocketContext';
 import board from '../assets/chess-images/board.png';
 import figures from '../assets/chess-images/figures.png';
 import useImage from 'use-image';
-import { Rect, Circle, Text, Image } from 'react-konva';
+import { Rect, Circle, Image } from 'react-konva';
 import { Stage, Layer, Portal } from 'react-konva-portal'
 import { useMeasure } from "react-use";
 import '../styles/ComponentCSS.css';
@@ -114,11 +114,10 @@ const Canvas = () => {
 
   // Initial Render
   useEffect(() => {
-    socket.on('update', (pieces, title, last, need) => {
+    socket.on('update', (pieces, title, last) => {
       setPieces(pieces);
       setMessage(title);
       setLast(last);
-      setNeedToPromote(need);
     });
 
     socket.on('wait', (start, playerMissing) => {
@@ -135,6 +134,7 @@ const Canvas = () => {
       }
     });
 
+    socket.on('promotion', () => setNeedToPromote(true));
     socket.on('set client color', (server_role) => setRole(server_role));
 
     socket.emit('Get Game');
@@ -146,15 +146,16 @@ const Canvas = () => {
     
   }, [boardImg]);
 
-  const handlePromotion = () => {
+  const handlePromotion = (event) => {
     setNeedToPromote(false);
+    socket.emit('Update Piece', event.target.value);
   }
 
   return (
     <div ref={ref} className="container-fluid d-flex flex-column col-sm-8 p-2" align="center">
-      <h1 className="text-white text-bold">{message}</h1>
+      <h1 className="text-white text-bold" style={{ fontSize: 'calc(1.5vw + 1.5vh)' }}>{message}</h1>
       <div className="flex-grow-1">
-        <Stage className={`${ready ? '' : 'block-content'}`} width={Math.min(width, height, maxSize)} height={Math.min(width, height, maxSize)} scale={getScale()}>
+        <Stage className={`${!ready || needToPromote ? 'block-content' : ''}`} width={Math.min(width, height, maxSize)} height={Math.min(width, height, maxSize)} scale={getScale()}>
           <Layer>
 
             <Image image={boardImg} />  
@@ -169,7 +170,7 @@ const Canvas = () => {
             y={calcPosition(last.from.charAt(1), true)}
             width={56}
             height={56}
-            opacity={0.3}
+            opacity={0.5}
             fill="brown"
             />
             }
@@ -180,12 +181,11 @@ const Canvas = () => {
             y={calcPosition(last.to.charAt(1), true)}
             width={56}
             height={56}
-            opacity={0.5}
+            opacity={0.7}
             fill="brown"
             />
             }
-      
-            <Text text={`${Math.floor(width)}, ${Math.floor(height)}`} />
+
           </Layer>
         </Stage>
         <div className={ready ? 'd-none' : 'canvas-modal'}>
@@ -197,12 +197,12 @@ const Canvas = () => {
           <div className="p-3 modal-content">
             <h5 className="modal-title mb-3">Choose a piece to upgrade the Pawn into</h5>
             <div className="row mx-0">
-              <button className="col btn btn-primary" value="Rook" onClick={handlePromotion}>Rook</button>
-              <button className="col btn btn-primary" value="Knight" onClick={handlePromotion}>Knight</button>
+              <button className="col btn btn-primary" value="r" onClick={handlePromotion}>Rook</button>
+              <button className="col btn btn-primary" value="n" onClick={handlePromotion}>Knight</button>
             </div>
             <div className="row mx-0">
-              <button className="col btn btn-primary" value="Bishop" onClick={handlePromotion}>Bishop</button>
-              <button className="col btn btn-primary" value="Queen" onClick={handlePromotion}>Queen</button>
+              <button className="col btn btn-primary" value="b" onClick={handlePromotion}>Bishop</button>
+              <button className="col btn btn-primary" value="q" onClick={handlePromotion}>Queen</button>
             </div>
           </div>
         </div>
