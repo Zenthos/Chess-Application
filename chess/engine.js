@@ -65,7 +65,6 @@ ChessEngine.prototype.init = function(fen) {
   this.board.fill(-1, 0, this.board.length);
 
   fen = fen || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-  fen = '7k/Q7/3R4/8/4K3/8/8/8 w KQkq - 0 1';
   const { ranks, headers } = this.readFEN(fen);
 
   Object.values(SQUARES).forEach((item, index) => this.board[item] = ranks[index]);
