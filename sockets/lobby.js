@@ -15,6 +15,8 @@ const Lobby = function(name, playingNPC) {
 Lobby.prototype.addMessage = function(io, name, role, msg) {
   let log = { id: this.logs.length, name, msg, role };
 
+  if (msg === '!history') console.log(this.game.history);
+
   this.logs.push(log);
   if (this.logs.length > 30) this.logs.shift();
 
@@ -29,10 +31,10 @@ Lobby.prototype.sendLogs = function(io) {
 // Chess Functions
 /////////////////////////////////////////////////////////////////
 
-Lobby.prototype.init = function(role, playingNPC) {
+Lobby.prototype.init = function(role, difficulty) {
   this.game.init();
-  if (playingNPC) {
-    this.game.opponentIsComputer = playingNPC;
+  if (this.opponentIsNPC) {
+    this.npcStrength = difficulty;
     this.game.computerColor = (role === 'White' ? 'Black' : 'White');
   }
 }
@@ -46,12 +48,17 @@ Lobby.prototype.updateGame = function(io, socket, role, move) {
 
   setTimeout(() => {
     if (this.opponentIsNPC) {
-      let AIMove = this.chooseRandomMove(this.game.currentPlayer);
+      let AIMove = this.chooseAIMove(this.game.currentPlayer);
       this.game.makeMove(socket, this.game.currentPlayer, AIMove);
       this.game.switchPlayer();
       io.in(this.name).emit('update', this.game.getBoard(role), this.game.getGameState(), this.game.lastMove);
     }
-  }, 2000);
+  }, 1000);
+
+  if (this.game.gameOver) {
+    // io.in(this.name).emit('game over', this.game.getGameState());
+    console.log('game is over');
+  }
 }
 
 Lobby.prototype.updatePiece = function(io, role, newPiece) {
@@ -63,11 +70,17 @@ Lobby.prototype.updatePiece = function(io, role, newPiece) {
 // AI Functions
 /////////////////////////////////////////////////////////////////
 
-Lobby.prototype.chooseRandomMove = function(side) {
+Lobby.prototype.chooseAIMove = function(side) {
   let move;
   do {
-    move = this.game.randomMove(side);
-  } while (!move && this.game.generateAllMoves(side).length !== 0);
+    // move = this.game.randomMove(side);
+
+    let d = new Date().getTime();
+    move = this.game.chooseBestMove(side, this.npcStrength);
+    let d2 = new Date().getTime();
+    let moveTime = (d2 - d);
+    console.log(moveTime);
+  } while (!move && !this.game.gameOver);
   
   return move;
 }

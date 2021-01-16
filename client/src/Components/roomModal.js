@@ -71,7 +71,7 @@ const SelectRoom = ({ setSetupState, opponent, windowWidth }) => {
     let name = (username === '') ? randomString(6, 10):username;
     let room = (roomName === '') ? randomString(6, 10):roomName;
 
-    socket.emit('join room', name, room, role, false, function (responseData) {
+    socket.emit('join room', name, room, role, { npc: false, difficulty: 0 }, function (responseData) {
       setUsername(name);
       setAlerts(responseData.responses);
       if (responseData.status === 'Success') {

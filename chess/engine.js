@@ -65,9 +65,22 @@ ChessEngine.prototype.init = function(fen) {
   this.board.fill(-1, 0, this.board.length);
 
   fen = fen || 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-  const { ranks, headers } = this.readFEN(fen);
 
-  Object.values(SQUARES).forEach((item, index) => this.board[item] = ranks[index]);
+  if (this.isValidFEN(fen)) {
+    const { ranks, headers } = this.readFEN(fen);
+  
+    this.history = this.history.splice(0, this.history.length);
+    this.currentPlayer = (headers[0] === 'w' ? 'White':'Black');
+    this.enpassantTarget = headers[2];
+    this.halfMoves = headers[3];
+    this.moveCount = headers[4];
+    this.castles = { 
+      'White': { KC: headers[1].includes('K'), QC: headers[1].includes('Q') },
+      'Black': { KC: headers[1].includes('k'), QC: headers[1].includes('q') }
+    };
+  
+    Object.values(SQUARES).forEach((item, index) => this.board[item] = ranks[index]);
+  }
 }
 
 //////////////////////////////////////////////////////////////////
@@ -76,9 +89,9 @@ ChessEngine.prototype.init = function(fen) {
 
 ChessEngine.prototype.buildMove = function(turn, from, to, optional) {
   let move = {
-    color: turn,
     from, 
     to, 
+    color: turn,
     piece: this.board[SQUARES[from]]
   }
 
@@ -135,8 +148,12 @@ ChessEngine.prototype.generateMoves = function(fromLocation) {
       let tile = this.board[toIndex];
       let toLocation = this.getTileUsingIndex(toIndex);
 
-      if (tile !== EMPTY && !ILLEGAL.includes(tile) && this.getColor(tile) !== piece.color && tile.toLowerCase() !== KING)
-        moves.push(this.buildMove(piece.color, fromLocation, toLocation));
+      if (tile !== EMPTY && !ILLEGAL.includes(tile) && this.getColor(tile) !== piece.color && tile.toLowerCase() !== KING) {
+        if (toLocation.charAt(1) === '8' || toLocation.charAt(1) === '1')
+          moves.push(this.buildMove(piece.color, fromLocation, toLocation, { promote: true }));
+        else
+          moves.push(this.buildMove(piece.color, fromLocation, toLocation));
+      }
 
       if (this.getTileUsingIndex(toIndex) === this.enpassantTarget)
         moves.push(this.buildMove(piece.color, fromLocation, toLocation, { enpassant: true }));
@@ -194,7 +211,7 @@ ChessEngine.prototype.generateMoves = function(fromLocation) {
           if (side === 'kingside' && i === 2 && this.castles[piece.color].KC)
             moves.push(this.buildMove(piece.color, fromLocation, toLocation, { castle: 'kingside' }));
 
-          if (side === 'queenside' && i*-1 === -2 && this.castles[piece.color].QC)
+          if (side === 'queenside' && i*-1 === -2 && this.board[toIndex - 1] === EMPTY && this.castles[piece.color].QC)
            moves.push(this.buildMove(piece.color, fromLocation, toLocation, { castle: 'queenside' }));
         }
       }
@@ -217,11 +234,22 @@ ChessEngine.prototype.generateMoves = function(fromLocation) {
 ChessEngine.prototype.generateAllMoves = function(color) {
   let moves = [];
 
-  for (let i = SQUARES.a1; i <= SQUARES.h8; i++) {
-    let char = this.board[i];
-    if (!ILLEGAL.includes(char) && char !== EMPTY && this.getColor(char) === color) {
-      let charMoves = this.generateMoves(this.getTileUsingIndex(i));
-      moves = moves.concat(charMoves);
+  // Generate all moves or all moves for a specific color
+  if (color) {
+    for (let i = SQUARES.a1; i <= SQUARES.h8; i++) {
+      let char = this.board[i];
+      if (!ILLEGAL.includes(char) && char !== EMPTY && this.getColor(char) === color) {
+        let charMoves = this.generateMoves(this.getTileUsingIndex(i));
+        moves = moves.concat(charMoves);
+      }
+    }
+  } else {
+    for (let i = SQUARES.a1; i <= SQUARES.h8; i++) {
+      let char = this.board[i];
+      if (!ILLEGAL.includes(char) && char !== EMPTY) {
+        let charMoves = this.generateMoves(this.getTileUsingIndex(i));
+        moves = moves.concat(charMoves);
+      }
     }
   }
 
@@ -276,6 +304,43 @@ ChessEngine.prototype.isKingChecked = function(side) {
 
 ChessEngine.prototype.isKingStaleMated = function(side) {
   if (!this.isKingChecked(side) && this.generateAllMoves(side).length === 0) 
+    return true;
+  else
+    return false;
+}
+
+ChessEngine.prototype.checkRepetition = function() {
+  // Implement Zobrist Hashing
+}
+
+ChessEngine.prototype.checkInsufficientMaterial = function() {
+  let numPieces = [0, 0, 0, 0, 0];
+  for (let square in SQUARES) {
+    let tile = this.board[SQUARES[square]];
+    if (ILLEGAL.includes(tile) || tile === EMPTY) continue;
+
+    switch(this.board[SQUARES[square]].toLowerCase()) {
+      case 'p':
+        numPieces[0]++;
+        break;
+      case 'r':
+        numPieces[1]++;
+        break;
+      case 'b':
+        numPieces[2]++;
+        break;
+      case 'n':
+        numPieces[3]++;
+        break;
+      case 'q':
+        numPieces[4]++;
+        break;
+      default:
+        break;
+    }
+  }
+
+  if (numPieces.every((item) => item === 0))
     return true;
   else
     return false;
@@ -453,6 +518,13 @@ ChessEngine.prototype.makeMove = function(socket, role, clientMove) {
         socket.emit('promotion');
       }
     }
+
+    if (newMove.hasOwnProperty('captured') || newPiece.type === PAWN) {
+      this.moveCount++;
+      this.halfMoves = 0;
+    } else {
+      this.halfMoves++;
+    }
     
     this.lastMove = { from: newMove.from, to: newMove.to };
   }
@@ -498,6 +570,15 @@ ChessEngine.prototype.getGameState = function() {
     this.gameOver = true;
   }
 
+  if (this.checkInsufficientMaterial()) {
+    title = `Neither side has enough material to checkmate. It's a draw!`
+    this.gameOver = true;
+  }
+
+  if (this.halfMoves >= 50) {
+    title = `50 moves have passed since a pawn was moved or a piece was captured. It's a draw!`
+  }
+
   return title;
 }
 
@@ -505,39 +586,103 @@ ChessEngine.prototype.getGameState = function() {
 // Notation Functions
 /////////////////////////////////////////////////////////////////
 
-ChessEngine.prototype.convertToFEN = function() {
-
+ChessEngine.prototype.isValidFEN = function(fen) {
+  return true;
 }
 
 ChessEngine.prototype.readFEN = function(fen) {
   let ranks = fen.split('/', 8);
   let headers = ranks[7].split(' ', 6); // Headers are bundled with last rank so split them
   ranks[7] = headers.shift();           // remove headers from rank
-
+  
   ranks.forEach((rank, index) => {
     rank = rank.split(/(?=[0-9])/g);
     rank.forEach((char, index) => {
       let replacement = EMPTY.repeat(parseInt(char[0]));
       rank[index] = char.replace(/[0-9]/, replacement);
     });
-
+    
     if (rank.length > 0) rank = rank.join('');
-
+    
     ranks[index] = rank;
   });
-
+  
   ranks = ranks.join('');
   return { ranks, headers };
+}
+
+ChessEngine.prototype.convertToFEN = function() {
+
 }
 
 //////////////////////////////////////////////////////////////////
 // Computer Functions
 /////////////////////////////////////////////////////////////////
 
+ChessEngine.prototype.evaluate = function() {
+  let totalEvaluation = 0;
+  for (let square in SQUARES) {
+    let tile = this.board[SQUARES[square]];
+    if (!ILLEGAL.includes(tile) && tile !== EMPTY) 
+      totalEvaluation += this.getPieceValue(this.getPiece(square));
+  }
+
+  return totalEvaluation;
+}
+
 ChessEngine.prototype.randomMove = function(side) {
   let validMoves = this.generateAllMoves(side);
 
   return validMoves[Math.floor(Math.random() * validMoves.length)];
+}
+
+ChessEngine.prototype.chooseBestMove = function(side, depth) {
+  let validMoves = this.generateAllMoves(side);
+  let bestMove = null;
+  let bestEval = -9999;
+
+  for (let move of validMoves) {
+    this.move(move);
+    let score = this.minimax(side, depth, -10000, 10000, true);
+    this.undoMove();
+
+    if(score > bestEval) {
+      bestEval = score;
+      bestMove = move;
+    }
+  }
+
+  return bestMove;
+}
+
+ChessEngine.prototype.minimax = function(side, depth, alpha, beta, isMaximisingPlayer) {
+  if (depth === 0) return -this.evaluate();
+
+  var validMoves = this.generateAllMoves(side);
+
+  if (isMaximisingPlayer) {
+    let bestMove = -9999;
+    for (let move of validMoves) {
+      this.move(move);
+      bestMove = Math.max(bestMove, this.minimax((side === 'White'?'Black':'White'), depth - 1, alpha, beta, !isMaximisingPlayer));
+      this.undoMove();
+      alpha = Math.max(alpha, bestMove);
+      if (alpha <= beta) return bestMove;
+    }
+
+    return bestMove;
+  } else {
+    let bestMove = 9999;
+    for (let move of validMoves) {
+      this.move(move);
+      bestMove = Math.min(bestMove, this.minimax((side === 'White'?'Black':'White'), depth - 1, alpha, beta, !isMaximisingPlayer));
+      this.undoMove();
+      beta = Math.min(beta, bestMove);
+      if (beta <= alpha) return bestMove;
+    }
+
+    return bestMove;
+  }
 }
 
 //////////////////////////////////////////////////////////////////
@@ -562,7 +707,11 @@ ChessEngine.prototype.getColor = function(char) {
 
 ChessEngine.prototype.getPiece = function(square) {
   let char = this.board[SQUARES[square]];
-  return { type: char.toLowerCase(), color: this.getColor(char) };
+
+  if (char)
+    return { type: char.toLowerCase(), color: this.getColor(char) };
+  else
+    return { type: 'Square is not on the board', color: 'No Color' };
 }
 
 ChessEngine.prototype.getTileUsingIndex = function(index) {
@@ -570,6 +719,32 @@ ChessEngine.prototype.getTileUsingIndex = function(index) {
     if (SQUARES[location] === index)
       return location;
   }
+}
+
+ChessEngine.prototype.getPieceValue = function(piece) {
+  if (piece === null) {
+    console.log("Tried to get Value of Null Piece");
+    return 0;
+  }
+
+  let absoluteValue = function(piece) {
+    if (piece.type === 'p')
+        return 10;
+    else if (piece.type === 'r')
+        return 50;
+    else if (piece.type === 'n')
+        return 30;
+    else if (piece.type === 'b')
+        return 30 ;
+    else if (piece.type === 'q')
+        return 90;
+    else if (piece.type === 'k')
+        return 900;
+    else
+      throw "Unknown Piece Type: " + piece.type;
+  }
+
+  return (piece.color === 'White' ? absoluteValue(piece):-absoluteValue(piece));
 }
 
 ChessEngine.prototype.convertBoard64 = function() {

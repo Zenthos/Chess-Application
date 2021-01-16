@@ -51,7 +51,11 @@ const Canvas = () => {
 
   const Piece = ({ socket, image, data }) => {
     const [isDragging, setIsDragging] = useState(false);
+    const [isHovering, setIsHovering] = useState(false);
     const [position, setPosition] = useState({ x: calcPosition(data.position.charAt(0)), y: calcPosition(data.position.charAt(1), true) });
+
+    const hoverStart = () => setIsHovering(true);
+    const hoverEnd = () => setIsHovering(false);
 
     const dragStart = () => {
       setIsDragging(true);
@@ -88,13 +92,14 @@ const Canvas = () => {
     }
 
     return (
-      <Portal zIndex={isDragging? 100:0}>
-        {data.availableMoves ? data.availableMoves.map(([x, y], index) => {
-          return isDragging ? <Circle 
+      <Portal zIndex={(isDragging) ? 100:0}>
+        {data.availableMoves && data.color === role ? data.availableMoves.map(([x, y], index) => {
+          return (isDragging || isHovering) ? <Circle 
           key={index} 
           x={calcPosition(x) + 28}
           y={calcPosition(y, true) + 28}
           radius={6}
+          shadowBlur={1}
           fill={'black'}
           />:null
         }):null}
@@ -106,6 +111,8 @@ const Canvas = () => {
         scaleY={isDragging? 1.1 : 1}
         onDragStart={dragStart}
         onDragEnd={dragEnd}
+        onMouseEnter={hoverStart}
+        onMouseLeave={hoverEnd}
         draggable={role === data.color? true:false}
         />
       </Portal>

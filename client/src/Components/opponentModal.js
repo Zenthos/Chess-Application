@@ -42,7 +42,7 @@ const SelectOpponent = ({ setSetupState, windowWidth }) => {
     } else {
       let username = randomString(6, 10);
       let room = randomString(6, 10);
-      socket.emit('join room', username, room, role, true, (responseData) => {
+      socket.emit('join room', username, room, role, { npc: true, difficulty }, (responseData) => {
         setAlerts(responseData.responses);
         if (responseData.status === 'Success') {
           setDisabled(true);
@@ -69,7 +69,7 @@ const SelectOpponent = ({ setSetupState, windowWidth }) => {
             </ToggleButtonGroup>
 
             <div className={opponent !== "npc" ? 'd-none':'my-3'}>
-              <h5 className="text-center my-3">Choose Opponent Difficulty (Not Fully Complete, Difficulty Won't Change) </h5>
+              <h5 className="text-center my-3">Choose Opponent Difficulty (Not Fully Complete) </h5>
               <ToggleButtonGroup className="d-flex" type="checkbox" value={difficulty} onChange={([a, b]) => setDifficulty(b)}>
                 <ToggleButton value={1} className={difficulty === 1 ? "toggle-button-active":""}>Easy</ToggleButton>
                 <ToggleButton value={2} className={difficulty === 2 ? "toggle-button-active":""}>Medium</ToggleButton>

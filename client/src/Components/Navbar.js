@@ -52,6 +52,8 @@ const Navbar = () => {
     return (
       <>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} exact to="/">Home</NavLink>
+        <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/about">About</NavLink>
+        <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/how-to-play">How to Play</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/play">Play Chess</NavLink>
         <Dropdown alignRight>
           <Dropdown.Toggle as={CustomToggle}>
@@ -61,8 +63,7 @@ const Navbar = () => {
             <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to="/friends">Friends</NavLink>
             <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to="/settings">Settings</NavLink>
             <Dropdown.Divider />
-            <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to="/about">About</NavLink>
-            <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to="/how-to-play">Learn Chess</NavLink>
+            <NavLink className={`dropdown-item`} activeClassName={`dropdown-active`} to="/forum">Forums</NavLink>
             <Dropdown.Divider />
             <button className={`dropdown-item`} onClick={LogoutHandler}>Logout</button>
           </Dropdown.Menu>

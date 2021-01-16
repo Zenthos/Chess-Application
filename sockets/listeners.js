@@ -14,13 +14,13 @@ module.exports = class SocketListeners {
       // Joining And Leaving
       /////////////////////////////////////////////////////////////////
 
-      socket.on('join room', (username, roomName, role, playingNPC, callback) => {
+      socket.on('join room', (username, roomName, role, npcdata, callback) => {
         const client = { username, roomName, role };
         this.clients[socket.client.id] = client;
 
         if (!this.lobbies.hasOwnProperty(roomName)) {
-          this.lobbies[roomName] = new Lobby(roomName, playingNPC);
-          this.lobbies[roomName].init(role, playingNPC);
+          this.lobbies[roomName] = new Lobby(roomName, npcdata.npc);
+          this.lobbies[roomName].init(role, npcdata.difficulty);
         } 
         
         let lobby = this.getLobby(roomName);
