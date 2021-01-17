@@ -519,7 +519,7 @@ ChessEngine.prototype.makeMove = function(socket, role, clientMove) {
       }
     }
 
-    if (newMove.hasOwnProperty('captured') || newPiece.type === PAWN) {
+    if (newMove.hasOwnProperty('captured') || newMove.type === PAWN) {
       this.moveCount++;
       this.halfMoves = 0;
     } else {
@@ -577,6 +577,7 @@ ChessEngine.prototype.getGameState = function() {
 
   if (this.halfMoves >= 50) {
     title = `50 moves have passed since a pawn was moved or a piece was captured. It's a draw!`
+    this.gameOver = true;
   }
 
   return title;
