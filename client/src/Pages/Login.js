@@ -54,7 +54,7 @@ const Login = () => {
       <div className="row mt-5">
         <div className="card col-md-6 m-auto">
           <form className="text-center">
-            <img className="m-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="108" height="108" />
+            <img className="m-4" src="/android-chrome-192x192.png" alt="" width="108" height="108" />
             <h1 className="h3 mb-3 font-weight-normal">Sign in</h1>
 
             <input className="form-control my-3" type="email" onChange={handleEmail} disabled={isSubmitting} placeholder="Email address"/>

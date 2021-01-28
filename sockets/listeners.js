@@ -30,6 +30,7 @@ module.exports = class SocketListeners {
         // This callback is used to send the client a message if connection was successful or rejected
         callback(lobby.addPlayer(client));
 
+        this.io.in(roomName).emit('Update Players', lobby.players);
         this.io.emit('Update Lobbies', this.getAllLobbies());
       });
       
@@ -39,12 +40,13 @@ module.exports = class SocketListeners {
         const { username, roomName, role } = this.getClient(socket.client.id);
         const lobby = this.getLobby(roomName);
         
-        lobby.addMessage(this.io, 'System', 'Admin', `${username} (${role}) has disconnected!`)
+        lobby.addMessage(this.io, 'System', 'Admin', `${username} (${role}) has disconnected!`);
         lobby.removePlayer(username);
         
         if (lobby.players.length === 0 || lobby.onlyContainsAI()) {
           delete this.lobbies[roomName];
         } else {
+          this.io.in(roomName).emit('Update Players', lobby.players);
           const { status, playerMissing } = lobby.BlackAndWhitePresent();
           this.io.in(roomName).emit('wait', status, playerMissing);
         }
@@ -115,7 +117,16 @@ module.exports = class SocketListeners {
         
         lobby.sendLogs(this.io);
       });
-      
+
+      socket.on('Get Players', () => {
+        if (!this.clients.hasOwnProperty(socket.client.id)) return;
+        
+        const roomName =  this.getRoomName(socket.client.id);
+        const lobby = this.getLobby(roomName);
+
+        socket.emit('Update Players', lobby.players);
+      })
+
       socket.on('Get Lobbies', () => {
         socket.emit('Update Lobbies', this.getAllLobbies());
       });

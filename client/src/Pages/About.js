@@ -83,8 +83,8 @@ const About = () => {
             <ul className="list-group mb-3">
               <li className="list-item list-group-item-success">&#x2713; Implement Login/Register System</li>
               <li className="list-item list-group-item-success">&#x2713; Create Chess AI</li>
-              <li className="list-item list-group-item-warning">... Finish Chat Interface</li>
-              <li className="list-item list-group-item-danger">&#x2613; Design and Implement User Profiles</li>
+              <li className="list-item list-group-item-success">&#x2713; Finish Chat Interface</li>
+              <li className="list-item list-group-item-warning">... Design and Implement User Profiles</li>
               <li className="list-item list-group-item-danger">&#x2613; Implement Friend System</li>
               <li className="list-item list-group-item-danger">&#x2613; Implement User Settings</li>
               <li className="list-item list-group-item-danger">&#x2613; Complete the Tutorial Page</li>

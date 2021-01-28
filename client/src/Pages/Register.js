@@ -64,7 +64,7 @@ const Register = () => {
       <div className="row mt-3">
         <div className="card col-md-6 m-auto">
           <form className="text-center" onSubmit={handleSubmit}>
-            <img className="m-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="108" height="108" />
+            <img className="m-4" src="/android-chrome-192x192.png" alt="" width="108" height="108" />
             <h1 className="h3 mb-3 font-weight-normal">Register</h1>
 
             <input className="form-control my-3" type="text" onChange={handleUsername} disabled={isSubmitting} placeholder="Username"/>

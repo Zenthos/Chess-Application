@@ -29,7 +29,7 @@ const Home = () => {
 
       <h1 className="my-2">Don't know how to play?</h1>
       <Link to="/how-to-play">
-        <button className="my-3 btn btn-primary">Learn the Basics!</button>
+        <button className="my-3 btn btn-primary">Learn the Rules!</button>
       </Link>
 
       <h1 className="my-2">Who made this website?</h1>

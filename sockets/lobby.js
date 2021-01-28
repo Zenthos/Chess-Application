@@ -40,24 +40,25 @@ Lobby.prototype.init = function(role, difficulty) {
 }
 
 Lobby.prototype.updateGame = function(io, socket, role, move) {
-  if (role === this.game.currentPlayer) {
+  if (role === this.game.currentPlayer && !this.game.gameOver) {
     this.game.makeMove(socket, role, move);
     this.game.switchPlayer();
     io.in(this.name).emit('update', this.game.getBoard(role), this.game.getGameState(), this.game.lastMove);
+    io.in(this.name).emit('Update Moves', this.game.history);
   }
 
   setTimeout(() => {
-    if (this.opponentIsNPC) {
+    if (this.opponentIsNPC && !this.game.gameOver) {
       let AIMove = this.chooseAIMove(this.game.currentPlayer);
       this.game.makeMove(socket, this.game.currentPlayer, AIMove);
       this.game.switchPlayer();
       io.in(this.name).emit('update', this.game.getBoard(role), this.game.getGameState(), this.game.lastMove);
+      io.in(this.name).emit('Update Moves', this.game.history);
     }
   }, 1000);
 
   if (this.game.gameOver) {
-    // io.in(this.name).emit('game over', this.game.getGameState());
-    console.log('game is over');
+    io.in(this.name).emit('game over', this.game.getGameState());
   }
 }
 
@@ -79,7 +80,7 @@ Lobby.prototype.chooseAIMove = function(side) {
     move = this.game.chooseBestMove(side, this.npcStrength);
     let d2 = new Date().getTime();
     let moveTime = (d2 - d);
-    console.log(moveTime);
+    // console.log(moveTime);
   } while (!move && !this.game.gameOver);
   
   return move;
@@ -124,7 +125,7 @@ Lobby.prototype.addPlayer = function(player) {
   if (responses.length === 0) {
     this.players.push({ username, role });
     
-    if (this.opponentIsNPC)
+    if (this.opponentIsNPC && !this.players.some((player) => player.username === 'AIOpponent'))
       this.players.push({ username: 'AIOpponent', role: `${this.players[0].role === 'White'? 'Black':'White'}`, difficulty: "easy" });
     
     responses.push({ msg: "Success! Joining Room...", type: "success" });

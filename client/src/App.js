@@ -21,6 +21,7 @@ function App() {
         <Route path="/play" component={pages.Play} />
         <Route path="/about" component={pages.About} />
         <Route path="/how-to-play" component={pages.Tutorial} />
+        <Route path="/shop" component={pages.Shop} />
 
         <Route path="/profile/:username" component={pages.Profile} />
         <PrivateRoute path="/friends" component={pages.Friends} />

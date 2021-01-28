@@ -620,6 +620,69 @@ ChessEngine.prototype.convertToFEN = function() {
 // Computer Functions
 /////////////////////////////////////////////////////////////////
 
+const PIECE_SQUARE_TABLES = {
+  'p': [
+    [ 0,  0,  0,  0,  0,  0,  0,  0],
+    [50, 50, 50, 50, 50, 50, 50, 50],
+    [10, 10, 20, 30, 30, 20, 10, 10],
+    [ 5,  5, 10, 25, 25, 10,  5,  5],
+    [ 0,  0,  0, 20, 20,  0,  0,  0],
+    [ 5, -5,-10,  0,  0,-10, -5,  5],
+    [ 5, 10, 10,-20,-20, 10, 10,  5],
+    [ 0,  0,  0,  0,  0,  0,  0,  0]
+  ],
+  'n': [
+    [-50,-40,-30,-30,-30,-30,-40,-50],
+    [-40,-20,  0,  0,  0,  0,-20,-40],
+    [-30,  0, 10, 15, 15, 10,  0,-30],
+    [-30,  5, 15, 20, 20, 15,  5,-30],
+    [-30,  0, 15, 20, 20, 15,  0,-30],
+    [-30,  5, 10, 15, 15, 10,  5,-30],
+    [-40,-20,  0,  5,  5,  0,-20,-40],
+    [-50,-40,-30,-30,-30,-30,-40,-50]
+  ],
+  'b': [
+    [-20,-10,-10,-10,-10,-10,-10,-20],
+    [-10,  0,  0,  0,  0,  0,  0,-10],
+    [-10,  0,  5, 10, 10,  5,  0,-10],
+    [-10,  5,  5, 10, 10,  5,  5,-10],
+    [-10,  0, 10, 10, 10, 10,  0,-10],
+    [-10, 10, 10, 10, 10, 10, 10,-10],
+    [-10,  5,  0,  0,  0,  0,  5,-10],
+    [-20,-10,-10,-10,-10,-10,-10,-20]
+  ],
+  'r': [
+    [ 0,  0,  0,  0,  0,  0,  0,  0],
+    [ 5, 10, 10, 10, 10, 10, 10,  5],
+    [-5,  0,  0,  0,  0,  0,  0, -5],
+    [-5,  0,  0,  0,  0,  0,  0, -5],
+    [-5,  0,  0,  0,  0,  0,  0, -5],
+    [-5,  0,  0,  0,  0,  0,  0, -5],
+    [-5,  0,  0,  0,  0,  0,  0, -5],
+    [ 0,  0,  0,  5,  5,  0,  0,  0]
+  ],
+  'q': [
+    [-20,-10,-10, -5, -5,-10,-10,-20],
+    [-10,  0,  0,  0,  0,  0,  0,-10],
+    [-10,  0,  5,  5,  5,  5,  0,-10],
+    [ -5,  0,  5,  5,  5,  5,  0, -5],
+    [  0,  0,  5,  5,  5,  5,  0, -5],
+    [-10,  5,  5,  5,  5,  5,  0,-10],
+    [-10,  0,  5,  0,  0,  0,  0,-10],
+    [-20,-10,-10, -5, -5,-10,-10,-20]
+  ],
+  'k': [
+    [-30,-40,-40,-50,-50,-40,-40,-30],
+    [-30,-40,-40,-50,-50,-40,-40,-30],
+    [-30,-40,-40,-50,-50,-40,-40,-30],
+    [-30,-40,-40,-50,-50,-40,-40,-30],
+    [-20,-30,-30,-40,-40,-30,-30,-20],
+    [-10,-20,-20,-20,-20,-20,-20,-10],
+    [ 20, 20,  0,  0,  0,  0, 20, 20],
+    [ 20, 30, 10,  0,  0, 10, 30, 20]
+  ]
+}
+
 ChessEngine.prototype.evaluate = function() {
   let totalEvaluation = 0;
   for (let square in SQUARES) {
@@ -631,10 +694,13 @@ ChessEngine.prototype.evaluate = function() {
   return totalEvaluation;
 }
 
-ChessEngine.prototype.randomMove = function(side) {
-  let validMoves = this.generateAllMoves(side);
+ChessEngine.prototype.calculateBonus = function(piece) {
+  let table = [...PIECE_SQUARE_TABLES[piece.type]];
 
-  return validMoves[Math.floor(Math.random() * validMoves.length)];
+  if (piece.color === 'Black')
+    table = table.slice().reverse();
+
+  return table[FILES.indexOf(piece.tile.charAt(0))][RANKS.indexOf(parseInt(piece.tile.charAt(1)))];
 }
 
 ChessEngine.prototype.chooseBestMove = function(side, depth) {
@@ -710,9 +776,9 @@ ChessEngine.prototype.getPiece = function(square) {
   let char = this.board[SQUARES[square]];
 
   if (char)
-    return { type: char.toLowerCase(), color: this.getColor(char) };
+    return { type: char.toLowerCase(), color: this.getColor(char), tile: square };
   else
-    return { type: 'Square is not on the board', color: 'No Color' };
+    return { type: 'Square is not on the board', color: 'No Color', tile: 'No Tile' };
 }
 
 ChessEngine.prototype.getTileUsingIndex = function(index) {
@@ -745,7 +811,10 @@ ChessEngine.prototype.getPieceValue = function(piece) {
       throw "Unknown Piece Type: " + piece.type;
   }
 
-  return (piece.color === 'White' ? absoluteValue(piece):-absoluteValue(piece));
+  let score = absoluteValue(piece);
+  score += this.calculateBonus(piece);
+
+  return (piece.color === 'White' ? score:-score);
 }
 
 ChessEngine.prototype.convertBoard64 = function() {

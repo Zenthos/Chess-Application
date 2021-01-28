@@ -389,10 +389,10 @@ const Tutorial = () => {
               <Nav.Link className="px-2" eventKey="bishop">Bishop</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link className="px-1" eventKey="queen">King</Nav.Link>
+              <Nav.Link className="px-1" eventKey="queen">Queen</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link className="px-2" eventKey="king">Queen</Nav.Link>
+              <Nav.Link className="px-2" eventKey="king">King</Nav.Link>
             </Nav.Item>
           </Nav>
 

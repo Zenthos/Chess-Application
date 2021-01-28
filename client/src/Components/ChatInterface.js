@@ -2,32 +2,53 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Nav, Tab } from 'react-bootstrap';
 import { SocketContext } from '../Context/SocketContext';
 import Chat from './Chat';
+import FadeIn from '../Components/fade-in';
 import '../styles/ComponentCSS.css';
 
 const MoveHistory = () => {
-  const { socket } = useContext(SocketContext);
-  
+  const { socket } = useContext(SocketContext);  
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    socket.on('set moves', (data) => {
-      setHistory(data);
-    });
+    socket.on('Update Moves', (data) => setHistory([...data]));
   }, [socket]);
 
   return (
-    <ol className="m-0 border-top-0">
-      {history.map((value, index) => {
-        return <li key={index}>{value}</li>;
-      })}
-    </ol>
+    <div class="h-100">
+      <ul className="list-group border-top-0 h-100 overflow-auto m-0 p-2">
+        {history.map((move, index) => {
+          return (
+            <FadeIn>
+              <li className="list-group-item" key={index}>{`${index}. ${move.color} - ${move.from} ${move.to}`}</li>
+            </FadeIn>
+          )
+        })}
+      </ul>
+    </div>
   )
 }
 
 const UserList = () => {
+  const { socket } = useContext(SocketContext);  
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    socket.on('Update Players', (data) => setList([...data]));
+
+    socket.emit('Get Players');
+  }, [socket]);
+
   return (
-    <div className="border-top-0">
-      
+    <div class="h-100">
+      <ul className="list-group border-top-0 h-100 overflow-auto m-0 p-2">
+        {list.map((player, index) => {
+          return (
+            <FadeIn>
+              <li className="list-group-item" key={index}>{`${player.username} - ${player.role}`}</li>
+            </FadeIn>
+          )
+        })}
+      </ul>
     </div>
   )
 }
@@ -41,13 +62,13 @@ const ChatInterface = ({ username, role }) => {
             <Nav.Link eventKey="chat">Chat</Nav.Link>
           </Nav.Item>
 
-          {/* <Nav.Item>
+          <Nav.Item>
             <Nav.Link eventKey="history">History</Nav.Link>
           </Nav.Item>
 
           <Nav.Item>
-            <Nav.Link eventKey="list">List</Nav.Link>
-          </Nav.Item> */}
+            <Nav.Link eventKey="list">Users</Nav.Link>
+          </Nav.Item>
         </Nav>
 
         <Tab.Content style={{ height: "85vh"}}>

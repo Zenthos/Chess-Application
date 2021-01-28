@@ -23,6 +23,7 @@ const Canvas = () => {
   const [needToPromote, setNeedToPromote] = useState(false);
   const [message, setMessage] = useState('Waiting...');
   const [role, setRole] = useState('White');
+  const [gameOver, setGameOver] = useState(false);
 
   const getScale = () => {
     let scale = 1;
@@ -94,7 +95,7 @@ const Canvas = () => {
     return (
       <Portal zIndex={(isDragging) ? 100:0}>
         {data.availableMoves && data.color === role ? data.availableMoves.map(([x, y], index) => {
-          return (isDragging || isHovering) ? <Circle 
+          return (isDragging || isHovering) && !gameOver ? <Circle 
           key={index} 
           x={calcPosition(x) + 28}
           y={calcPosition(y, true) + 28}
@@ -113,7 +114,7 @@ const Canvas = () => {
         onDragEnd={dragEnd}
         onMouseEnter={hoverStart}
         onMouseLeave={hoverEnd}
-        draggable={role === data.color? true:false}
+        draggable={role === data.color && !gameOver ? true:false}
         />
       </Portal>
     )
@@ -143,6 +144,7 @@ const Canvas = () => {
 
     socket.on('promotion', () => setNeedToPromote(true));
     socket.on('set client color', (server_role) => setRole(server_role));
+    socket.on('game over', () => setGameOver(true));
 
     socket.emit('Get Game');
   }, [socket]);
