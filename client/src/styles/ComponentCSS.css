@@ -80,17 +80,17 @@ html {
 
 .jumbotron-chess {
   height: 100%;
-  min-height: 300px;
+  min-height: 400px;
   background: #373b44; /* fallback for old browsers */
-  background: -webkit-linear-gradient(rgba(52, 232, 158, 0.3), rgba(15, 52, 67, 0.7)), url("../assets/chess-images/jumbo-image.jpg");
-  background: linear-gradient(rgba(52, 232, 158, 0.3), rgba(15, 52, 67, 0.7)), url("../assets/chess-images/jumbo-image.jpg");
+  background: -webkit-linear-gradient(rgba(28, 143, 95, 0.8), rgba(15, 52, 67, 0.95)), url("../assets/chess-images/jumbo-image.jpg");
+  background: linear-gradient(rgba(28, 143, 95, 0.8), rgba(15, 52, 67, 0.95)), url("../assets/chess-images/jumbo-image.jpg");
   background-size: cover;
 }
 
 .mast {
   background: #373b44; /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, rgba(55, 59, 68, 0.4), rgba(66, 134, 244, 0.6)), url("../assets/mast-picture.jpg");; /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, rgba(55, 59, 68, 0.4), rgba(66, 134, 244, 0.6)), url("../assets/mast-picture.jpg"); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: -webkit-linear-gradient(to right, rgba(55, 59, 68, 0.7), rgba(46, 100, 185, 0.7)), url("../assets/mast-picture.jpg");; /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, rgba(55, 59, 68, 0.7), rgba(46, 100, 185, 0.7)), url("../assets/mast-picture.jpg"); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   background-size: cover;
 }
 

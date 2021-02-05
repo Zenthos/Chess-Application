@@ -61,7 +61,7 @@ const Register = () => {
 
   return (
     <div className="container">
-      <div className="row mt-3">
+      <div className="row my-5">
         <div className="card col-md-6 m-auto">
           <form className="text-center" onSubmit={handleSubmit}>
             <img className="m-4" src="/android-chrome-192x192.png" alt="" width="108" height="108" />

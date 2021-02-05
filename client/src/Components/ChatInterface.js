@@ -4,6 +4,7 @@ import { SocketContext } from '../Context/SocketContext';
 import Chat from './Chat';
 import FadeIn from '../Components/fade-in';
 import '../styles/ComponentCSS.css';
+import ScrollToBottom from 'react-scroll-to-bottom';
 
 const MoveHistory = () => {
   const { socket } = useContext(SocketContext);  
@@ -14,16 +15,16 @@ const MoveHistory = () => {
   }, [socket]);
 
   return (
-    <div class="h-100">
-      <ul className="list-group border-top-0 h-100 overflow-auto m-0 p-2">
+    <div className="h-100">
+      <ScrollToBottom className="list-group border-top-0 h-100 overflow-auto m-0 p-2">
         {history.map((move, index) => {
           return (
             <FadeIn>
-              <li className="list-group-item" key={index}>{`${index}. ${move.color} - ${move.from} ${move.to}`}</li>
+              <li className="list-group-item bg-dark" key={index}>{`${index}. ${move.color} - ${move.from} ${move.to}`}</li>
             </FadeIn>
           )
         })}
-      </ul>
+      </ScrollToBottom>
     </div>
   )
 }
@@ -39,12 +40,12 @@ const UserList = () => {
   }, [socket]);
 
   return (
-    <div class="h-100">
+    <div className="h-100">
       <ul className="list-group border-top-0 h-100 overflow-auto m-0 p-2">
         {list.map((player, index) => {
           return (
             <FadeIn>
-              <li className="list-group-item" key={index}>{`${player.username} - ${player.role}`}</li>
+              <li className="list-group-item bg-dark" key={index}>{`${player.username} - ${player.role}`}</li>
             </FadeIn>
           )
         })}

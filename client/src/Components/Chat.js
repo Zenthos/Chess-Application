@@ -7,7 +7,7 @@ import '../styles/ComponentCSS.css';
 const Message = ({msgData, index}) => {
   return (
     <FadeIn>
-      <div className={`border border-dark rounded mx-2 ${ index % 2 === 1 ? 'bg-primary' : 'bg-secondary' }`}>
+      <div className={`border border-dark rounded mx-2 ${ index % 2 === 1 ? 'bg-dark' : 'bg-secondary' }`}>
         <div className="p-2">
           <strong className="text-white">{msgData.name} <i>( {msgData.role} )</i></strong>
           <hr className="my-1"/>

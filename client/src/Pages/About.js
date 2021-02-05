@@ -81,14 +81,14 @@ const About = () => {
           <div className="col-sm">
             <h1>Planned Updates</h1>
             <ul className="list-group mb-3">
-              <li className="list-item list-group-item-success">&#x2713; Implement Login/Register System</li>
-              <li className="list-item list-group-item-success">&#x2713; Create Chess AI</li>
-              <li className="list-item list-group-item-success">&#x2713; Finish Chat Interface</li>
-              <li className="list-item list-group-item-warning">... Design and Implement User Profiles</li>
-              <li className="list-item list-group-item-danger">&#x2613; Implement Friend System</li>
-              <li className="list-item list-group-item-danger">&#x2613; Implement User Settings</li>
-              <li className="list-item list-group-item-danger">&#x2613; Complete the Tutorial Page</li>
-              <li className="list-item list-group-item-danger">&#x2613; Complete the About Page</li>
+              <li className="list-group-item list-group-item-success">&#x2713; Implement Login/Register System</li>
+              <li className="list-group-item list-group-item-success">&#x2713; Create Chess AI</li>
+              <li className="list-group-item list-group-item-success">&#x2713; Finish Chat Interface</li>
+              <li className="list-group-item list-group-item-warning">... Design and Implement User Profiles</li>
+              <li className="list-group-item list-group-item-danger">&#x2613; Implement Friend System</li>
+              <li className="list-group-item list-group-item-danger">&#x2613; Implement User Settings</li>
+              <li className="list-group-item list-group-item-danger">&#x2613; Complete the Tutorial Page</li>
+              <li className="list-group-item list-group-item-danger">&#x2613; Complete the About Page</li>
             </ul> 
           </div>
 
@@ -139,10 +139,8 @@ const About = () => {
           </Carousel>
         </div>
 
-        <div className="row m-0">
-          <div className="col-1"></div>
-
-          <div className="col-10 text-center">
+        <div id="contact-us" className="row m-0">
+          <div className="col-md-10 offset-md-1 text-center">
             <h1 className="mt-3">Contact</h1>
             <form className="form-group" onSubmit={submitHandler}>
               <input type="email" className="form-control mb-2" disabled={isSubmitting} onChange={emailHandler} placeholder="name@example.com" />
@@ -152,8 +150,6 @@ const About = () => {
               <button type="submit" className="btn btn-primary mb-3" disabled={isSubmitting}>Submit</button>
             </form>
           </div>
-
-          <div className="col-1"></div>
         </div>
       </div>
     </>

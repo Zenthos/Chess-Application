@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Nav, Dropdown, Navbar as NavComponent } from 'react-bootstrap';
 import { Link, NavLink, Redirect } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserCircle } from '@fortawesome/free-solid-svg-icons'
+import { faUserCircle, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { AuthContext } from '../Context/AuthContext';
 import AuthService from '../Service/AuthService';
 import '../styles/ComponentCSS.css';
@@ -39,12 +39,16 @@ const Navbar = () => {
   const NotAuthenticated = () => {
     return (
       <>
+        <NavLink className={`navbar-link`} activeClassName={`navbar-active`} exact to="/search">
+          <FontAwesomeIcon className="text-white mx-2" icon={faSearch} />
+        </NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} exact to="/">Home</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/about">About</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/how-to-play">How to Play</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/shop">Shop</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/play">Play Chess</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/login">Login</NavLink>
+        <NavLink className={`btn btn-primary bg-secondary navbar-link`} activeClassName={`navbar-active bg-dark`} to="/register">Sign Up</NavLink>
       </>
     )
   }
@@ -52,6 +56,9 @@ const Navbar = () => {
   const Authenticated = () => {
     return (
       <>
+        <NavLink className={`navbar-link`} activeClassName={`navbar-active`} exact to="/search">
+          <FontAwesomeIcon className="text-white mx-2" icon={faSearch} />
+        </NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} exact to="/">Home</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/about">About</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/how-to-play">How to Play</NavLink>

@@ -66,10 +66,28 @@ router.post('/profile', (req, res) => {
     if (user)
       res.status(200).json({ userExists: true, user: getPublicUserData(user) });
     else
-      res.status(401).json({ userExists: false, user: null });
+      res.status(200).json({ userExists: false, user: null });
   })
   .catch(err => console.log(err));
 });
+
+router.post('/search', (req, res) => {
+  User.find({ username: { $regex: new RegExp(req.body.searchValue), $options: 'i' } })
+  .then(users => {
+    if (users) {
+      let publicData = users.map((item) => { 
+        return {
+          username: item.username,
+          id: item._id,
+        }
+      });
+      res.status(200).json(publicData);
+    }
+    else
+      res.status(200).json([]);
+  })
+  .catch(err => console.log(err));
+})
 
 router.get('/logout', (req, res) => {
   if (req.cookies.hasOwnProperty('access_token')) 
