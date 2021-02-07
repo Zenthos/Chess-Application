@@ -48,7 +48,7 @@ const Navbar = () => {
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/shop">Shop</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/play">Play Chess</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/login">Login</NavLink>
-        <NavLink className={`btn btn-primary bg-secondary navbar-link`} activeClassName={`navbar-active bg-dark`} to="/register">Sign Up</NavLink>
+        <NavLink className={`bg-secondary navbar-link rounded`} activeClassName={`navbar-active bg-dark`} to="/register">Sign Up</NavLink>
       </>
     )
   }

@@ -7,6 +7,7 @@ import spinner from '../assets/spinner.gif';
 import UserService from '../Service/UserService';
 
 const Search = () => {
+  const [searchOccurred, setSearchOccurred] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const searchValueHandler = (event) => setSearchValue(event.target.value);
 
@@ -17,6 +18,7 @@ const Search = () => {
     event.preventDefault();
     if (searchValue !== '') {
       setLoading(true);
+      setSearchOccurred(true);
 
       await UserService.getSearchResults({ searchValue })
       .then((res) => {
@@ -24,6 +26,8 @@ const Search = () => {
         setLoading(false);
       })
       .catch((err) => console.log(err));
+    } else {
+      setSearchOccurred(false);
     }
   }
 
@@ -37,22 +41,27 @@ const Search = () => {
         </button>
       </form>
       <div id="results" className="py-5">
-        <ul className="card list-group rounded border-top-0 p-5">
-          <h3 className="p-2">Users</h3>
+        <ul className="card list-group rounded p-5">
           {
           !loading ?
-          results.length > 0 ?
-          results.map((item, index) => {
-            return (
-              <Link to={`/profile/${item.username}`} className="list-group-item list-group-item-action bg-dark py-4" key={index}>
-                {item.username}
-              </Link>
-            )
-          })
+            results.length > 0 ?
+              <>
+                <h3 className="p-2">Users</h3>
+                {results.map((item, index) => {
+                  return (
+                    <Link to={`/profile/${item.username}`} className="list-group-item list-group-item-action bg-secondary py-4" key={index}>
+                      <p className="text-white m-0">{item.username}</p>
+                    </Link>
+                  )
+                })}
+              </>
+            :
+              searchOccurred ? 
+              <h3 className="text-center">No Results Found</h3> 
+              : 
+              <h3 className="text-center">Enter Something Above to Search</h3>
           :
-          <h3 className="text-center">No Results Found</h3>
-          :
-          <img className="col-sm-2 offset-5" src={spinner} alt="" />
+            <img className="col-sm-2 offset-5" src={spinner} alt="" />
           }
         </ul>
       </div> 

@@ -12,6 +12,7 @@ const Footer = () => {
           <div className="col-lg-3 mb-5 mb-lg-0">
             <h4 className="text-uppercase mb-4">Chess</h4>
             <Link to="/play" className="btn btn-link p-0">Play</Link><br />
+            <Link to="/how-to-play" className="btn btn-link p-0">Learn</Link><br />
             <Link to="/practice" className="btn btn-link p-0">Practice</Link><br />
             <Link to="/shop" className="btn btn-link p-0">Shop</Link><br />
           </div>
@@ -27,8 +28,8 @@ const Footer = () => {
             <h4 className="text-uppercase mb-4">Resources</h4>
             <Link to="/about" className="btn btn-link p-0">About</Link><br />
             <Link to="/search" className="btn btn-link p-0">Search</Link><br />
-            <Link to="/how-to-play" className="btn btn-link p-0">Learn How to Play</Link><br />
             <a href="https://github.com/Zenthos/Chess-Application" className="btn btn-link p-0">Source Code</a><br />
+            <Link to="/forum" className="btn btn-link p-0">Forum</Link><br />
           </div>
 
           <div className="col-lg-3">

@@ -69,7 +69,7 @@ const SelectOpponent = ({ setSetupState, windowWidth }) => {
             </ToggleButtonGroup>
 
             <div className={opponent !== "npc" ? 'd-none':'my-3'}>
-              <h5 className="text-center my-3">Choose Opponent Difficulty (Not Fully Complete) </h5>
+              <h5 className="text-center my-3">Choose Opponent Difficulty</h5>
               <ToggleButtonGroup className="d-flex" type="checkbox" value={difficulty} onChange={([a, b]) => setDifficulty(b)}>
                 <ToggleButton value={1} className={difficulty === 1 ? "toggle-button-active":""}>Easy</ToggleButton>
                 <ToggleButton value={2} className={difficulty === 2 ? "toggle-button-active":""}>Medium</ToggleButton>

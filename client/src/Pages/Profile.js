@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import "../styles/ComponentCSS.css";
 import UserService from '../Service/UserService';
 import { AuthContext } from '../Context/AuthContext';
+import spinner from '../assets/spinner.gif';
 import placeholder300 from '../assets/placeholder300.png';
 
 const Profile = () => {
@@ -12,6 +13,8 @@ const Profile = () => {
   let [ profileData, setProfileData ] = useState(null);
 
   let [ isLoaded, setIsLoaded ] = useState(false); 
+
+  const dateFormat = { year: 'numeric', month: 'long', day: 'numeric' };
 
   useEffect(() => {
     UserService.getProfile({ username })
@@ -63,7 +66,7 @@ const Profile = () => {
               <img src={placeholder300} className="img-fluid" alt=""></img>
             </div>
             <div className="col-sm">
-              <h1>{`Welcome to ${profileData.username}'s profile!`}</h1>
+              <h1>{`${profileData.username}`}</h1>
               <h3>{`Friends: ${profileData.friends.length}`}</h3>
               <h3>{`Total Wins: ${profileData.stats.wins}`}</h3>
               <h3>{`Wins as White: ${profileData.stats.whiteWins}`}</h3>
@@ -85,7 +88,7 @@ const Profile = () => {
               <img src={placeholder300} className="img-fluid" alt=""></img>
             </div>
             <div className="col-sm">
-              <h1>{`Welcome to ${profileData.username}'s profile!`}</h1>
+              <h1>{`${profileData.username}`}</h1>
               <h3>{`Friends: ${profileData.friends.length}`}</h3>
               <h3>{`Total Wins: ${profileData.stats.wins}`}</h3>
               <h3>{`Wins as White: ${profileData.stats.whiteWins}`}</h3>
@@ -107,12 +110,12 @@ const Profile = () => {
               <img src={placeholder300} className="img-fluid" alt=""></img>
             </div>
             <div className="col-sm-9">
-              <h1>{`Welcome to ${profileData.username}'s profile!`}</h1>
+              <h1>{`${profileData.username}`}</h1>
               <h5>{`Total Wins: ${profileData.stats.wins}`}</h5>
               <h5>{`Wins as White: ${profileData.stats.whiteWins}`}</h5>
               <h5>{`Wins as Black: ${profileData.stats.blackWins}`}</h5>
-              <p className="m-0">{`Account Created: ${new Date(profileData.stats.dateCreated).toLocaleString()}`}</p>
-              <p className="m-0">{`Last Active: ${new Date(profileData.stats.lastActive).toLocaleString()}`}</p>
+              <p className="m-0">{`Account Created: ${new Date(profileData.stats.dateCreated).toLocaleString(undefined, dateFormat)}`}</p>
+              <p className="m-0">{`Last Active: ${new Date(profileData.stats.lastActive).toLocaleString(undefined, dateFormat)}`}</p>
             </div>
           </div>
           <div className="row my-3">
@@ -148,7 +151,12 @@ const Profile = () => {
 
   return (
     <div className="container align-center">
-      {isLoaded ? displayProfile() : null}
+      {
+        isLoaded ? 
+        displayProfile() 
+        : 
+        <img className="col-sm-2 offset-5" src={spinner} alt="" />
+      }
     </div>
   )
 }
