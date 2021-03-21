@@ -474,7 +474,7 @@ const Tutorial = () => {
       </div>
 
       <hr />
-      <h3>Advanced Moves</h3>
+      <h3>Special Moves</h3>
       <div className="">
         <Tabs defaultActiveKey="castling" transition={false}>
           <Tab eventKey="castling" title="Castling">

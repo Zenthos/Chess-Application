@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { AuthContext } from '../Context/AuthContext';
 import { FadeIn, Alert } from '../Components';
 import { Carousel } from 'react-bootstrap';
-import placeholder from '../assets/placeholder.png';
+import ga from '../assets/ga.png';
 import "../styles/ComponentCSS.css";
 
 const About = () => {
@@ -29,7 +29,7 @@ const About = () => {
 
   const Caption = React.forwardRef(({ children, text, subtext }, ref) => (
     <div className={"mt-1"} ref={ref} >
-      <h2>{text}</h2>
+      <h3>{text}</h3>
       <p>{subtext}</p>
       {children}
     </div>
@@ -110,15 +110,15 @@ const About = () => {
         </div>
 
         <div align="center">
-          <h1>Other Projects</h1>
-          <Carousel indicators={false} interval={null} slide={false} wrap={true}>
+          <h1><u>Other Projects</u></h1>
+          <Carousel controls={false} indicators={false} interval={null} slide={false} wrap={true}>
             <Carousel.Item>
               <FadeIn>
-                <img src={placeholder} className="img-fluid" alt="first slide"/>
-                <Carousel.Caption as={Caption} text={"First Slide"} />
+                <img src={ga} className="img-fluid" alt="first slide"/>
+                <Carousel.Caption as={Caption} text={"Genetic Algorithm Implementation"} />
               </FadeIn>
             </Carousel.Item>
-            <Carousel.Item>
+            {/* <Carousel.Item>
               <FadeIn>
                 <img src={placeholder} className="img-fluid" alt="second slide"/>
                 <Carousel.Caption as={Caption} text={"Second Slide"} />
@@ -135,7 +135,7 @@ const About = () => {
                 <img src={placeholder} className="img-fluid" alt="fourth slide"/>
                 <Carousel.Caption as={Caption} text={"Fourth Slide"} />
               </FadeIn>
-            </Carousel.Item>
+            </Carousel.Item> */}
           </Carousel>
         </div>
 

@@ -38,6 +38,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/user', require('./routes/user'));
+app.use('/forum', require('./routes/forum'));
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')))

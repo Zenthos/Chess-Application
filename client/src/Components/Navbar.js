@@ -45,7 +45,7 @@ const Navbar = () => {
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} exact to="/">Home</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/about">About</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/how-to-play">How to Play</NavLink>
-        <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/shop">Shop</NavLink>
+        <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/forum">Forum</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/play">Play Chess</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/login">Login</NavLink>
         <NavLink className={`bg-secondary navbar-link rounded`} activeClassName={`navbar-active bg-dark`} to="/register">Sign Up</NavLink>
@@ -62,7 +62,7 @@ const Navbar = () => {
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} exact to="/">Home</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/about">About</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/how-to-play">How to Play</NavLink>
-        <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/shop">Shop</NavLink>
+        <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/forum">Forum</NavLink>
         <NavLink className={`navbar-link`} activeClassName={`navbar-active`} to="/play">Play Chess</NavLink>
         <Dropdown alignRight>
           <Dropdown.Toggle as={CustomToggle}>

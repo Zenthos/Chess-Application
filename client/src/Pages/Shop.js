@@ -38,7 +38,7 @@ const NumberOnlyInput = ({ placeholder, value, setValue }) => {
 }
 
 const Shop = () => {
-  // Basic
+  // Pagination
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -89,7 +89,7 @@ const Shop = () => {
   return (
     <div className="container-fluid">
       <h1 className="text-center">Sample Shopping Page</h1>
-      <div className="row no-gutters m-2">
+      <div className="row no-gutters">
         <div className="col-sm-2">
           <h1>Filters</h1>
           <hr className="border border-secondary" />
@@ -102,13 +102,13 @@ const Shop = () => {
           </div>
           <hr className="border border-secondary" />
         </div>
-        <div className="col-sm-10 p-3">
+        <div className="col-sm-10">
           {
           !loading ?
           posts.length > 0 ?
           generateRows(currentPosts, 3).map((row, index) => {
             return (
-              <div className="row m-2" key={index}>
+              <div className="row no-gutters" key={index}>
                 {row.map((product, index) => <Item key={index} product={product} loading={loading} /> )}
               </div>
             )

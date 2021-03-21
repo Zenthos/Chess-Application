@@ -12,7 +12,7 @@ const Home = () => {
     <div className="container align-center">
 
       <div className="jumbotron-chess d-flex h-100 my-3 p-3 p-md-5 text-white rounded bg-primary" align="center">
-        <div className="justify-content-center align-self-center">
+        <div className="col-md-6 m-auto justify-content-center align-self-center">
           <h1 className="display-4 font-italic">Chessrooms</h1>
           <p className="lead my-3">
             Welcome to the home page of this Chess Website. 

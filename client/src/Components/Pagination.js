@@ -18,13 +18,13 @@ const Pagination = ({ currentPage, postsPerPage, totalPosts, paginate }) => {
   }
 
   return (
-    <div className="mt-5">
-      <ul className='pagination justify-content-center'>
+    <div className="d-flex my-2">
+      <div className={`mr-2 page-item ${currentPage === 1 ? 'disabled':''}`}>
+        <button onClick={() => paginate(currentPage - 1)} className='btn btn-primary page-link'>&#x2039; Prev</button>
+      </div>
+      <ul className='my-0 pagination justify-content-center'>
         <li className={`page-item ${currentPage === 1 ? 'disabled':''}`}>
           <button onClick={() => paginate(1)} className='page-link'>&#x00AB;</button>
-        </li>
-        <li className={`page-item ${currentPage === 1 ? 'disabled':''}`}>
-          <button onClick={() => paginate(currentPage - 1)} className='page-link'>&#x2039;</button>
         </li>
         {pageNumbers.map(number => (
           <li key={number} className={`page-item ${currentPage === number ? 'active':''}`}>
@@ -34,12 +34,12 @@ const Pagination = ({ currentPage, postsPerPage, totalPosts, paginate }) => {
           </li>
         ))}
         <li className={`page-item ${currentPage === Math.ceil(totalPosts / postsPerPage) ? 'disabled':''}`}>
-          <button onClick={() => paginate(currentPage + 1)} className='page-link'>&#x203A;</button>
-        </li>
-        <li className={`page-item ${currentPage === Math.ceil(totalPosts / postsPerPage) ? 'disabled':''}`}>
           <button onClick={() => paginate(Math.ceil(totalPosts / postsPerPage))} className='page-link'>&#x00BB;</button>
         </li>
       </ul>
+      <div className={`ml-2 page-item ${currentPage === Math.ceil(totalPosts / postsPerPage) ? 'disabled':''}`}>
+        <button onClick={() => paginate(currentPage + 1)} className='btn btn-primary page-link'>Next &#x203A;</button>
+      </div>
     </div>
   );
 };

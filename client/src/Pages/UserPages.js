@@ -68,13 +68,13 @@ const Login = () => {
 
             <button className="btn btn-primary btn-block my-3" onClick={handleSubmit} disabled={isSubmitting} type="submit">Sign in</button>
             
+            { readyToRedirect ? <Redirect to={{ pathname: '/' }} />: ""}
+
+            <Link className={`btn btn-primary btn-block ${isSubmitting ? "disabled":""}`} to='/register'>Need an Account? Register</Link> <br />
+
             { alerts.map((value, index) => {
               return <Alert key={index} status={value.type} message={value.msg} />
             })}
-
-            { readyToRedirect ? <Redirect to={{ pathname: '/' }} />: ""}
-
-            <Link className={`text-decoration-none ${isSubmitting ? "disabled":""}`} to='/register'>Need an Account? Register</Link> <br />
             <a className={`text-decoration-none ${isSubmitting ? "disabled":""}`} onClick={handleForgot} href="/">Forgot Password?</a>
             <p className="my-3 text-muted">© 2019-2020</p>
           </form>
