@@ -2,6 +2,10 @@ name: auto-merge
 
 on:
   pull_request:
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Test scenario tags'  
 
 jobs:
   auto-merge:
