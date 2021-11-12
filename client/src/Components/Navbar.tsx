@@ -1,23 +1,23 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Nav, Dropdown, Navbar as NavComponent } from 'react-bootstrap';
-import { Link, NavLink, Redirect } from 'react-router-dom';
+import { Link, NavLink, Navigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle, faSearch } from '@fortawesome/free-solid-svg-icons';
-import { AuthContext } from '../Context/AuthContext';
-import AuthService from '../Services/AuthService';
-import '../styles/ComponentCSS.css';
+import { AuthContext } from 'src/Contexts/AuthContext';
+import { AuthService } from 'src/Services/AuthService';
+import 'src/Styles/ComponentCSS.css';
 
 const Navbar = () => {
   const { user, setUser, isAuthenticated, setIsAuthenticated, isSubmitting } = useContext(AuthContext);
   const [readyToRedirect, setReadyToRedirect] = useState(false);
 
-  const toggleHandler = (event, onClick) => {
+  const toggleHandler = (event: React.MouseEvent<HTMLAnchorElement>, onClick: any) => {
     event.preventDefault();
     onClick(event);
   };
 
   const CustomToggle = React.forwardRef(({ children, onClick }: any, ref) => (
-    <a href="/" className={'navbar-link m-0'} ref={ref} onClick={(event) => toggleHandler(event, onClick)}>
+    <a href="/" className={'navbar-link m-0'} onClick={(event) => toggleHandler(event, onClick)}>
       <FontAwesomeIcon className="text-white" icon={faUserCircle} size="2x" />
       {children}
       {' '} &#x25bc;
@@ -41,16 +41,16 @@ const Navbar = () => {
   const NotAuthenticated = () => {
     return (
       <>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} exact to="/search">
+        <NavLink className={'navbar-link'} to="/search">
           <FontAwesomeIcon className="text-white mx-2" icon={faSearch} />
         </NavLink>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} exact to="/">Home</NavLink>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} to="/about">About</NavLink>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} to="/how-to-play">How to Play</NavLink>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} to="/forum">Forum</NavLink>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} to="/play">Play Chess</NavLink>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} to="/login">Login</NavLink>
-        <NavLink className={'bg-secondary navbar-link rounded'} activeClassName={'navbar-active bg-dark'} to="/register">Sign Up</NavLink>
+        <NavLink className={'navbar-link'} to="/">Home</NavLink>
+        <NavLink className={'navbar-link'} to="/about">About</NavLink>
+        <NavLink className={'navbar-link'} to="/how-to-play">How to Play</NavLink>
+        <NavLink className={'navbar-link'} to="/forum">Forum</NavLink>
+        <NavLink className={'navbar-link'} to="/play">Play Chess</NavLink>
+        <NavLink className={'navbar-link'} to="/login">Login</NavLink>
+        <NavLink className={'bg-secondary navbar-link rounded'} to="/register">Sign Up</NavLink>
       </>
     );
   };
@@ -58,23 +58,23 @@ const Navbar = () => {
   const Authenticated = () => {
     return (
       <>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} exact to="/search">
+        <NavLink className={'navbar-link'} to="/search">
           <FontAwesomeIcon className="text-white mx-2" icon={faSearch} />
         </NavLink>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} exact to="/">Home</NavLink>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} to="/about">About</NavLink>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} to="/how-to-play">How to Play</NavLink>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} to="/forum">Forum</NavLink>
-        <NavLink className={'navbar-link'} activeClassName={'navbar-active'} to="/play">Play Chess</NavLink>
-        <Dropdown alignRight>
+        <NavLink className={'navbar-link'} to="/">Home</NavLink>
+        <NavLink className={'navbar-link'} to="/about">About</NavLink>
+        <NavLink className={'navbar-link'} to="/how-to-play">How to Play</NavLink>
+        <NavLink className={'navbar-link'} to="/forum">Forum</NavLink>
+        <NavLink className={'navbar-link'} to="/play">Play Chess</NavLink>
+        <Dropdown>
           <Dropdown.Toggle as={CustomToggle}>
           </Dropdown.Toggle>
           <Dropdown.Menu className='mb-2'>
-            <NavLink className={'dropdown-item'} activeClassName={'dropdown-active'} to={`/profile/${user.username}`}>Profile</NavLink>
-            <NavLink className={'dropdown-item'} activeClassName={'dropdown-active'} to="/friends">Friends</NavLink>
-            <NavLink className={'dropdown-item'} activeClassName={'dropdown-active'} to="/settings">Settings</NavLink>
+            <NavLink className={'dropdown-item'} to={`/profile/${user.username}`}>Profile</NavLink>
+            <NavLink className={'dropdown-item'} to="/friends">Friends</NavLink>
+            <NavLink className={'dropdown-item'} to="/settings">Settings</NavLink>
             <Dropdown.Divider />
-            <NavLink className={'dropdown-item'} activeClassName={'dropdown-active'} to="/forum">Forums</NavLink>
+            <NavLink className={'dropdown-item'} to="/forum">Forums</NavLink>
             <Dropdown.Divider />
             <button className={'dropdown-item'} onClick={LogoutHandler}>Logout</button>
           </Dropdown.Menu>
@@ -90,7 +90,7 @@ const Navbar = () => {
 
   return (
     <>
-      { readyToRedirect ? <Redirect to="/login" />: '' }
+      { readyToRedirect ? <Navigate to="/login" />: '' }
       <NavComponent className={ isSubmitting ? 'disabled':'' } variant="dark" bg="primary" expand="lg">
         <Link className="text-decoration-none" to="/">Chessrooms</Link>
         <NavComponent.Toggle aria-controls="responsive-navbar-nav" />

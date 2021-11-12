@@ -1,3 +1,3 @@
+/build
 /node_modules
-/client/node_modules
-/config/keys
+/src/config/keys.ts

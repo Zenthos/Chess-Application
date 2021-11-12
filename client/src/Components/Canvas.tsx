@@ -1,12 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { SocketContext } from '../Context/SocketContext';
-import board from '../assets/chess-images/board.png';
-import figures from '../assets/chess-images/figures.png';
+import { SocketContext } from 'src/Contexts/SocketContext';
+import board from 'src/Assets/chess-images/board.png';
+import figures from 'src/Assets/chess-images/figures.png';
 import useImage from 'use-image';
 import { Rect, Circle, Image } from 'react-konva';
 import { Stage, Layer, Portal } from 'react-konva-portal';
 import { useMeasure } from 'react-use';
-import '../styles/ComponentCSS.css';
+import 'src/Styles/ComponentCSS.css';
+import { KonvaEventObject } from 'konva/lib/Node';
 
 const Canvas = () => {
   const { socket } = useContext(SocketContext);
@@ -33,12 +34,12 @@ const Canvas = () => {
     return { x: scale, y: scale };
   };
 
-  const calcPosition = (tile, flag) => {
+  const calcPosition = (tile: number | string, flag: boolean) => {
     const charMap = ['a','b','c','d','e','f','g','h'];
-    if (charMap.includes(tile)) {
+    if (charMap.includes(tile as string)) {
       tile = charMap.findIndex((value) => value === tile);
     } else {
-      tile = parseInt(tile) - 1;
+      tile = parseInt(tile as string) - 1;
     }
 
     if (role === 'Black' && flag) {
@@ -48,12 +49,12 @@ const Canvas = () => {
     return 28 + ( 56 * tile );
   };
 
-  const calcTile = (offset) => Math.round((offset - 28) / 56);
+  const calcTile = (offset: number) => Math.round((offset - 28) / 56);
 
   const Piece = ({ socket, image, data }: any) => {
     const [isDragging, setIsDragging] = useState(false);
     const [isHovering, setIsHovering] = useState(false);
-    const [position, setPosition] = useState({ x: calcPosition(data.position.charAt(0)), y: calcPosition(data.position.charAt(1), true) });
+    const [position, setPosition] = useState({ x: calcPosition(data.position.charAt(0), false), y: calcPosition(data.position.charAt(1), true) });
 
     const hoverStart = () => setIsHovering(true);
     const hoverEnd = () => setIsHovering(false);
@@ -63,7 +64,7 @@ const Canvas = () => {
       setPosition({ x: 0, y: 0 });
     };
 
-    const dragEnd = (event) => {
+    const dragEnd = (event: KonvaEventObject<DragEvent>) => {
       setIsDragging(false);
       const tileX = calcTile(event.target.x()) + 1;
       const tileY = calcTile(event.target.y()) + 1;
@@ -72,13 +73,13 @@ const Canvas = () => {
       const newTile = `${charMap[tileX - 1]}${role === 'White'? tileY: 9 - tileY}`;
 
       if (data.availableMoves.includes(newTile)) {
-        setPosition({ x: calcPosition(tileX), y: calcPosition(tileY) });
+        setPosition({ x: calcPosition(tileX, false), y: calcPosition(tileY, false) });
         socket.emit('Update Game', { from: data.position, to: newTile });
       } else
-        setPosition({ x: calcPosition(data.position.charAt(0)), y: calcPosition(data.position.charAt(1), true) });
+        setPosition({ x: calcPosition(data.position.charAt(0), false), y: calcPosition(data.position.charAt(1), true) });
     };
 
-    const calcCrop = function(type, color) {
+    const calcCrop = function(type: string, color: string) {
       let x = 0;
       switch (type.toLowerCase()) {
         case 'r': x = 0; break;
@@ -94,10 +95,10 @@ const Canvas = () => {
 
     return (
       <Portal zIndex={(isDragging) ? 100:0}>
-        {data.availableMoves && data.color === role ? data.availableMoves.map(([x, y], index) => {
+        {data.availableMoves && data.color === role ? data.availableMoves.map(([x, y]: any, index: number) => {
           return (isDragging || isHovering) && !gameOver ? <Circle
             key={index}
-            x={calcPosition(x) + 28}
+            x={calcPosition(x, false) + 28}
             y={calcPosition(y, true) + 28}
             radius={6}
             shadowBlur={1}
@@ -122,31 +123,31 @@ const Canvas = () => {
 
   // Initial Render
   useEffect(() => {
-    socket.on('update', (pieces, title, last) => {
-      setPieces(pieces);
-      setMessage(title);
-      setLast(last);
-    });
+    // socket.on('update', (pieces, title, last) => {
+    //   setPieces(pieces);
+    //   setMessage(title);
+    //   setLast(last);
+    // });
 
-    socket.on('wait', (start, playerMissing) => {
-      if (!start) {
-        setTimeout(() => {
-          socket.emit('Get Game');
-        }, 1000);
+    // socket.on('wait', (start, playerMissing) => {
+    //   if (!start) {
+    //     setTimeout(() => {
+    //       socket.emit('Get Game');
+    //     }, 1000);
 
-        setReady(false);
-        setMissing(playerMissing);
-      } else {
-        setReady(true);
-        setMissing('');
-      }
-    });
+    //     setReady(false);
+    //     setMissing(playerMissing);
+    //   } else {
+    //     setReady(true);
+    //     setMissing('');
+    //   }
+    // });
 
-    socket.on('promotion', () => setNeedToPromote(true));
-    socket.on('set client color', (server_role) => setRole(server_role));
-    socket.on('game over', () => setGameOver(true));
+    // socket.on('promotion', () => setNeedToPromote(true));
+    // socket.on('set client color', (server_role) => setRole(server_role));
+    // socket.on('game over', () => setGameOver(true));
 
-    socket.emit('Get Game');
+    // socket.emit('Get Game');
   }, [socket]);
 
   useEffect(() => {
@@ -154,13 +155,13 @@ const Canvas = () => {
       setMaxSize(boardImg.width * 1.25);
   }, [boardImg]);
 
-  const handlePromotion = (event) => {
+  const handlePromotion = (piece: string) => {
     setNeedToPromote(false);
-    socket.emit('Update Piece', event.target.value);
+    // socket.emit('Update Piece', piece);
   };
 
   return (
-    <div ref={ref} className="container-fluid d-flex flex-column col-sm-8 p-2" >
+    <div className="container-fluid d-flex flex-column col-sm-8 p-2" >
       <h1 className="text-white text-bold" style={{ fontSize: 'calc(1.5vw + 1.5vh)' }}>{message}</h1>
       <div className="flex-grow-1">
         <Stage className={`${!ready || needToPromote ? 'block-content' : ''}`} width={Math.min(width, height, maxSize)} height={Math.min(width, height, maxSize)} scale={getScale()}>
@@ -174,7 +175,7 @@ const Canvas = () => {
 
             {last.from === '' ? null:
               <Rect
-                x={calcPosition([' ','a','b','c','d','e','f','g','h'].findIndex((item) => item === last.from.charAt(0)))}
+                x={calcPosition([' ','a','b','c','d','e','f','g','h'].findIndex((item) => item === last.from.charAt(0)), false)}
                 y={calcPosition(last.from.charAt(1), true)}
                 width={56}
                 height={56}
@@ -185,7 +186,7 @@ const Canvas = () => {
 
             {last.from === '' ? null:
               <Rect
-                x={calcPosition([' ','a','b','c','d','e','f','g','h'].findIndex((item) => item === last.to.charAt(0)))}
+                x={calcPosition([' ','a','b','c','d','e','f','g','h'].findIndex((item) => item === last.to.charAt(0)), false)}
                 y={calcPosition(last.to.charAt(1), true)}
                 width={56}
                 height={56}
@@ -205,12 +206,12 @@ const Canvas = () => {
           <div className="p-3 modal-content">
             <h5 className="modal-title mb-3">Choose a piece to upgrade the Pawn into</h5>
             <div className="row mx-0">
-              <button className="col btn btn-primary" value="r" onClick={handlePromotion}>Rook</button>
-              <button className="col btn btn-primary" value="n" onClick={handlePromotion}>Knight</button>
+              <button className="col btn btn-primary" onClick={() => handlePromotion('r')}>Rook</button>
+              <button className="col btn btn-primary" onClick={() => handlePromotion('n')}>Knight</button>
             </div>
             <div className="row mx-0">
-              <button className="col btn btn-primary" value="b" onClick={handlePromotion}>Bishop</button>
-              <button className="col btn btn-primary" value="q" onClick={handlePromotion}>Queen</button>
+              <button className="col btn btn-primary" onClick={() => handlePromotion('b')}>Bishop</button>
+              <button className="col btn btn-primary" onClick={() => handlePromotion('q')}>Queen</button>
             </div>
           </div>
         </div>

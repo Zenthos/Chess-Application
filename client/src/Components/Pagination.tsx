@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const Pagination = ({ currentPage, postsPerPage, totalPosts, paginate }: any) => {
-  const [pageNumbers, setPageNumbers] = useState([]);
+  const [pageNumbers, setPageNumbers] = useState<number[]>([]);
 
   useEffect(() => {
     const nums = [];
@@ -12,7 +12,7 @@ const Pagination = ({ currentPage, postsPerPage, totalPosts, paginate }: any) =>
     setPageNumbers(nums.filter((value) => value < currentPage + 3 && value > currentPage - 3));
   }, [currentPage, totalPosts, postsPerPage]);
 
-  const clickHandler = function(event, number) {
+  const clickHandler = function(event: React.MouseEvent, number: number) {
     event.preventDefault();
     paginate(number);
   };

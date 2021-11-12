@@ -1,4 +1,4 @@
-import Alert from './Alert';
+import { CustomAlert as Alert } from './Alert';
 import Canvas from './Canvas';
 import Cart from './Cart';
 import Chat from './Chat';

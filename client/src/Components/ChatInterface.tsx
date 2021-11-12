@@ -1,30 +1,27 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Nav, Tab } from 'react-bootstrap';
-import { SocketContext } from '../Context/SocketContext';
+import { SocketContext } from 'src/Contexts/SocketContext';
 import Chat from './Chat';
 import FadeIn from './fade-in';
-import '../styles/ComponentCSS.css';
-import ScrollToBottom from 'react-scroll-to-bottom';
+import 'src/Styles/ComponentCSS.css';
 
 const MoveHistory = () => {
   const { socket } = useContext(SocketContext);
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    socket.on('Update Moves', (data) => setHistory([...data]));
+    // socket.on('Update Moves', (data) => setHistory(data));
   }, [socket]);
 
   return (
     <div className="h-100">
-      <ScrollToBottom className="list-group border-top-0 h-100 overflow-auto m-0 p-2">
-        {history.map((move, index) => {
-          return (
-            <FadeIn key={`test-${index}`}>
-              <li className="list-group-item bg-dark" key={index}>{`${index}. ${move.color} - ${move.from} ${move.to}`}</li>
-            </FadeIn>
-          );
-        })}
-      </ScrollToBottom>
+      {history.map((move: any, index: number) => {
+        return (
+          <FadeIn key={`test-${index}`}>
+            <li className="list-group-item bg-dark" key={index}>{`${index}. ${move.color} - ${move.from} ${move.to}`}</li>
+          </FadeIn>
+        );
+      })}
     </div>
   );
 };
@@ -34,15 +31,15 @@ const UserList = () => {
   const [list, setList] = useState([]);
 
   useEffect(() => {
-    socket.on('Update Players', (data) => setList([...data]));
+    // socket.on('Update Players', (data) => setList(data));
 
-    socket.emit('Get Players');
+    // socket.emit('Get Players');
   }, [socket]);
 
   return (
     <div className="h-100">
       <ul className="list-group border-top-0 h-100 overflow-auto m-0 p-2">
-        {list.map((player, index) => {
+        {list.map((player: any, index) => {
           return (
             <FadeIn key={`test-${index}`}>
               <li className="list-group-item bg-dark" key={index}>{`${player.username} - ${player.role}`}</li>
@@ -54,10 +51,10 @@ const UserList = () => {
   );
 };
 
-const ChatInterface = ({ username, role }: any) => {
+const ChatInterface = () => {
   return (
     <div className="col-sm-4 p-2 border-top-0 d-flex flex-column">
-      <Tab.Container className="border-0" defaultActiveKey="chat" transition={false}>
+      <Tab.Container defaultActiveKey="chat" transition={false}>
         <Nav className="nav-tabs">
           <Nav.Item>
             <Nav.Link eventKey="chat">Chat</Nav.Link>
@@ -74,7 +71,7 @@ const ChatInterface = ({ username, role }: any) => {
 
         <Tab.Content style={{ height: '85vh' }}>
           <Tab.Pane className="card h-100 border-top-0" eventKey="chat">
-            <Chat username={username} role={role} />
+            <Chat />
           </Tab.Pane>
 
           <Tab.Pane className="card h-100 border-top-0" eventKey="history">

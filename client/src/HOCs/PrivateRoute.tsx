@@ -1,18 +1,13 @@
 import React, { useContext } from 'react';
-import { Navigate, PathRouteProps } from 'react-router';
-import { BaseRoute } from './BaseRoute';
-import { AuthContext } from '../Context/AuthContext';
+import { Outlet, Navigate } from 'react-router';
+import { AuthContext } from '../Contexts/AuthContext';
 
-export interface PrivateRouteType extends PathRouteProps {
-  component: () => React.ReactElement;
-}
-
-const PrivateRoute = ({ component: Component, ...rest }: PrivateRouteType) => {
+const PrivateRoute = () => {
   const { isAuthenticated } = useContext(AuthContext);
 
   if (!isAuthenticated) return <Navigate to="/login" />;
 
-  return <BaseRoute {...rest} component={Component} />;
+  return <Outlet />;
 };
 
 export default PrivateRoute;

@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
-import '../styles/ComponentCSS.css';
+import 'src/Styles/ComponentCSS.css';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { UserService } from '../Services/UserService';
-import spinner from '../assets/spinner.gif';
+import { UserService } from 'src/Services/UserService';
+import spinner from 'src/Assets/spinner.gif';
 
-const Search = () => {
+export const Search = () => {
   const [searchOccurred, setSearchOccurred] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const searchValueHandler = (event) => setSearchValue(event.target.value);
+  const searchValueHandler = (event: React.ChangeEvent<HTMLInputElement>) => setSearchValue(event.target.value);
 
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
 
-  const searchHandler = async (event) => {
+  const searchHandler = async (event: React.FormEvent) => {
     event.preventDefault();
     if (searchValue !== '') {
       setLoading(true);
       setSearchOccurred(true);
 
-      await UserService.getSearchResults({ searchValue })
-        .then((res) => {
+      await UserService.getSearchResults(searchValue)
+        .then((res: any) => {
           setResults(res);
           setLoading(false);
         })
@@ -47,7 +47,7 @@ const Search = () => {
               results.length > 0 ?
                 <>
                   <h3 className="p-2">Users</h3>
-                  {results.map((item, index) => {
+                  {results.map((item: any, index) => {
                     return (
                       <Link to={`/profile/${item.username}`} className="list-group-item list-group-item-action bg-secondary py-4" key={index}>
                         <p className="text-white m-0">{item.username}</p>
@@ -68,5 +68,3 @@ const Search = () => {
     </div>
   );
 };
-
-export default Search;

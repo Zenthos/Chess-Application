@@ -1,37 +1,44 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import * as pages from './Pages';
-import { BaseRoute as Route } from './HOCs/BaseRoute';
+import * as Pages from './Pages';
+import { Routes, Route } from 'react-router';
 import PrivateRoute from './HOCs/PrivateRoute';
+import { Navbar, Footer } from './Components';
 import 'jquery/dist/jquery.min.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootswatch/dist/slate/bootstrap.min.css';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Route path="/" component={pages.Home} />
+    <React.Fragment>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={Pages.Home()} />
 
-      <Route path="/play" component={pages.Play} />
-      <Route path="/how-to-play" component={pages.Tutorial} />
-      <Route path="/shop" component={pages.Shop} />
+        <Route path="/play" element={Pages.Play()} />
+        <Route path="/how-to-play" element={Pages.Tutorial()} />
+        <Route path="/shop" element={Pages.Shop()} />
 
-      <Route path="/login" component={pages.UserPages.Login} />
-      <Route path="/register" component={pages.UserPages.Register} />
-      <Route path="/profile/:username" component={pages.Profile} />
-      <PrivateRoute path="/friends" component={pages.UserPages.Friends} />
-      <PrivateRoute path="/settings" component={pages.UserPages.Settings} />
+        <Route path="/login" element={Pages.Login()} />
+        <Route path="/register" element={Pages.Register()} />
+        <Route path="/profile/:username" element={Pages.Profile()} />
 
-      <Route path="/about" component={pages.About} />
+        <Route path="/" element={<PrivateRoute />}>
+          <Route path="/friends" element={Pages.Friends()} />
+          <Route path="/settings" element={Pages.Settings()} />
+        </Route>
 
-      <Route path="/search" component={pages.Search} />
+        <Route path="/about" element={Pages.About()} />
 
-      <Route path="/forum" component={pages.Forum.Home} />
-      <Route path="/forum/:category" component={pages.Forum.Category} />
-      <Route path="/forum/:category/:thread" component={pages.Forum.Thread} />
+        <Route path="/search" element={Pages.Search()} />
 
-      <Route path="*" component={() => <h1 className="text-center m-3">ERROR 404 NOT FOUND</h1>} />
-    </BrowserRouter>
+        <Route path="/forum" element={Pages.ForumHub()} />
+        <Route path="/forum/:category" element={Pages.Category()} />
+        <Route path="/forum/:category/:thread" element={Pages.Thread()} />
+
+        <Route path="*" element={<h1 className="text-center m-3">ERROR 404 NOT FOUND</h1>} />
+      </Routes>
+      <Footer />
+    </React.Fragment>
   );
 }
 

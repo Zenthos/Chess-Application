@@ -1,15 +1,18 @@
 import React from 'react';
-import { Alert as ReactBSAlert } from 'react-bootstrap';
+import { Alert, AlertProps } from 'react-bootstrap';
 import FadeIn from './fade-in';
 
-const Alert = ({ status, message }: any) => {
+export interface CustomAlertProps {
+  status: AlertProps['variant'];
+  message: string;
+}
+
+export const CustomAlert = ({ status = 'success', message }: CustomAlertProps) => {
   return (
     <FadeIn>
-      <ReactBSAlert variant={status}>
+      <Alert variant={status}>
         { message }
-      </ReactBSAlert>
+      </Alert>
     </FadeIn>
   );
 };
-
-export default Alert;

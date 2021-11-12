@@ -2,10 +2,12 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     rebase-strategy: "auto"
-    directory: "/"
+    directory: "/server"
     schedule:
       interval: "daily"
-    ignore:
-      # nexus at the moment does not support graphql 16 yet
-      - dependency-name: "graphql"
-      - dependency-name: "pino-pretty"
+
+  - package-ecosystem: "npm"
+    rebase-strategy: "auto"
+    directory: "/client"
+    schedule:
+      interval: "daily"

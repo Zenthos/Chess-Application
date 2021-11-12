@@ -2,12 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faBook, faChessPawn, faChessBoard } from '@fortawesome/free-solid-svg-icons';
-import chess from '../assets/chess.jpg';
-import source from '../assets/source.jpg';
-import person from '../assets/person.jpg';
-import '../styles/ComponentCSS.css';
+import chess from 'src/Assets/chess.jpg';
+import source from 'src/Assets/source.jpg';
+import person from 'src/Assets/person.jpg';
+import 'src/Styles/ComponentCSS.css';
 
-const Home = () => {
+export const Home = () => {
   return (
     <div className="container align-center">
 
@@ -104,5 +104,3 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;

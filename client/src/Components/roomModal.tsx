@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Alert from './Alert';
-import { SocketContext } from '../Context/SocketContext';
+import { CustomAlert as Alert } from './Alert';
+import { SocketContext } from 'src/Contexts/SocketContext';
 import { Modal, Form, Button } from 'react-bootstrap';
 import FadeIn from './fade-in';
-import '../styles/ComponentCSS.css';
+import 'src/Styles/ComponentCSS.css';
 
-const getScale = (windowWidth, imageWidth) => {
+const getScale = (windowWidth: number, imageWidth: number) => {
   return ((windowWidth * 0.85) / 2) / imageWidth;
 };
 
-const randomString = (min, max) => {
+const randomString = (min: number, max: number) => {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
   let id = '';
   const size = Math.random() * (max - min) + min;
@@ -57,40 +57,42 @@ const SelectRoom = ({ setSetupState, opponent, windowWidth }: any) => {
 
   const { socket } = useContext(SocketContext);
 
-  const handleUsername = (event) => setUsername(event.target.value);
-  const handleRoomName = (event) => setRoomName(event.target.value);
-  const handleRole = (event) => setRole(event.target.value);
+  const handleUsername = (event: React.ChangeEvent<HTMLInputElement>) => setUsername(event.target.value);
+  const handleRoomName = (event: React.ChangeEvent<HTMLInputElement>) => setRoomName(event.target.value);
+  const handleRole = (event: React.ChangeEvent<HTMLInputElement>) => setRole(event.target.value);
 
   const handleBack = () => {
     setSetupState(0);
     setShow(false);
   };
 
-  const handleJoin = (event) => {
+  const handleJoin = (event: React.FormEvent) => {
     event.preventDefault();
     const name = (username === '') ? randomString(6, 10):username;
     const room = (roomName === '') ? randomString(6, 10):roomName;
 
-    socket.emit('join room', name, room, role, { npc: false, difficulty: 0 }, function (responseData) {
-      setUsername(name);
-      setAlerts(responseData.responses);
-      if (responseData.status === 'Success') {
-        setDisabled(true);
-        setTimeout(() => {
-          setSetupState(2);
-        }, 1000);
-      }
-    });
+    // socket.emit('join room', name, room, role, { npc: false, difficulty: 0 }, function (responseData: any) {
+    //   setUsername(name);
+    //   setAlerts(responseData.responses);
+    //   if (responseData.status === 'Success') {
+    //     setDisabled(true);
+    //     setTimeout(() => {
+    //       setSetupState(2);
+    //     }, 1000);
+    //   }
+    // });
   };
 
   useEffect(() => {
-    const updateLobbies = (data) => setLobbies(data);
+    const updateLobbies = (data: any) => setLobbies(data);
 
-    socket.on('Update Lobbies', updateLobbies);
+    // socket.on('Update Lobbies', updateLobbies);
 
-    socket.emit('Get Lobbies');
+    // socket.emit('Get Lobbies');
 
-    return () => socket.removeListener('Update Lobbies', updateLobbies);
+    // return () => {
+    //   socket.removeListener('Update Lobbies', updateLobbies);
+    // };
   }, [socket]);
 
   useEffect(() => {
@@ -122,14 +124,14 @@ const SelectRoom = ({ setSetupState, opponent, windowWidth }: any) => {
                 <option value="Spectator">Spectator</option>
               </Form.Control>
 
-              { alerts.map((value, index) => {
+              { alerts.map((value: any, index) => {
                 return <Alert key={index} status={value.type} message={value.msg} />;
               })}
             </Modal.Body>
 
             <Modal.Footer>
-              <Button variant="secondary" type="Submit" onClick={handleBack} disabled={disabled}>Back</Button>
-              <Button variant="primary" type="Submit" disabled={disabled}>Join</Button>
+              <Button variant="secondary" onClick={handleBack} disabled={disabled}>Back</Button>
+              <Button variant="primary" disabled={disabled}>Join</Button>
             </Modal.Footer>
           </form>
           <div className="col-sm border-left border-dark">
