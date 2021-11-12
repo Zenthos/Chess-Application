@@ -4,14 +4,12 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import { keys } from './config';
-import { Server } from 'socket.io';
 import { forumRouter, userRouter } from './routes';
 
-const PORT = process.env['PORT'] || 8000;
 const app = express();
 const server = http.createServer(app);
 
-mongoose.connect(process.env['MONGODB_URI'] || keys.MongoURI, {}, () => {
+mongoose.connect(keys.MongoURI, {}, () => {
   console.log('Connection to Mongo Database Established');
 });
 
@@ -31,6 +29,6 @@ app.use(
   express.static(path.join(__dirname, '../../', 'client' , 'build'))
 );
 
-server.listen(PORT, () => {
-  console.log(`Now listening on Port: ${PORT}`);
+server.listen(keys.PORT, () => {
+  console.log(`Now listening on Port: ${keys.PORT}`);
 });
