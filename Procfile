@@ -1,1 +1,1 @@
-server: cd server && yarn install && yarn build && yarn start
+web: cd server && yarn install && yarn build && yarn start

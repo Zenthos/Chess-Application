@@ -1,5 +1,6 @@
 import path from 'path';
 import http from 'http';
+import morgan from 'morgan';
 import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
@@ -19,6 +20,7 @@ mongoose.connection.on('error', (err) => {
   }
 });
 
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
 
