@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Nav, Tab } from 'react-bootstrap';
 import { SocketContext } from 'src/Contexts/SocketContext';
 import Chat from './Chat';
-import FadeIn from './fade-in';
+import FadeIn from './Fade';
 import 'src/Styles/ComponentCSS.css';
 
 const MoveHistory = () => {

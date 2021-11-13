@@ -6,9 +6,8 @@
   "scripts": {
     "build": "tsc",
     "build:client": "cd ../client && yarn build",
-    "start": "yarn build && node build/index.js",
-    "start:dev": "nodemon app.js",
-    "heroku-postbuild": "npm run install-client && npm run build"
+    "start": "node build/index.js",
+    "start:dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "Zenthos",

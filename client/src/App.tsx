@@ -3,7 +3,6 @@ import * as Pages from './Pages';
 import { Routes, Route } from 'react-router';
 import PrivateRoute from './HOCs/PrivateRoute';
 import { Navbar, Footer } from './Components';
-import 'jquery/dist/jquery.min.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootswatch/dist/slate/bootstrap.min.css';
 

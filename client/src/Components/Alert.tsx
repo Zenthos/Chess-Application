@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, AlertProps } from 'react-bootstrap';
-import FadeIn from './fade-in';
+import FadeIn from './Fade';
 
 export interface CustomAlertProps {
   status: AlertProps['variant'];

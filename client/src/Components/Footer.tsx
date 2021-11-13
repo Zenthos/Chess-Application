@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { HashLink } from 'react-router-hash-link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faTwitter, faLinkedin, faInstagram } from '@fortawesome/free-brands-svg-icons';
 
@@ -21,7 +20,7 @@ const Footer = () => {
             <h4 className="text-uppercase mb-4">Legal</h4>
             <Link to="/about" className="btn btn-link p-0">Privacy</Link><br />
             <Link to="/about" className="btn btn-link p-0">Terms</Link><br />
-            <HashLink to="/about#contact-us" className="btn btn-link p-0">Contact</HashLink><br />
+            <Link to="/about#contact-us" className="btn btn-link p-0">Contact</Link><br />
           </div>
 
           <div className="col-lg-2 mb-5 mb-lg-0">

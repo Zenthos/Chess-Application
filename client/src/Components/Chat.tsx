@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { SocketContext } from 'src/Contexts/SocketContext';
-import FadeIn from './fade-in';
+import FadeIn from './Fade';
 import 'src/Styles/ComponentCSS.css';
 
 const Message = ({ msgData, index }: any) => {

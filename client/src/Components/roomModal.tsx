@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { CustomAlert as Alert } from './Alert';
 import { SocketContext } from 'src/Contexts/SocketContext';
 import { Modal, Form, Button } from 'react-bootstrap';
-import FadeIn from './fade-in';
+import FadeIn from './Fade';
 import 'src/Styles/ComponentCSS.css';
 
 const getScale = (windowWidth: number, imageWidth: number) => {
