@@ -1,0 +1,38 @@
+{
+  "files": {
+    "main.css": "/static/css/main.1441f57e.chunk.css",
+    "main.js": "/static/js/main.c77f09a4.chunk.js",
+    "main.js.map": "/static/js/main.c77f09a4.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.dceabdcb.js",
+    "runtime-main.js.map": "/static/js/runtime-main.dceabdcb.js.map",
+    "static/css/2.22a48db8.chunk.css": "/static/css/2.22a48db8.chunk.css",
+    "static/js/2.03314e56.chunk.js": "/static/js/2.03314e56.chunk.js",
+    "static/js/2.03314e56.chunk.js.map": "/static/js/2.03314e56.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.22a48db8.chunk.css.map": "/static/css/2.22a48db8.chunk.css.map",
+    "static/css/main.1441f57e.chunk.css.map": "/static/css/main.1441f57e.chunk.css.map",
+    "static/js/2.03314e56.chunk.js.LICENSE.txt": "/static/js/2.03314e56.chunk.js.LICENSE.txt",
+    "static/media/Bishop.482b5b71.png": "/static/media/Bishop.482b5b71.png",
+    "static/media/Checkmate.95e0f95a.png": "/static/media/Checkmate.95e0f95a.png",
+    "static/media/King.d1480e95.png": "/static/media/King.d1480e95.png",
+    "static/media/Knight.a4d7b75f.png": "/static/media/Knight.a4d7b75f.png",
+    "static/media/Pawn1.44176edb.png": "/static/media/Pawn1.44176edb.png",
+    "static/media/Pawn2.fb5b85cf.png": "/static/media/Pawn2.fb5b85cf.png",
+    "static/media/Queen.db7c022d.png": "/static/media/Queen.db7c022d.png",
+    "static/media/Rook.05ed7918.png": "/static/media/Rook.05ed7918.png",
+    "static/media/Stalemate.fcf511d1.png": "/static/media/Stalemate.fcf511d1.png",
+    "static/media/chess.117acfe2.jpg": "/static/media/chess.117acfe2.jpg",
+    "static/media/ga.4dc84c01.png": "/static/media/ga.4dc84c01.png",
+    "static/media/ComponentCSS.css": "/static/media/mast-picture.768b33b8.jpg",
+    "static/media/person.063f513d.jpg": "/static/media/person.063f513d.jpg",
+    "static/media/source.ae222415.jpg": "/static/media/source.ae222415.jpg",
+    "static/media/starting.eb421523.png": "/static/media/starting.eb421523.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.dceabdcb.js",
+    "static/css/2.22a48db8.chunk.css",
+    "static/js/2.03314e56.chunk.js",
+    "static/css/main.1441f57e.chunk.css",
+    "static/js/main.c77f09a4.chunk.js"
+  ]
+}
