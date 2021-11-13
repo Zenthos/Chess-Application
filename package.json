@@ -1,0 +1,13 @@
+{
+  "name": "chess-application",
+  "version": "2.0.0",
+  "description": "A Chess application allowing you to player with other people, and talk through chat rooms.\r The game can be played at https://chessrooms.herokuapp.com/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zenthos/Chess-Application.git"
+  },
+  "keywords": [],
+  "author": "Zenthos",
+  "license": "MIT",
+  "homepage": "https://github.com/Zenthos/Chess-Application#readme"
+}
