@@ -1,9 +1,9 @@
 import React from 'react';
 
-export const Shop = () => {
+export const Sidebar = () => {
   return (
     <div>
-      Example Shop Page
+      Side Bar Component
     </div>
   );
 };

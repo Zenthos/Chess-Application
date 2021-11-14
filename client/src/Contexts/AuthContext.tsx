@@ -1,6 +1,10 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { AuthService } from '../Services/AuthService';
 
+interface AuthContextType {
+  children: React.ReactNode | React.ReactNode[];
+}
+
 // Sets context Type, and default values
 export const AuthContext = createContext<{
   isAuthenticated: boolean;
@@ -18,11 +22,7 @@ export const AuthContext = createContext<{
   setUser: () => {},
 });
 
-export interface AuthContextType {
-  children: React.ReactNode | React.ReactNode[];
-}
-
-const AuthContextProvider = ({ children }: AuthContextType) => {
+export const AuthProvider = ({ children }: AuthContextType) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -53,5 +53,3 @@ const AuthContextProvider = ({ children }: AuthContextType) => {
     </div>
   );
 };
-
-export default AuthContextProvider;

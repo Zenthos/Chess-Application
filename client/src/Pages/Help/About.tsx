@@ -1,9 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from 'src/Contexts/AuthContext';
-import { FadeIn, Alert } from 'src/Components';
-import { Carousel } from 'react-bootstrap';
 import ga from 'src/Assets/ga.png';
-import 'src/Styles/ComponentCSS.css';
 
 export const About = () => {
   const [email, setEmail] = useState('');
@@ -111,7 +108,7 @@ export const About = () => {
           </div>
         </div>
 
-        <div>
+        {/* <div>
           <h1><u>Other Projects</u></h1>
           <Carousel controls={false} indicators={false} interval={null} slide={false} wrap={true}>
             <Carousel.Item>
@@ -121,7 +118,7 @@ export const About = () => {
               </FadeIn>
             </Carousel.Item>
           </Carousel>
-        </div>
+        </div> */}
 
         <div id="contact-us" className="row m-0">
           <div className="col-md-10 offset-md-1 text-center">
@@ -130,7 +127,7 @@ export const About = () => {
               <input type="email" className="form-control mb-2" disabled={isSubmitting} onChange={emailHandler} placeholder="name@example.com" />
               <input type="text" className="form-control mb-2" disabled={isSubmitting} onChange={subjectHandler} placeholder="Subject" />
               <textarea className="form-control mb-3" disabled={isSubmitting} onChange={messageHandler} rows={3} placeholder="Write your message here..." />
-              { showAlert ? <Alert status={'warning'} message={'Feature Currently in Development! No Message Sent.'}/>: '' }
+              {/* { showAlert ? <Alert status={'warning'} message={'Feature Currently in Development! No Message Sent.'}/>: '' } */}
               <button type="submit" className="btn btn-primary mb-3" disabled={isSubmitting}>Submit</button>
             </form>
           </div>
