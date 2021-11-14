@@ -1,30 +1,28 @@
 import React from 'react';
-import { Nav, Tabs, Tab, Carousel } from 'react-bootstrap';
-import { FadeIn } from 'src/Components';
 import placeholder from 'src/Assets/placeholder.png';
 import * as imgs from 'src/Assets/tutorial-images';
 
 const Pawn = () => {
   return (
-    <FadeIn>
-      <div className="card border-top-0">
-        <div className="row m-3">
-          <div className="col-sm d-flex align-items-center justify-content-center">
+    <div>
+      <div>
+        <div>
+          {/* <div>
             <Carousel interval={null} wrap={false} slide={false} indicators={false}>
               <Carousel.Item>
-                <FadeIn>
+                <div>
                   <img src={imgs.Pawn2} className="img-fluid" alt=""/>
-                </FadeIn>
+                </div>
               </Carousel.Item>
               <Carousel.Item>
-                <FadeIn>
+                <div>
                   <img src={imgs.Pawn1} className="img-fluid" alt=""/>
-                </FadeIn>
+                </div>
               </Carousel.Item>
             </Carousel>
-          </div>
-          <div className="col">
-            <h5 className="mt-3">Pawn</h5>
+          </div> */}
+          <div>
+            <h5>Pawn</h5>
             <p> Pawns move one square forward in a straight line. They cannot move horizontally, diagonally or backwards.</p>
 
             <p>
@@ -43,13 +41,13 @@ const Pawn = () => {
           </div>
         </div>
       </div>
-    </FadeIn>
+    </div>
   );
 };
 
 const Rook = () => {
   return (
-    <FadeIn>
+    <div>
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
@@ -66,13 +64,13 @@ const Rook = () => {
           </div>
         </div>
       </div>
-    </FadeIn>
+    </div>
   );
 };
 
 const Knight = () => {
   return (
-    <FadeIn>
+    <div>
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
@@ -105,13 +103,13 @@ const Knight = () => {
           </div>
         </div>
       </div>
-    </FadeIn>
+    </div>
   );
 };
 
 const Bishop = () => {
   return (
-    <FadeIn>
+    <div>
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
@@ -129,13 +127,13 @@ const Bishop = () => {
           </div>
         </div>
       </div>
-    </FadeIn>
+    </div>
   );
 };
 
 const Queen = () => {
   return (
-    <FadeIn>
+    <div>
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
@@ -153,13 +151,13 @@ const Queen = () => {
           </div>
         </div>
       </div>
-    </FadeIn>
+    </div>
   );
 };
 
 const King = () => {
   return (
-    <FadeIn>
+    <div>
       <div className="card border-top-0">
         <div className="row m-3">
           <div className="col-sm d-flex align-items-center justify-content-center">
@@ -180,16 +178,16 @@ const King = () => {
           </div>
         </div>
       </div>
-    </FadeIn>
+    </div>
   );
 };
 
 const Promotion = () => {
   return (
-    <FadeIn>
+    <div>
       <div className="card border-top-0">
         <div className="row m-3">
-          <div className="col-sm d-flex align-items-center justify-content-center">
+          {/* <div className="col-sm d-flex align-items-center justify-content-center">
             <Carousel interval={null} wrap={false} slide={false} indicators={false}>
               <Carousel.Item>
                 <img src={placeholder} className="img-fluid" alt=""/>
@@ -198,7 +196,7 @@ const Promotion = () => {
                 <img src={placeholder} className="img-fluid" alt=""/>
               </Carousel.Item>
             </Carousel>
-          </div>
+          </div> */}
           <div className="col">
             <h5 className="mt-3">Promotion</h5>
             <p>
@@ -220,16 +218,16 @@ const Promotion = () => {
           </div>
         </div>
       </div>
-    </FadeIn>
+    </div>
   );
 };
 
 const Enpassant = () => {
   return (
-    <FadeIn>
+    <div>
       <div className="card border-top-0">
         <div className="row m-3">
-          <div className="col-sm d-flex align-items-center justify-content-center">
+          {/* <div className="col-sm d-flex align-items-center justify-content-center">
             <Carousel interval={null} wrap={false} slide={false} indicators={false}>
               <Carousel.Item>
                 <img src={placeholder} className="img-fluid" alt=""/>
@@ -238,7 +236,7 @@ const Enpassant = () => {
                 <img src={placeholder} className="img-fluid" alt=""/>
               </Carousel.Item>
             </Carousel>
-          </div>
+          </div> */}
           <div className="col">
             <h5 className="mt-3">En Passant</h5>
             <p>
@@ -260,16 +258,16 @@ const Enpassant = () => {
           </div>
         </div>
       </div>
-    </FadeIn>
+    </div>
   );
 };
 
 const Castling = () => {
   return (
-    <FadeIn>
+    <div>
       <div className="card border-top-0">
         <div className="row m-3">
-          <div className="col-sm d-flex align-items-center justify-content-center">
+          {/* <div className="col-sm d-flex align-items-center justify-content-center">
             <Carousel interval={null} wrap={false} slide={false} indicators={false}>
               <Carousel.Item>
                 <img src={placeholder} className="img-fluid" alt=""/>
@@ -284,7 +282,7 @@ const Castling = () => {
                 <img src={placeholder} className="img-fluid" alt=""/>
               </Carousel.Item>
             </Carousel>
-          </div>
+          </div> */}
           <div className="col">
             <h5 className="mt-3">Castling</h5>
             <p>
@@ -323,7 +321,7 @@ const Castling = () => {
           </div>
         </div>
       </div>
-    </FadeIn>
+    </div>
   );
 };
 
@@ -373,7 +371,7 @@ export const Tutorial = () => {
 
       <hr />
       <h3>Rules of the Pieces</h3>
-      <div className="border-0">
+      {/* <div className="border-0">
         <Tab.Container defaultActiveKey="pawn" transition={false}>
           <Nav className="nav-tabs">
             <Nav.Item>
@@ -417,7 +415,7 @@ export const Tutorial = () => {
             </Tab.Pane>
           </Tab.Content>
         </Tab.Container>
-      </div>
+      </div> */}
 
       <hr />
       <div className="row">
@@ -457,25 +455,25 @@ export const Tutorial = () => {
           </p>
 
         </div>
-        <div className="col-sm d-flex align-items-center justify-content-center">
+        {/* <div className="col-sm d-flex align-items-center justify-content-center">
           <Carousel interval={null} wrap={false} slide={false} indicators={false}>
             <Carousel.Item>
-              <FadeIn>
+              <div>
                 <img src={imgs.Checkmate} className="img-fluid" alt=""/>
-              </FadeIn>
+              </div>
             </Carousel.Item>
             <Carousel.Item>
-              <FadeIn>
+              <div>
                 <img src={imgs.Stalemate} className="img-fluid" alt=""/>
-              </FadeIn>
+              </div>
             </Carousel.Item>
           </Carousel>
-        </div>
+        </div> */}
       </div>
 
       <hr />
       <h3>Special Moves</h3>
-      <div className="">
+      {/* <div className="">
         <Tabs defaultActiveKey="castling" transition={false}>
           <Tab eventKey="castling" title="Castling">
             <Castling />
@@ -487,7 +485,7 @@ export const Tutorial = () => {
             <Promotion />
           </Tab>
         </Tabs>
-      </div>
+      </div> */}
     </div>
   );
 };
