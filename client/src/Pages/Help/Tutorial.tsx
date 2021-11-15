@@ -56,10 +56,10 @@ const Rook = () => {
           <div className="col">
             <h5 className="mt-3">Rook</h5>
             <p>
-            The rook, sometimes called the castle, can move any number of squares horizontally
-            along its current row (rank) or column (file). It cannot pass through pieces of the
-            same colour, and can capture pieces of the opposite colour by moving onto an occupied space.
-            It cannot move diagonally for any reason.
+              The rook, sometimes called the castle, can move any number of squares horizontally
+              along its current row (rank) or column (file). It cannot pass through pieces of the
+              same colour, and can capture pieces of the opposite colour by moving onto an occupied space.
+              It cannot move diagonally for any reason.
             </p>
           </div>
         </div>
@@ -286,8 +286,8 @@ const Castling = () => {
           <div className="col">
             <h5 className="mt-3">Castling</h5>
             <p>
-            Castling is perhaps the most complicated basic rule in chess, and a rule that many
-            beginners often overlook as a result.
+              Castling is perhaps the most complicated basic rule in chess, and a rule that many
+              beginners often overlook as a result.
             </p>
 
             <p>
@@ -335,33 +335,33 @@ export const Tutorial = () => {
         <div className="col">
           <h3>Setting Up The Board</h3>
           <p>
-          Chess is played by two players on a chess board measuring eight-by-eight squares.
-          The 64 squares alternate between light and dark colours - traditionally, black and white.
-          When properly set up, a white square should be the rightmost square along the edge closest to each player.
+            Chess is played by two players on a chess board measuring eight-by-eight squares.
+            The 64 squares alternate between light and dark colours - traditionally, black and white.
+            When properly set up, a white square should be the rightmost square along the edge closest to each player.
           </p>
 
           <p>
-          Players’ pieces are set up in the two horizontal rows (known as ranks) closest to each player.
-          The second rank - ie. the second row from the player’s perspective - consists of a line of eight pawns,
-          each placed on a single square.
+            Players’ pieces are set up in the two horizontal rows (known as ranks) closest to each player.
+            The second rank - ie. the second row from the player’s perspective - consists of a line of eight pawns,
+            each placed on a single square.
           </p>
 
           <p>
-          The closer rank is nearly symmetrical, with rooks (also known as castles) placed on the two leftmost and
-          rightmost corner squares, followed by knights on the inside space next to them, then bishops.
+            The closer rank is nearly symmetrical, with rooks (also known as castles) placed on the two leftmost and
+            rightmost corner squares, followed by knights on the inside space next to them, then bishops.
           </p>
 
           <p>
-          The two central squares of the rank are occupied by the king and queen. The queen is
-          placed on the square matching her colour (for example, the black queen on the black square), with the king
-          occupying the remaining square of the opposite colour. This means that the king and queen of each colour face
-          each other, making the correct setup symmetrical between the two players.
+            The two central squares of the rank are occupied by the king and queen. The queen is
+            placed on the square matching her colour (for example, the black queen on the black square), with the king
+            occupying the remaining square of the opposite colour. This means that the king and queen of each colour face
+            each other, making the correct setup symmetrical between the two players.
           </p>
 
           <p>
-          The white player takes the first move, with players alternating single turns until a player is defeated
-          via checkmate or resigns. A draw can also be agreed. If playing with an optional timer, as in tournaments,
-          the first player to run out of time forfeits the game.
+            The white player takes the first move, with players alternating single turns until a player is defeated
+            via checkmate or resigns. A draw can also be agreed. If playing with an optional timer, as in tournaments,
+            the first player to run out of time forfeits the game.
           </p>
         </div>
         <div className="col-sm d-flex align-items-center justify-content-center">
@@ -422,36 +422,36 @@ export const Tutorial = () => {
         <div className="col">
           <h3>Check, Checkmate, or Stalemate</h3>
           <p>
-          When a piece moves in a way that would allow a player to capture the opponent’s
-          king on their next turn, the attacking player typically announces “check”.
+            When a piece moves in a way that would allow a player to capture the opponent’s
+            king on their next turn, the attacking player typically announces “check”.
           </p>
 
           <p>
-          The player placed into check must move their king or move another piece to stop the
-          attack on their next turn - either by blocking the move or capturing the attacking piece.
+            The player placed into check must move their king or move another piece to stop the
+            attack on their next turn - either by blocking the move or capturing the attacking piece.
           </p>
 
           <p>
-          If a player creates a situation where their opponent cannot stop their king from
-          being captured on the next turn, the attacking player announces “checkmate” and
-          immediately wins the game. The king is never captured - a game of chess is won when
-          a successful checkmate is announced.
+            If a player creates a situation where their opponent cannot stop their king from
+            being captured on the next turn, the attacking player announces “checkmate” and
+            immediately wins the game. The king is never captured - a game of chess is won when
+            a successful checkmate is announced.
           </p>
 
           <p>
-          A player can also choose to resign, granting their opponent the victory. Matches can also end
-          in an agreed draw - for example, as the result of stalemate leaving a player without any legal
-          moves, or if no player can win using available legal moves, a situation known as a “dead position”.
-          One example of a dead position is when both players are left with their king as their only remaining
-          piece on the board.
+            A player can also choose to resign, granting their opponent the victory. Matches can also end
+            in an agreed draw - for example, as the result of stalemate leaving a player without any legal
+            moves, or if no player can win using available legal moves, a situation known as a “dead position”.
+            One example of a dead position is when both players are left with their king as their only remaining
+            piece on the board.
           </p>
 
           <p>
-          Draws can also occur as the result of advanced rules typically used in professional tournaments,
-          including identical board positions occurring three or five times - rules known respectively as
-          threefold repetition and fivefold repetition - or no captures or pawn moves taking place within
-          the last 50 or 75 moves. The exact rules used can depend on the tournament and agreement between
-          the players.
+            Draws can also occur as the result of advanced rules typically used in professional tournaments,
+            including identical board positions occurring three or five times - rules known respectively as
+            threefold repetition and fivefold repetition - or no captures or pawn moves taking place within
+            the last 50 or 75 moves. The exact rules used can depend on the tournament and agreement between
+            the players.
           </p>
 
         </div>
