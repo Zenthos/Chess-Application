@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { Button, TextField, Box, Typography, Container } from '@mui/material';
+import { Link } from 'src/Components';
+import { Button, TextField, Box, Paper, Typography, Container } from '@mui/material';
 
 export const Login = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -13,17 +13,16 @@ export const Login = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          pt: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+    <Container component="main" maxWidth="sm">
+      <Paper sx={{
+        p: 4,
+        mt: 8,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
         <Typography component="h1" variant="h5">
-          Login To Your Account
+          Login to your account
         </Typography>
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <TextField
@@ -54,15 +53,15 @@ export const Login = () => {
             Login
           </Button>
           <Box display="flex" justifyContent="space-between">
-            <Link to="#">
+            <Link to="#" underline>
               Forgot password?
             </Link>
-            <Link to="/register">
+            <Link to="/register" underline>
               Need an account? Sign Up
             </Link>
           </Box>
         </Box>
-      </Box>
+      </Paper>
     </Container>
   );
 };

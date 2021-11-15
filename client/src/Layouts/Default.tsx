@@ -7,7 +7,7 @@ export const DefaultLayout = (Component: React.ComponentType) => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
-      <Container>
+      <Container sx={{ py: 2 }}>
         <Component />
       </Container>
       <Footer />

@@ -6,7 +6,7 @@ interface SocketContextType {
 }
 
 export const SocketContext = createContext<{
-  socket: null
+  socket: Socket | null;
 }>({
   socket: null
 });

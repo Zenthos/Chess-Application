@@ -1,17 +1,17 @@
 import axios from 'axios';
 
-interface User {
+interface UserDetails {
   email: string;
   password: string;
 }
 
 export const AuthService = {
-  login: async (user: User) => {
+  login: async (user: UserDetails) => {
     const response = await axios.post('/user/login', user);
 
     return response.data;
   },
-  register: async (user: User) => {
+  register: async (user: UserDetails) => {
     const response = await axios.post('/user/register', user);
 
     return response.data;
