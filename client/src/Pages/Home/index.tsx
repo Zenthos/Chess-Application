@@ -9,7 +9,7 @@ export const Home = () => {
   return (
     <div className="container align-center">
       <Alert variant="filled" severity="info" sx={{ py: 2, mt: 2 }}>
-        This sit is currently undergoing a major revision, please check back later when it is completed.
+        This site is currently undergoing a major revision, please check back later when it is completed.
       </Alert>
       <div className="jumbotron-chess d-flex h-100 my-3 p-3 p-md-5 text-white rounded bg-primary" >
         <div className="col-md-6 m-auto justify-content-center align-self-center">
