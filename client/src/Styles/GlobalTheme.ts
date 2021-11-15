@@ -3,6 +3,10 @@ import { createTheme, PaletteMode } from '@mui/material';
 export const Theme = (mode: PaletteMode) => createTheme({
   palette: {
     mode,
+    background: {
+      default: mode === 'dark' ? '#303030' : '#fafafa',
+      paper: mode === 'dark' ? '#121212' : '#fff',
+    },
     primary: {
       main: '#2c3e50',
     },

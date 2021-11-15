@@ -1,37 +1,37 @@
 import React from 'react';
+import { Link } from '../Atoms';
 import { Box, Paper, Container, Divider, Grid, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
 
 export const Footer = () => {
   return (
     <Paper
+      component="footer"
       sx={{
-        py: 4,
+        pt: 4,
         mt: 'auto',
         bgcolor: (theme) =>
           theme.palette.mode === 'light'
             ? theme.palette.primary.main
             : undefined,
       }}
-      component="footer"
     >
       <Container>
         <Grid container>
           <Grid item xs={6} sm={6} md={4}>
             <Box display="flex" flexDirection="column">
               <Typography variant="h4" color="white">Chess</Typography>
-              <Link to="/play">Play</Link>
-              <Link to="/how-to-play">Learn</Link>
-              <Link to="/practice">Practice</Link>
-              <Link to="/shop">Shop</Link>
+              <Link to="/play" underline>Play</Link>
+              <Link to="/how-to-play" underline>Learn</Link>
+              <Link to="/practice" underline>Practice</Link>
+              <Link to="/shop" underline>Shop</Link>
             </Box>
           </Grid>
           <Grid item xs={6} sm={6} md={4}>
             <Box display="flex" flexDirection="column">
               <Typography variant="h4" color="white">Legal</Typography>
-              <Link to="/about">Privacy</Link>
-              <Link to="/about">Terms</Link>
-              <Link to="/about">Contact</Link>
+              <Link to="/about" underline>Privacy</Link>
+              <Link to="/about" underline>Terms</Link>
+              <Link to="/about" underline>Contact</Link>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
@@ -47,9 +47,11 @@ export const Footer = () => {
         </Grid>
 
         <Divider sx={{ py: 2, borderColor: 'white' }} />
-        <Typography variant="caption" color="white">
-          Copyright ChessRooms © {new Date().getFullYear()}
-        </Typography>
+        <Box display="flex" justifyContent="center" sx={{ py: 1 }}>
+          <Typography variant="caption" color="white" align="center">
+            Copyright ChessRooms © {new Date().getFullYear()}
+          </Typography>
+        </Box>
       </Container>
     </Paper>
   );

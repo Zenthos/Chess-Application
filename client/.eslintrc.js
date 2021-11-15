@@ -53,6 +53,7 @@ module.exports = {
     'no-class-assign': 'error',
     'no-const-assign': 'error',
     'no-duplicate-imports': 'error',
+    'react/jsx-indent': ['error', 2],
     'object-property-newline': [
       'error',
       {

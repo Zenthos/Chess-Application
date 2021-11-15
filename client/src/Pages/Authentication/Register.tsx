@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { Button, TextField, Box, Typography, Container } from '@mui/material';
+import { Link } from 'src/Components';
+import { Button, TextField, Box, Paper, Typography, Container } from '@mui/material';
 
 export const Register = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -13,15 +13,14 @@ export const Register = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          pt: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+    <Container component="main" maxWidth="sm">
+      <Paper sx={{
+        p: 4,
+        mt: 8,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
         <Typography component="h1" variant="h5">
           Create an account
         </Typography>
@@ -63,11 +62,11 @@ export const Register = () => {
           >
             Register
           </Button>
-          <Link to="/login">
+          <Link to="/login" underline>
             Already have an account? Sign in
           </Link>
         </Box>
-      </Box>
+      </Paper>
     </Container>
   );
 };
