@@ -1,6 +1,6 @@
+import React from 'react';
 import { Container } from '@mui/material';
 import { Box } from '@mui/system';
-import React from 'react';
 import { Navbar, Footer } from 'src/Components';
 
 export const DefaultLayout = (Component: React.ComponentType) => {

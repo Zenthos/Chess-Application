@@ -48,7 +48,7 @@ module.exports = {
     'comma-style': ['error', 'last'],
     'dot-location': ['error', 'property'],
     'func-call-spacing': ['error', 'never'],
-    'key-spacing': 'off',
+    'key-spacing': 'error',
     'new-parens': 'error',
     'no-class-assign': 'error',
     'no-const-assign': 'error',

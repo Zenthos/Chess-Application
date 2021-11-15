@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { Outlet, Navigate } from 'react-router';
+import React, { useContext, useEffect } from 'react';
 import { AuthContext } from '../Contexts/AuthContext';
+import { Navigate } from 'react-router';
 
 interface AuthenticatorProps {
   redirect: string;

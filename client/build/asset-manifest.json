@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.js": "/static/js/main.d060f39b.chunk.js",
-    "main.js.map": "/static/js/main.d060f39b.chunk.js.map",
+    "main.js": "/static/js/main.ff0d3d13.chunk.js",
+    "main.js.map": "/static/js/main.ff0d3d13.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.dceabdcb.js",
     "runtime-main.js.map": "/static/js/runtime-main.dceabdcb.js.map",
-    "static/js/2.342763db.chunk.js": "/static/js/2.342763db.chunk.js",
-    "static/js/2.342763db.chunk.js.map": "/static/js/2.342763db.chunk.js.map",
+    "static/js/2.23c8d5a7.chunk.js": "/static/js/2.23c8d5a7.chunk.js",
+    "static/js/2.23c8d5a7.chunk.js.map": "/static/js/2.23c8d5a7.chunk.js.map",
     "index.html": "/index.html",
-    "static/js/2.342763db.chunk.js.LICENSE.txt": "/static/js/2.342763db.chunk.js.LICENSE.txt",
+    "static/js/2.23c8d5a7.chunk.js.LICENSE.txt": "/static/js/2.23c8d5a7.chunk.js.LICENSE.txt",
     "static/media/Bishop.482b5b71.png": "/static/media/Bishop.482b5b71.png",
     "static/media/Checkmate.95e0f95a.png": "/static/media/Checkmate.95e0f95a.png",
     "static/media/King.d1480e95.png": "/static/media/King.d1480e95.png",
@@ -24,7 +24,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.dceabdcb.js",
-    "static/js/2.342763db.chunk.js",
-    "static/js/main.d060f39b.chunk.js"
+    "static/js/2.23c8d5a7.chunk.js",
+    "static/js/main.ff0d3d13.chunk.js"
   ]
 }

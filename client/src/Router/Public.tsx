@@ -25,6 +25,11 @@ export const PublicRoute: Route[] = [
     element: DefaultLayout(Pages.Play),
   },
   {
+    key: 'PracticePage',
+    path: '/practice',
+    element: DefaultLayout(Pages.Practice),
+  },
+  {
     key: 'ShopPage',
     path: '/shop',
     element: DefaultLayout(Pages.Shop),
@@ -52,6 +57,8 @@ export const PublicRoute: Route[] = [
   {
     key: '404Page',
     path: '*',
-    element: (<h1 className="text-center m-3">ERROR 404 NOT FOUND</h1>),
+    element: DefaultLayout(() => (
+      <h1 className="text-center m-3">ERROR 404 NOT FOUND</h1>
+    )),
   }
 ];

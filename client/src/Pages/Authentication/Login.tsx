@@ -1,8 +1,14 @@
-import * as React from 'react';
-import { Link } from 'src/Components';
+import React, { useState } from 'react';
+import { Link, Alert, AlertState } from 'src/Components';
 import { Button, TextField, Box, Paper, Typography, Container } from '@mui/material';
 
 export const Login = () => {
+  const [message, setMessage] = useState<AlertState>({
+    text: 'The login system is currently being revamped, check back later.',
+    display: true,
+    severity: 'warning'
+  });
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -25,6 +31,7 @@ export const Login = () => {
           Login to your account
         </Typography>
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Alert state={message} />
           <TextField
             required
             fullWidth

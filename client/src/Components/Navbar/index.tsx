@@ -12,9 +12,9 @@ export const Navbar = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Link component={RouterLink} to="/">
+        <Link component={RouterLink} to="/" style={{ textDecoration: 'none' }}>
           <Typography color="white" variant="h6" component="div">
-            ChessRooms
+            Chess
           </Typography>
         </Link>
         <Box style={{ flexGrow: 1 }} />

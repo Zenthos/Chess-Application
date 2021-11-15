@@ -14,18 +14,18 @@ export const PrivateRoutes: ProtectedRoute[] = [
     key: 'FriendsPage',
     path: '/friends',
     redirect: '/login',
-    element:DefaultLayout(Pages.Friends),
+    element: DefaultLayout(Pages.Friends),
   },
   {
     key: 'SettingsPage',
     path: '/settings',
     redirect: '/login',
-    element:DefaultLayout(Pages.Settings),
+    element: DefaultLayout(Pages.Settings),
   },
   {
     key: 'ProfilePage',
     path: '/profile/:username',
     redirect: '/login',
-    element:DefaultLayout(Pages.Profile),
+    element: DefaultLayout(Pages.Profile),
   },
 ];

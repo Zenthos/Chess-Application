@@ -29,16 +29,20 @@ export const AuthProvider = ({ children }: AuthContextType) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    AuthService.isAuthenticated()
-      .then(res => {
-        setUser(res.user);
-        setIsAuthenticated(res.isAuthenticated);
-        setIsLoaded(true);
-      })
-      .catch((err) => {
-        setIsLoaded(true);
-        console.error(err);
-      });
+    // Authentication is being reworked
+
+    // AuthService.isAuthenticated()
+    //   .then(res => {
+    //     setUser(res.user);
+    //     setIsAuthenticated(res.isAuthenticated);
+    //     setIsLoaded(true);
+    //   })
+    //   .catch((err) => {
+    //     setIsLoaded(true);
+    //     console.error(err);
+    //   });
+
+    setIsLoaded(true);
   }, []);
 
   return (

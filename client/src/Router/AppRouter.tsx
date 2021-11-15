@@ -1,5 +1,4 @@
 import React from 'react';
-import * as Pages from '../Pages';
 import Authenticator from './Authenticator';
 import { Routes, Route } from 'react-router';
 import { PrivateRoutes } from './Private';
