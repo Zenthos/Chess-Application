@@ -27,7 +27,35 @@ export const Theme = (mode: PaletteMode) => createTheme({
     },
   },
   components: {
+    MuiDivider: {
+      styleOverrides: {
+        fullWidth: {
+          margin: '16px 0px',
+          borderWidth: 1.5,
+          borderColor: mode === 'dark' ? '#555555' : 'rgba(0, 0, 0, 0.87)',
+        }
+      }
+    },
+    MuiLink: {
+      styleOverrides: {
+        underlineAlways: {
+          textDecoration: 'none',
+          color: 'white'
+        },
+        underlineHover: {
+          textDecoration: 'none',
+          color: 'white'
+        },
+        underlineNone: {
+          textDecoration: 'none',
+          color: 'white'
+        }
+      }
+    },
     MuiButton: {
+      defaultProps: {
+        variant: 'contained',
+      },
       styleOverrides: {
         contained: {
           textTransform: 'none',

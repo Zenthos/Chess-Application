@@ -1,4 +1,3 @@
-export * from './Footer';
-export * from './Navbar';
-export * from './Sidebar';
 export * from './Atoms';
+export * from './Molecules';
+export * from './Organisms';

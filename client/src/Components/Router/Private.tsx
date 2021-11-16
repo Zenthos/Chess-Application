@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Pages from 'src/Pages';
-import { DefaultLayout } from 'src/Layouts';
+import { DefaultLayout } from 'src/Components/Layouts';
 
 interface ProtectedRoute {
   key: string;

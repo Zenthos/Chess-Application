@@ -8,7 +8,7 @@ interface LinkProps {
   children: string | React.ReactElement | React.ReactElement[];
 }
 
-export const Link = ({ to, underline, children, ...props }: LinkProps) => {
+export const Link = ({ to, underline, children }: LinkProps) => {
   return (
     <RouterLink to={to} style={{ textDecoration: 'none' }}>
       <Typography

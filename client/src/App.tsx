@@ -1,7 +1,7 @@
 import React from 'react';
 import { Theme } from './Styles/GlobalTheme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { AppRouter } from './Router';
+import { AppRouter } from './Components/Router';
 import { useAppSelector } from './Redux';
 
 function App() {

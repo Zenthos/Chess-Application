@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Pages from 'src/Pages';
-import { DefaultLayout, NavOnlyLayout } from 'src/Layouts';
+import { DefaultLayout, NavOnlyLayout } from 'src/Components/Layouts';
 
 interface Route {
   key: string;

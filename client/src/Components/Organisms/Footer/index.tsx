@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '../Atoms';
+import { Link } from 'src/Components';
 import { Box, Paper, Container, Divider, Grid, Typography } from '@mui/material';
 
 export const Footer = () => {
@@ -46,7 +46,7 @@ export const Footer = () => {
           </Grid>
         </Grid>
 
-        <Divider sx={{ py: 2, borderColor: 'white' }} />
+        <Divider sx={{ borderColor: (theme) => theme.palette.mode === 'dark' ? '#555555' : 'white' }} />
         <Box display="flex" justifyContent="center" sx={{ py: 1 }}>
           <Typography variant="caption" color="white" align="center">
             Copyright ChessRooms © {new Date().getFullYear()}

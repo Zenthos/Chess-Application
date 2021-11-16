@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from 'react';
-import { AuthContext } from '../Contexts/AuthContext';
+import React, { useContext } from 'react';
+import { AuthContext } from 'src/Contexts/AuthContext';
 import { Navigate } from 'react-router';
 
 interface AuthenticatorProps {
