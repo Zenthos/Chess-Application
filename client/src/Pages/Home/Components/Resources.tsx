@@ -29,7 +29,7 @@ export const Resources = () => {
     <React.Fragment>
       <Typography variant="h3" textAlign="center">Resources</Typography>
       <Divider />
-      <Grid container textAlign="center">
+      <Grid container spacing={4} textAlign="center">
         {resourceList.map((resource) => (
           <Grid key={resource.key} item md={3} sm={6} xs={12}>
             <Typography variant="h5" sx={{ fontWeight: 600 }} gutterBottom>

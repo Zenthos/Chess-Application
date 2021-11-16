@@ -21,7 +21,7 @@ export const FutureUpdates = () => {
     },
     {
       key: 4,
-      Close,
+      Check,
       description: 'Complete the Tutorial Page'
     },
     {

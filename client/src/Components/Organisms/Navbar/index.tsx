@@ -1,13 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Box, AppBar, Toolbar, Typography, Button, Link } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, Button, IconButton, Link, useTheme, useMediaQuery } from '@mui/material';
 import { changeTheme, useAppDispatch, useAppSelector } from 'src/Redux';
+import { Menu } from '@mui/icons-material';
 import { Switch } from 'src/Components';
+import { Drawer } from './Components';
+import { navOptions } from './Options';
 
 export const Navbar = () => {
   const dispatch = useAppDispatch();
   const { theme } = useAppSelector((state) => state.user);
   const toggleTheme = () => dispatch(changeTheme());
+
+  const muiTheme = useTheme();
+  const isMedScreen = useMediaQuery(muiTheme.breakpoints.down('md'));
+
+  const [displayDrawer, setDisplayDrawer] = useState(false);
 
   return (
     <AppBar position="static">
@@ -24,24 +32,36 @@ export const Navbar = () => {
           </Typography>
           <Switch checked={theme === 'dark'} onChange={toggleTheme} />
         </Box>
-        {/* <Button component={RouterLink} to="/shop" variant="text" color="inherit" sx={{ ml: 0.5 }}>
-          Shop
-        </Button> */}
-        <Button component={RouterLink} to="/how-to-play" variant="text" color="inherit" sx={{ ml: 0.5 }}>
-          How to Play
-        </Button>
-        <Button component={RouterLink} to="/about" variant="text" color="inherit" sx={{ ml: 0.5 }}>
-          About
-        </Button>
-        <Button component={RouterLink} to="/play" variant="text" color="inherit" sx={{ ml: 0.5 }}>
-          Play Chess
-        </Button>
-        <Button component={RouterLink} to="/login" variant="text" color="inherit" sx={{ ml: 0.5 }}>
-          Login
-        </Button>
-        <Button component={RouterLink} to="/register" color="secondary" sx={{ ml: 0.5 }}>
-          Sign Up
-        </Button>
+
+        {isMedScreen ? (
+          <React.Fragment>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mx: 2 }}
+              onClick={() => setDisplayDrawer(true)}
+            >
+              <Menu />
+            </IconButton>
+            <Drawer display={displayDrawer} setDisplay={setDisplayDrawer} />
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            {navOptions.map(({ path, text, variant, color }) => (
+              <Button
+                key={path}
+                to={path}
+                component={RouterLink}
+                variant={variant || 'text'}
+                color={color || 'inherit'} sx={{ ml: 0.5 }}
+              >
+                {text}
+              </Button>
+            ))}
+          </React.Fragment>
+        )}
       </Toolbar>
     </AppBar>
   );

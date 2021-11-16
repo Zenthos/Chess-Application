@@ -2,19 +2,19 @@ module.exports = {
   'env': {
     'browser': true,
     'es2021': true,
-    'node': true
+    'node': true,
   },
   'extends': [
     'eslint:recommended',
-    'plugin:react/recommended',
+    'plugin:react/recommended'
   ],
   'parser': '@typescript-eslint/parser',
   'parserOptions': {
     'ecmaFeatures': {
-      'jsx': true
+      'jsx': true,
     },
     'ecmaVersion': 'latest',
-    'sourceType': 'module'
+    'sourceType': 'module',
   },
   'plugins': [
     'react',
@@ -45,6 +45,7 @@ module.exports = {
     'no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
     'no-multi-str': 'error',
     'no-floating-decimal': 'error',
+    'comma-dangle': ['error', { objects: 'only-multiline', arrays: 'only-multiline' }],
     'comma-style': ['error', 'last'],
     'dot-location': ['error', 'property'],
     'func-call-spacing': ['error', 'never'],
@@ -58,14 +59,14 @@ module.exports = {
       'error',
       {
         allowAllPropertiesOnSameLine: true,
-      },
+      }
     ],
     'semi-spacing': [
       'error',
       {
         before: false,
         after: true,
-      },
+      }
     ],
-  }
+  },
 };

@@ -45,6 +45,21 @@ export const PublicRoute: Route[] = [
     element: DefaultLayout(Pages.Search),
   },
   {
+    key: 'ForumHub',
+    path: '/forum',
+    element: DefaultLayout(Pages.ForumHub),
+  },
+  {
+    key: 'ForumCategory',
+    path: '/forum/:category',
+    element: DefaultLayout(Pages.Category),
+  },
+  {
+    key: 'ForumThread',
+    path: '/forum/:category/:thread',
+    element: DefaultLayout(Pages.Thread),
+  },
+  {
     key: 'LoginPage',
     path: '/login',
     element: NavOnlyLayout(Pages.Login),
