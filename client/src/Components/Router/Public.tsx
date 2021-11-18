@@ -1,6 +1,10 @@
 import React from 'react';
 import * as Pages from 'src/Pages';
-import { DefaultLayout, NavOnlyLayout } from 'src/Components/Layouts';
+import {
+  DefaultLayout,
+  NavOnlyLayout,
+  NoContainerLayout
+} from 'src/Components/Layouts';
 
 interface Route {
   key: string;
@@ -22,12 +26,12 @@ export const PublicRoute: Route[] = [
   {
     key: 'PlayPage',
     path: '/play',
-    element: DefaultLayout(Pages.Play),
+    element: NoContainerLayout(Pages.Play),
   },
   {
     key: 'PracticePage',
     path: '/practice',
-    element: DefaultLayout(Pages.Practice),
+    element: NoContainerLayout(Pages.Practice),
   },
   {
     key: 'ShopPage',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Box, Tab, CardMedia, Tabs as MuiTabs } from '@mui/material';
 import { TabPanel } from './Panel';
 
@@ -15,6 +15,21 @@ interface TabsProps {
 export const Tabs = ({ tabContent }: TabsProps) => {
   const [currentTab, setCurrentTab] = useState(0);
   const handleTab = (_event: React.SyntheticEvent, newValue: number) => setCurrentTab(newValue);
+
+  // Preload the images
+  useEffect(() => {
+    tabContent.forEach(({ image }) => {
+      if (typeof image === 'string') {
+        new Image().src = image;
+      }
+
+      if (Array.isArray(image)) {
+        image.forEach((i) => {
+          new Image().src = i;
+        });
+      }
+    });
+  }, []);
 
   return (
     <React.Fragment>

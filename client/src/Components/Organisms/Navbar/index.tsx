@@ -22,7 +22,7 @@ export const Navbar = () => {
       <Toolbar>
         <Link component={RouterLink} to="/" style={{ textDecoration: 'none' }}>
           <Typography color="white" variant="h6" component="div">
-            Chess
+            Home
           </Typography>
         </Link>
         <Box style={{ flexGrow: 1 }} />

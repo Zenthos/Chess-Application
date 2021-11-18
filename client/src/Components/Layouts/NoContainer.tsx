@@ -1,15 +1,12 @@
 import React from 'react';
 import { Box } from '@mui/system';
-import { Container } from '@mui/material';
 import { Navbar } from 'src/Components';
 
-export const NavOnlyLayout = (Component: React.ComponentType) => {
+export const NoContainerLayout = (Component: React.ComponentType) => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
-      <Container sx={{ py: 2 }}>
-        <Component />
-      </Container>
+      <Component />
     </Box>
   );
 };
