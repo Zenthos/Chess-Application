@@ -1,17 +1,19 @@
 import React, { useEffect } from 'react';
+import { Box } from '@mui/system';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { useDrag } from 'react-dnd';
 
 interface PieceProps {
   type: string;
-  image?: string;
-  children: string | React.ReactElement | React.ReactElement[];
+  image: string;
 }
 
-export const Piece = ({ type, image = '5', children }: PieceProps) => {
+export const Piece = ({ type, image }: PieceProps) => {
+  const imageComponent = <img src={image} alt={type} style={{ width: '95%' }} />;
+
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: 'piece',
-    item: { type, image },
+    item: imageComponent,
     collect: (monitor) => ({
       isDragging: monitor.isDragging()
     }),
@@ -23,9 +25,9 @@ export const Piece = ({ type, image = '5', children }: PieceProps) => {
 
   return (
     <React.Fragment>
-      <div
+      <Box
         ref={drag}
-        style={{
+        sx={{
           opacity: isDragging ? 0 : 1,
           fontSize: 25,
           fontWeight: 'bold',
@@ -36,8 +38,8 @@ export const Piece = ({ type, image = '5', children }: PieceProps) => {
           alignItems: 'center'
         }}
       >
-        {children}
-      </div>
+        {imageComponent}
+      </Box>
     </React.Fragment>
   );
 };

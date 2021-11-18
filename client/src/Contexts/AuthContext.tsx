@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: AuthContextType) => {
   }, []);
 
   return (
-    <div>
+    <React.Fragment>
       { isLoaded ?
         <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, setIsSubmitting, isSubmitting }} >
           { children }
@@ -54,6 +54,6 @@ export const AuthProvider = ({ children }: AuthContextType) => {
         :
         null
       }
-    </div>
+    </React.Fragment>
   );
 };

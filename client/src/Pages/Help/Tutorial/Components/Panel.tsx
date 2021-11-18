@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -9,7 +9,7 @@ interface TabPanelProps {
 
 export function TabPanel({ children, value, index }: TabPanelProps) {
   return (
-    <div
+    <Box
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
@@ -20,6 +20,6 @@ export function TabPanel({ children, value, index }: TabPanelProps) {
           {children}
         </Box>
       )}
-    </div>
+    </Box>
   );
 }

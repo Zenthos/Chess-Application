@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { Box } from '@mui/material';
 import { useDragLayer, XYCoord } from 'react-dnd';
 
 export const DragLayer = () => {
@@ -31,8 +32,8 @@ export const DragLayer = () => {
   }
 
   return (
-    <div style={getItemStyles(currentOffset)} ref={itemRef}>
-      {item.type}
-    </div>
+    <Box style={getItemStyles(currentOffset)} ref={itemRef}>
+      {item}
+    </Box>
   );
 };

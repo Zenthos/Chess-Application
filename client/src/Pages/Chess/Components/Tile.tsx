@@ -7,8 +7,8 @@ interface TileProps extends BoxProps {
 }
 
 const Overlay = ({ color }: { color: string }) => (
-  <div
-    style={{
+  <Box
+    sx={{
       position: 'absolute',
       top: 0,
       left: 0,

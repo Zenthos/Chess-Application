@@ -2,7 +2,7 @@ import React from 'react';
 import Chess from 'src/Assets/chess.jpg';
 import Source from 'src/Assets/source.jpg';
 import Person from 'src/Assets/person.jpg';
-import JumboImage from 'src/Assets/chess-images/jumbo-image.jpg';
+import JumboImage from 'src/Assets/header.jpg';
 import { Divider, Alert, useTheme, useMediaQuery } from '@mui/material';
 import { InfoCard, Resources } from './Components';
 import { Jumbotron } from 'src/Components';

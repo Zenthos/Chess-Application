@@ -1,5 +1,5 @@
 import React from 'react';
-import Mast from 'src/Assets/mast-picture.jpg';
+import Mast from 'src/Assets/about.jpg';
 import { Grid, Typography } from '@mui/material';
 import { Jumbotron } from 'src/Components';
 import { FutureUpdates } from './Components';
