@@ -1,56 +1,52 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Box, BoxProps } from '@mui/material';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Piece, Tile, DragLayer } from '../Components';
-import { White, Tiles, BoardImg } from 'src/Assets/chess-images';
+import { Tiles, BoardImg } from 'src/Assets/chess-images';
+import { GetPieceImage, ConversionMap } from 'src/Utils';
+import { useAppSelector } from 'src/Redux';
 
 export const Board = () => {
-  const boxRef = useRef<HTMLDivElement>();
+  const { pieces } = useAppSelector((state) => state.chess);
 
-  const containerProps: BoxProps['sx'] = {
+  const containerStyles: BoxProps['sx'] = {
     display: 'grid',
     aspectRatio: '1/1',
-    gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr',
+    gridTemplateRows: '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr',
     maxHeight: '85vh',
     margin: 'auto',
     border: '26px solid black',
     borderImage: `url(${BoardImg}) 28`
   };
 
-  const columnProps: BoxProps['sx'] = {
-    display: 'flex',
-    flexDirection: 'column'
-  };
-
-  const tileProps: BoxProps['sx'] = {
-    textAlign: 'center',
-    flex: 1
+  const rowStyles: BoxProps['sx'] = {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr',
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <DragLayer />
-      <Box sx={containerProps} ref={boxRef}>
+      <Box sx={containerStyles}>
         {
-          ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].map((column, columnIndex) => (
-            <Box key={`column-${column}`} sx={columnProps}>
+          pieces.map((row, rowIndex) => (
+            <Box key={`row-${rowIndex}`} sx={rowStyles}>
               {
-                [8, 7, 6, 5, 4, 3, 2, 1].map((row) => {
-                  const bg = columnIndex % 2 === 0
-                    ? (row % 2 === 0 ? Tiles.White : Tiles.Black)
-                    : (row % 2 === 0 ? Tiles.Black : Tiles.White);
+                row.map((piece, tileIndex) => {
+                  const bg = rowIndex % 2 === 0
+                    ? (tileIndex % 2 === 0 ? Tiles.White : Tiles.Black)
+                    : (tileIndex % 2 === 0 ? Tiles.Black : Tiles.White);
+
+                  const position = `${ConversionMap(tileIndex + 1)}${rowIndex + 1}`;
 
                   return (
-                    <Tile
-                      sx={tileProps}
-                      key={`tile-${column}${row}`}
-                      style={{
-                        position: 'relative',
-                        backgroundImage: `url(${bg})`,
-                      }}
-                    >
-                      <Piece type={`piece-${column}${row}`} image={White.Pawn} />
+                    <Tile key={`tile-${position}`} tilePos={position} color={bg}>
+                      {
+                        (piece !== '-') ? (
+                          <Piece key={`piece-${position}`} pieceType={piece} piecePos={position} image={GetPieceImage(piece)} />
+                        ) : null
+                      }
                     </Tile>
                   );
                 })

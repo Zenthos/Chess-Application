@@ -1,5 +1,6 @@
 // Regular Exports
 export * from './User';
+export * from './Chess';
 
 // React Hooks
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';

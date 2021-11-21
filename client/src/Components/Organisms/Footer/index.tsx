@@ -17,16 +17,23 @@ export const Footer = () => {
     >
       <Container>
         <Grid container spacing={5}>
-          <Grid item xs={6} sm={6} md={4}>
+          <Grid item xs={6} sm={6} md={3}>
             <Box display="flex" flexDirection="column">
               <Typography variant="h4" color="white">Chess</Typography>
               <Link to="/play" underline>Play</Link>
               <Link to="/how-to-play" underline>Learn</Link>
               <Link to="/practice" underline>Practice</Link>
-              {/* <Link to="/shop" underline>Shop</Link> */}
+              <Link to="/shop" underline>Shop</Link>
             </Box>
           </Grid>
-          <Grid item xs={6} sm={6} md={4}>
+          <Grid item xs={6} sm={6} md={3}>
+            <Box display="flex" flexDirection="column">
+              <Typography variant="h4" color="white">Social</Typography>
+              <Link to="/about" underline>About</Link>
+              <Link to="/forum" underline>Forum</Link>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
             <Box display="flex" flexDirection="column">
               <Typography variant="h4" color="white">Support</Typography>
               <Link to="/about" underline>Contact</Link>
@@ -34,7 +41,7 @@ export const Footer = () => {
               <Link to="/about" underline>Privacy Policy</Link>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid item xs={12} sm={6} md={3}>
             <Box display="flex" flexDirection="column">
               <Typography variant="h4" color="white">Information</Typography>
               <Typography variant="body1" color="white">

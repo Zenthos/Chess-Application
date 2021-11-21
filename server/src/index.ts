@@ -5,12 +5,12 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import { keys } from './config';
-import { forumRouter, userRouter } from './routes';
+import { forumRouter, userRouter, stripeRouter } from './routes';
 
 const app = express();
 const server = http.createServer(app);
 
-mongoose.connect(keys.MongoURI, {}, () => {
+mongoose.connect(keys.MONGO_URI, {}, () => {
   console.log('Connection to Mongo Database Established');
 });
 
@@ -24,6 +24,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
 
+app.use('/', stripeRouter);
 app.use('/user', userRouter);
 app.use('/forum', forumRouter);
 

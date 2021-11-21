@@ -25,7 +25,7 @@ export const DragLayer = () => {
     return {
       position: 'absolute',
       pointerEvents: 'none',
-      zIndex: 200,
+      zIndex: 300,
       left: x,
       top: y
     };
@@ -33,7 +33,7 @@ export const DragLayer = () => {
 
   return (
     <Box style={getItemStyles(currentOffset)} ref={itemRef}>
-      {item}
+      {item.imageComponent}
     </Box>
   );
 };
