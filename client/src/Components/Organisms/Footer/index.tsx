@@ -16,7 +16,7 @@ export const Footer = () => {
       }}
     >
       <Container>
-        <Grid container spacing={5}>
+        <Grid container spacing={3}>
           <Grid item xs={6} sm={6} md={3}>
             <Box display="flex" flexDirection="column">
               <Typography variant="h4" color="white">Chess</Typography>

@@ -59,6 +59,16 @@ export const FutureUpdates = () => {
       Close,
       description: 'Implement Friend System'
     },
+    {
+      key: 12,
+      Close,
+      description: 'Complete the Shop Page'
+    },
+    {
+      key: 13,
+      Close,
+      description: 'Complete the Forum Directory'
+    },
   ];
 
   return (

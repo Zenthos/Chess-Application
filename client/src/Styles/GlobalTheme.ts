@@ -36,6 +36,12 @@ export const Theme = (mode: PaletteMode) => createTheme({
         }
       }
     },
+    MuiTabs: {
+      defaultProps: {
+        textColor: mode === 'dark' ? 'secondary' : 'primary',
+        indicatorColor: mode === 'dark' ? 'secondary' : 'primary',
+      }
+    },
     MuiLink: {
       styleOverrides: {
         underlineAlways: {
