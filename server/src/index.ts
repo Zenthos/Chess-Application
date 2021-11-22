@@ -4,8 +4,8 @@ import morgan from 'morgan';
 import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
-import { keys } from './config';
-import { forumRouter, userRouter, stripeRouter } from './routes';
+import { keys } from './Config';
+import { forumRouter, userRouter, stripeRouter } from './Routes';
 
 const app = express();
 const server = http.createServer(app);

@@ -2,7 +2,7 @@
   "name": "chess-server",
   "version": "2.0.0",
   "description": "",
-  "main": "app.ts",
+  "main": "src/index.ts",
   "scripts": {
     "build": "tsc",
     "build:client": "cd ../client && yarn build",

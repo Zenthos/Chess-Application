@@ -1,0 +1,19 @@
+{
+  "name": "testing-grounds",
+  "version": "1.0.0",
+  "description": "Testing place for my app",
+  "main": "src/index.ts",
+  "scripts": {
+    "execute": "tsc && node build/index.js"
+  },
+  "keywords": [],
+  "author": "Zenthos",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^16.11.7",
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@typescript-eslint/parser": "^5.3.1",
+    "eslint": "^8.2.0",
+    "typescript": "^4.4.4"
+  }
+}

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { Stripe } from 'stripe';
-import { keys } from '../config';
+import { keys } from '../Config';
 
 export const stripeRouter = Router();
 
@@ -11,7 +11,6 @@ stripeRouter.post('/create-checkout-session', async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
-          // Provide the exact Price ID (e.g. pr_1234) of the product you want to sell
           name: 'Test',
           description: 'Test Transaction',
           amount: 1,

@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { keys } from '../config';
-import { User, UserType } from '../models';
+import { keys } from '../Config';
+import { User, UserType } from '../Models';
 import { sign, verify } from 'jsonwebtoken';
 
 export const userRouter = Router();
