@@ -27,6 +27,8 @@ module.exports = {
     'no-use-before-define': 0,
     'no-useless-catch': 0,
     'import/no-unresolved': 0,
+    'space-infix-ops': ['error'],
+    'space-before-function-paren': ['error', 'never'],
     'spaced-comment': ['error', 'always'],
     'space-before-blocks': 'error',
     'padded-blocks': ['error', 'never'],
