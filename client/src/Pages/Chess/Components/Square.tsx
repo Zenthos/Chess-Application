@@ -3,9 +3,9 @@ import { useDrop } from 'react-dnd';
 import { Box, BoxProps } from '@mui/material';
 import { useAppDispatch, movePiece, setDragging } from 'src/Redux';
 
-interface TileProps extends BoxProps {
+interface SquareProps extends BoxProps {
   children?: React.ReactElement | null;
-  tilePos: string;
+  squarePos: string;
   color: string;
 }
 
@@ -24,25 +24,24 @@ const Overlay = ({ color }: { color: string }) => (
   />
 );
 
-export const Tile = ({ color, tilePos, children }: TileProps) => {
+export const Square = ({ color, squarePos, children }: SquareProps) => {
   const dispatch = useAppDispatch();
 
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
     accept: 'piece',
     canDrop: () => true,
     drop: (item: any) => {
-      if (item.piecePos === tilePos) return;
+      if (item.piecePos === squarePos) return;
 
-      dispatch(movePiece({ start: item.piecePos, to: tilePos }));
-      dispatch(setDragging(null));
+      dispatch(movePiece({ start: item.piecePos, to: squarePos }));
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
     }),
-  }), [tilePos]);
+  }), [squarePos]);
 
-  const tileStyles: BoxProps['sx'] = {
+  const squareStyles: BoxProps['sx'] = {
     backgroundImage: `url(${color})`,
     justifyContent: 'center',
     alignItems: 'center',
@@ -63,7 +62,7 @@ export const Tile = ({ color, tilePos, children }: TileProps) => {
   };
 
   return (
-    <Box ref={drop} sx={tileStyles}>
+    <Box ref={drop} sx={squareStyles}>
       <Box sx={childStyles}>
         {children}
       </Box>

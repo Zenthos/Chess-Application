@@ -50,6 +50,9 @@ module.exports = {
     'no-class-assign': 'error',
     'no-const-assign': 'error',
     'no-duplicate-imports': 'error',
+    'array-element-newline': ['error', 'consistent'],
+    'array-bracket-newline': ['error', 'consistent'],
+    'object-curly-newline': ['error', { 'consistent': true }],
     'object-property-newline': [
       'error',
       {

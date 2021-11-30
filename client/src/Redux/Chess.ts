@@ -41,6 +41,9 @@ export const chessSlice = createSlice({
 
       state.pendingAnimation = payload;
     },
+    setPieces: (state, { payload }: PayloadAction<ChessState['pieces']>) => {
+      state.pieces = payload;
+    },
     movePiece: (state, { payload }: PayloadAction<{ start: string, to: string }>) => {
       const [sRank, sFile] = payload.start.split('');
       const [eRank, eFile] = payload.to.split('');
@@ -64,6 +67,11 @@ export const chessSlice = createSlice({
   },
 });
 
-export const { setDragging, setAnimation, movePiece } = chessSlice.actions;
+export const {
+  setDragging,
+  setAnimation,
+  setPieces,
+  movePiece,
+} = chessSlice.actions;
 
 export default chessSlice.reducer;

@@ -1,16 +1,26 @@
 import { printBoard, printMoves, setBit, getBit } from './Utils';
+import { Occupancies, BitBoardType, Pieces } from './Types';
+import { generatePawnMoves } from './Generation';
 
 // ------------
 //  Game Logic
 // ------------
 
-// 0 - Rook
-// 1 - Bishop
-// 2 - Knight
-// 3 - Queen
-// 4 - King
-// 5 - Pawn
-const bitBoards = [0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n, 0n];
+const bitboards: BitBoardType = [
+  0n, // P
+  0n, // N
+  0n, // B
+  0n, // R
+  0n, // Q
+  0n, // K
+  0n, // p
+  0n, // n
+  0n, // b
+  0n, // r
+  0n, // q
+  0n, // k
+];
+
 const asciiPieces = ['P', 'N', 'B', 'R', 'Q', 'K', 'p', 'n', 'b', 'r', 'q', 'k'];
 
 const occupancies = {
@@ -37,7 +47,7 @@ function parseFEN(fen: string) {
       const index = asciiPieces.findIndex((ascii) => ascii === piece);
 
       if (index !== -1) {
-        bitBoards[index] = setBit((bitBoards[index] as bigint), square);
+        bitboards[index] = setBit((bitboards[index] as bigint), square);
       }
 
       if (piece >= '1' && piece <= '8') {
@@ -49,7 +59,6 @@ function parseFEN(fen: string) {
   }
 }
 
-
 function convertToPieceArray() {
   const pieceArray = [];
 
@@ -59,8 +68,8 @@ function convertToPieceArray() {
       const square = (rank * 8) + file;
       let piece = -1;
 
-      for (let bbPiece = 0; bbPiece <= bitBoards.length; bbPiece++) {
-        if (bitBoards[bbPiece] && getBit((bitBoards[bbPiece] as bigint), square)) {
+      for (let bbPiece = 0; bbPiece <= bitboards.length; bbPiece++) {
+        if (bitboards[bbPiece] && getBit((bitboards[bbPiece] as bigint), square)) {
           piece = bbPiece;
         }
       }
@@ -73,5 +82,49 @@ function convertToPieceArray() {
   console.table(pieceArray);
 }
 
+function isSquareAttacked(square: number, side: keyof Occupancies) {
+  let bishopsQueens: bigint;
+  let rooksQueens: bigint;
+  let pawnBoard: bigint;
+  let knightBoard: bigint;
+  let kingBoard: bigint;
+
+  if (side === 'White') {
+    bishopsQueens = bitboards[Pieces.B] | bitboards[Pieces.Q];
+    rooksQueens = bitboards[Pieces.R] | bitboards[Pieces.Q];
+    pawnBoard = bitboards[Pieces.P];
+    knightBoard = bitboards[Pieces.N];
+    kingBoard = bitboards[Pieces.K];
+  } else {
+    bishopsQueens = bitboards[Pieces.b] | bitboards[Pieces.q];
+    rooksQueens = bitboards[Pieces.r] | bitboards[Pieces.q];
+    pawnBoard = bitboards[Pieces.p];
+    knightBoard = bitboards[Pieces.n];
+    kingBoard = bitboards[Pieces.k];
+  }
+
+  // if (pawnAttacks[square] & pawnBoard)
+  //   return 1;
+
+  // if (knightAttacks[square] & knightBoard)
+  //   return 1;
+
+  // if (GetBishopAttacks(square, occupancies['Both']) & bishopsQueens)
+  //   return 1;
+
+  // if (GetRookAttacks(square, occupancies['Both']) & rooksQueens)
+  //   return 1;
+
+  // if (kingAttacks[square] & kingBoard)
+  //   return 1;
+
+  return 0;
+}
+
+// convertToPieceArray();
+
 parseFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
 convertToPieceArray();
+
+// const moves = generatePawnMoves(occupancies, 'Black', bitboards[Pieces.p]);
+// printMoves(moves);

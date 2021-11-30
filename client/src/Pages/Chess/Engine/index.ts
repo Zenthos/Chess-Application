@@ -1,7 +1,3 @@
-/**
- * This file should not contain jsx
- */
+export * from './BoardHandler';
+export * from './SquareHandler';
 
-export class Engine {
-
-}

@@ -5,10 +5,14 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import { keys } from './Config';
+import { Server as SocketServer } from 'socket.io';
 import { forumRouter, userRouter, stripeRouter } from './Routes';
+import { initializeSocket } from './Socket';
 
 const app = express();
 const server = http.createServer(app);
+const io = new SocketServer(server);
+initializeSocket(io);
 
 mongoose.connect(keys.MONGO_URI, {}, () => {
   console.log('Connection to Mongo Database Established');
