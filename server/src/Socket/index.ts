@@ -1,6 +1,5 @@
 import * as Handlers from './Handlers';
-import { ChessEngine } from '../Engine';
-import { Room, User } from './Types';
+import { HandlerParams, Room, User } from './Types';
 import { Server } from 'socket.io';
 
 // Initialize Socket Server handlers
@@ -25,8 +24,10 @@ export function initializeSocket(io: Server) {
     });
 
     // Register event listeners Handlers
-    Handlers.registerRoomHandlers(io, socket, rooms);
-    Handlers.registerChatHandlers(io, socket);
-    Handlers.registerChessHandlers(io, socket);
+    const handlerParams: HandlerParams = { io, socket, users, rooms };
+
+    Handlers.registerRoomHandlers(handlerParams);
+    Handlers.registerChatHandlers(handlerParams);
+    Handlers.registerChessHandlers(handlerParams);
   });
 }

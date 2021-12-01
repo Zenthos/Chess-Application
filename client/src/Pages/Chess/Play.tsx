@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { Board } from './Components';
+import { Board, Chat } from './Components';
 import { SocketProvider } from 'src/Contexts';
 
 export const Play = () => {
@@ -11,21 +11,7 @@ export const Play = () => {
           <Board />
         </Grid>
         <Grid item xs={12} sm={4}>
-          Chat Interface Will Go Here
-          <br />
-          <br />
-          <br />
-          <br />
-          <h4>Todo List for this page</h4>
-          <ul>
-            <li>Incorporate Chess Engine</li>
-            <li>Add Animations</li>
-            <li>Add Pre-moves</li>
-            <li>Chat Functionality</li>
-            <li>Online Multiplayer</li>
-            <li>Play Against Computer</li>
-            <li>Keep track of match outcomes (wins/losses)</li>
-          </ul>
+          <Chat />
         </Grid>
       </Grid>
     </SocketProvider>

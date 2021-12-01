@@ -5,6 +5,7 @@ interface ScrollToTopProps {
   children: React.ReactElement;
 }
 
+// This component scrolls to the top upon every page navigation
 const ScrollToTop = ({ children }: ScrollToTopProps) => {
   const location = useLocation();
 

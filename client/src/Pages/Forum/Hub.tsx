@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Grid, IconButton, Paper, Card, CardHeader, CardContent, Typography, Divider } from '@mui/material';
-import { Menu } from '@mui/icons-material';
+import { Add, Menu } from '@mui/icons-material';
 
 export const ForumHub = () => {
   const categories = [
@@ -69,9 +69,15 @@ export const ForumHub = () => {
                 sx={{ pb: 0 }}
                 title={(
                   <React.Fragment>
-                    <Typography variant="h5">
-                      {title}
-                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="h5">
+                        {title}
+                      </Typography>
+
+                      <IconButton sx={{ m: 0, p: 0 }}>
+                        <Add />
+                      </IconButton>
+                    </Box>
                     <Divider />
                   </React.Fragment>
                 )}

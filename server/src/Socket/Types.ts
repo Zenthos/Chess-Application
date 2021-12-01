@@ -1,18 +1,38 @@
+import { Server, Socket } from 'socket.io';
+import { ChessEngine } from '../Engine';
+
 // Allows object types to be mutated and string indexed
 interface IndexType {
   [index: string]: any;
+}
+
+interface Message {
+  username: string;
+  message: string;
 }
 
 // User Type
 export interface User extends IndexType {
   socketId: string;
   username?: string;
-  role?: 'Black' | 'White' | 'Spectator';
+  roomId?: string;
+  role?: 'Black' | 'White' | 'Bot' | 'Spectator';
 }
 
 // Socket Room Type
 export interface Room extends IndexType {
   roomId: string;
-  users: Array<User['socketId']>; // Typed this way incase type of User is modified in the future
-  status: 'Ongoing' | 'Complete';
+  users: string[];
+  chatLogs: Message[];
+  game: ChessEngine;
+  type: 'Public' | 'Private';
+  status: 'Waiting' | 'Ongoing' | 'Complete';
+}
+
+// The function parameters of a socket handler
+export interface HandlerParams {
+  io: Server;
+  socket: Socket;
+  users: Map<string, User>;
+  rooms: Map<string, Room>;
 }

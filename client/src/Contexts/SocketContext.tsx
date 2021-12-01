@@ -16,14 +16,14 @@ interface SocketProviderProps {
 export const SocketProvider = ({ children }: SocketProviderProps) => {
   const [socket, setSocket] = useState<SocketContextType['socket']>(null);
 
-  useEffect(() => {
-    const newSocket = io();
-    setSocket(newSocket);
+  // useEffect(() => {
+  //   const newSocket = io();
+  //   setSocket(newSocket);
 
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []);
+  //   return () => {
+  //     newSocket.disconnect();
+  //   };
+  // }, []);
 
   return (
     <SocketContext.Provider value={{ socket }}>

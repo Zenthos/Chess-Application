@@ -9,3 +9,7 @@ export const keys = {
   MONGO_URI: process.env['MONGODB_URI'] || '',
   JWT_KEY: process.env['JWT_KEY'] || ''
 };
+
+export const constants = {
+  CHAT_ADMIN: 'SYSTEM',
+};

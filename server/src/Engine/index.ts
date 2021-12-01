@@ -1,6 +1,5 @@
-import { printBoard, printMoves, setBit, getBit } from './Utils';
-import { Occupancies, BitBoardType, Pieces } from './Types';
-import { generatePawnMoves } from './Generation';
+import { setBit, getBit } from './Utils';
+import { BitBoardType } from './Types';
 
 // Constants
 
@@ -32,9 +31,9 @@ export class ChessEngine {
     'Both': 0n
   };
 
-  // -----------------
-  //  Testing Grounds
-  // -----------------
+  initialize = () => {
+    this.parseFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
+  };
 
   parseFEN = (fen: string) => {
     const sections = fen.split(' ');
