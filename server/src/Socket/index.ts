@@ -1,25 +1,32 @@
+import * as Handlers from './Handlers';
 import { ChessEngine } from '../Engine';
+import { Room, User } from './Types';
 import { Server } from 'socket.io';
-
-// Allows object types to be mutated and string indexed
-interface IndexType {
-  [index: string]: string
-}
 
 // Initialize Socket Server handlers
 export function initializeSocket(io: Server) {
-  const users: IndexType = {};
-  const rooms: IndexType = {};
+  const users: Map<string, User> = new Map();
+  const rooms: Map<string, Room> = new Map();
 
   io.on('connection', (socket) => {
-    console.log(`a user connected: ${socket.id}`);
+    // Perform actions when a user connects
+    users.set(socket.id, { socketId: socket.id });
 
-    const engine = new ChessEngine();
-    engine.parseFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
-    socket.emit('setPieces', engine.convertToPieceArray());
-
+    // Perform actions when a user disconnects
     socket.on('disconnect', () => {
-      console.log(`a user disconnected: ${socket.id}\n`);
+      users.delete(socket.id);
+      rooms.forEach(({ users }) => {
+        if (users.includes(socket.id)) {
+          const userIndex = users.indexOf(socket.id);
+
+          users.splice(userIndex, 1);
+        }
+      });
     });
+
+    // Register event listeners Handlers
+    Handlers.registerRoomHandlers(io, socket, rooms);
+    Handlers.registerChatHandlers(io, socket);
+    Handlers.registerChessHandlers(io, socket);
   });
 }
