@@ -1,0 +1,34 @@
+{
+  "automerge": true,
+  "automergeType": "pr",
+  "enabledManagers": [
+    "yarn"
+  ],
+  "major": {
+    "automerge": false
+  },
+  "labels": [
+    "dependencies",
+    "bot"
+  ],
+  "packageRules": [
+    {
+      "matchPaths": [
+        "client/package.json"
+      ],
+      "enabled": true
+    },
+    {
+      "matchPaths": [
+        "server/package.json"
+      ],
+      "enabled": true
+    },
+    {
+      "matchPaths": [
+        "testing/package.json"
+      ],
+      "enabled": false
+    }
+  ]
+}
