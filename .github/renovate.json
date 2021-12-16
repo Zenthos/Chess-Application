@@ -13,13 +13,19 @@
   ],
   "packageRules": [
     {
-      "paths": "client/package.json"
+      "matchPaths": [
+        "client/package.json"
+      ]
     },
     {
-      "paths": "server/package.json"
+      "matchPaths": [
+        "server/package.json"
+      ]
     },
     {
-      "paths": "testing/package.json",
+      "matchPaths": [
+        "testing/package.json"
+      ],
       "enabled": false
     }
   ]
