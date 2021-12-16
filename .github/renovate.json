@@ -1,10 +1,26 @@
 {
   "automerge": true,
   "automergeType": "pr",
-  "extends": [
-    "config:base"
+  "enabledManagers": [
+    "yarn"
   ],
+  "major": {
+    "automerge": false
+  },
   "labels": [
-    "dependencies"
+    "dependencies",
+    "bot"
+  ],
+  "packageRules": [
+    {
+      "paths": "client/package.json"
+    },
+    {
+      "paths": "server/package.json"
+    },
+    {
+      "paths": "testing/package.json",
+      "enabled": false
+    }
   ]
 }
