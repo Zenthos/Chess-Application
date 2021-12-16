@@ -1,0 +1,10 @@
+{
+  "automerge": true,
+  "automergeType": "pr",
+  "extends": [
+    "config:base"
+  ],
+  "labels": [
+    "dependencies"
+  ]
+}
