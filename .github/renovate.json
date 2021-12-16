@@ -15,12 +15,14 @@
     {
       "matchPaths": [
         "client/package.json"
-      ]
+      ],
+      "enabled": true
     },
     {
       "matchPaths": [
         "server/package.json"
-      ]
+      ],
+      "enabled": true
     },
     {
       "matchPaths": [
