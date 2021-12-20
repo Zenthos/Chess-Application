@@ -2,11 +2,11 @@
   "automerge": true,
   "automergeType": "pr",
   "enabledManagers": ["yarn"],
+  "labels": ["dependencies", "bot"],
+  "schedule": ["before 2am"],
   "major": {
     "automerge": false
   },
-  "labels": ["dependencies", "bot"],
-  "extends": ["schedule:earlyMondays"],
   "packageRules": [
     {
       "matchPaths": ["client/package.json"],
