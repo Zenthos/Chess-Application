@@ -1,12 +1,8 @@
 {
   "automerge": true,
   "automergeType": "pr",
-  "enabledManagers": ["yarn"],
+  "enabledManagers": ["npm"],
   "labels": ["dependencies", "bot"],
-  "schedule": ["before 2am"],
-  "major": {
-    "automerge": false
-  },
   "packageRules": [
     {
       "matchPaths": ["client/package.json"],
