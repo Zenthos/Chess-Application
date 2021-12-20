@@ -15,10 +15,6 @@
     {
       "matchPaths": ["testing/package.json"],
       "enabled": false
-    },
-    {
-      "packageNames": ["node", "npm"],
-      "enabled": false
     }
   ]
 }
