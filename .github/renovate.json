@@ -1,16 +1,6 @@
 {
+  "extends": ["config:base"],
   "automerge": true,
-  "automergeType": "pr",
-  "enabledManagers": ["npm", "yarn"],
-  "labels": ["dependencies", "bot"],
-  "packageRules": [
-    {
-      "matchPaths": ["client/package.json"],
-      "enabled": true
-    },
-    {
-      "matchPaths": ["server/package.json"],
-      "enabled": true
-    }
-  ]
+  "ignore:paths": [],
+  "labels": ["dependencies", "bot"]
 }
