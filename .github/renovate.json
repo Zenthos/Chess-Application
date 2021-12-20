@@ -1,44 +1,27 @@
 {
   "automerge": true,
   "automergeType": "pr",
-  "enabledManagers": [
-    "yarn"
-  ],
+  "enabledManagers": ["yarn"],
   "major": {
     "automerge": false
   },
-  "labels": [
-    "dependencies",
-    "bot"
-  ],
-  "extends": [
-    "schedule:earlyMondays"
-  ],
+  "labels": ["dependencies", "bot"],
+  "extends": ["schedule:earlyMondays"],
   "packageRules": [
     {
-      "matchPaths": [
-        "client/package.json"
-      ],
+      "matchPaths": ["client/package.json"],
       "enabled": true
     },
     {
-      "matchPaths": [
-        "server/package.json"
-      ],
+      "matchPaths": ["server/package.json"],
       "enabled": true
     },
     {
-      "matchPaths": [
-        "testing/package.json"
-      ],
+      "matchPaths": ["testing/package.json"],
       "enabled": false
     },
     {
-      "packageNames": [
-        "node",
-        "npm",
-        "yarn"
-      ],
+      "packageNames": ["node", "npm"],
       "enabled": false
     }
   ]
