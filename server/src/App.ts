@@ -9,8 +9,8 @@ import { Server as SocketServer } from 'socket.io';
 import { forumRouter, userRouter, stripeRouter } from './Routes';
 import { initializeSocket } from './Socket';
 
-const app = express();
-const server = http.createServer(app);
+export const app = express();
+export const server = http.createServer(app);
 const io = new SocketServer(server);
 initializeSocket(io);
 
@@ -35,7 +35,3 @@ app.use('/forum', forumRouter);
 app.use(
   express.static(path.join(__dirname, '../../', 'client' , 'build'))
 );
-
-server.listen(keys.PORT, () => {
-  console.log(`Now listening on Port: ${keys.PORT}`);
-});

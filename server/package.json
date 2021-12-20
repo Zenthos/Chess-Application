@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc",
     "build:client": "cd ../client && yarn build",
-    "start": "node build/index.js",
-    "start:dev": "nodemon app.js"
+    "start": "node build/Server.js",
+    "start:dev": "nodemon Server.js"
   },
   "keywords": [],
   "author": "Zenthos",
