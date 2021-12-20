@@ -11,7 +11,6 @@
     "url": "git+https://github.com/Zenthos/Chess-Application.git"
   },
   "engines": {
-    "node": "16.13.0",
-    "yarn": "1.22.11"
+    "node": "16.13.0"
   }
 }
