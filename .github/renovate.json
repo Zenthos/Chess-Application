@@ -1,7 +1,7 @@
 {
   "automerge": true,
   "automergeType": "pr",
-  "enabledManagers": ["npm"],
+  "enabledManagers": ["npm", "yarn"],
   "labels": ["dependencies", "bot"],
   "packageRules": [
     {
@@ -11,10 +11,6 @@
     {
       "matchPaths": ["server/package.json"],
       "enabled": true
-    },
-    {
-      "matchPaths": ["testing/package.json"],
-      "enabled": false
     }
   ]
 }
