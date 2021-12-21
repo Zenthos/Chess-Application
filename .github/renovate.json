@@ -5,6 +5,8 @@
     ":automergeAll",
     ":label(internal)",
     ":masterIssue",
+    ":skipStatusChecks",
+    "group:allNonMajor",
     ":pinAllExceptPeerDependencies",
     ":enableVulnerabilityAlerts"
   ],
