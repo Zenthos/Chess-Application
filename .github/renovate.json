@@ -1,35 +1,28 @@
 {
-  "extends": ["config:base", ":disableDependencyDashboard"],
-  "automerge": true,
+  "extends": [
+    "config:base",
+    ":rebaseStalePrs",
+    ":automergeAll",
+    ":label(internal)",
+    ":masterIssue",
+    ":enableVulnerabilityAlerts"
+  ],
   "prHourlyLimit": 0,
   "ignorePaths": [],
   "labels": ["dependencies", "bot"],
+  "automerge": true,
+  "major": {
+    "automerge": false
+  },
+  "lockFileMaintenance": {
+    "enabled": true
+  },
   "packageRules": [
     {
-      "paths": ["client/package.json"],
-      "automerge": true,
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "digest",
-        "lockFileMaintenance",
-        "rollback",
-        "bump"
-      ]
-    },
-    {
-      "paths": ["server/package.json"],
-      "automerge": true,
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "digest",
-        "lockFileMaintenance",
-        "rollback",
-        "bump"
-      ]
+      "depTypeList": ["dependencies"],
+      "rangeStrategy": "bump"
     }
-  ]
+  ],
+  "prCreation": "not-pending",
+  "stabilityDays": 3
 }
