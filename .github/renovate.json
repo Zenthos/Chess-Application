@@ -5,9 +5,11 @@
     ":automergeAll",
     ":label(internal)",
     ":masterIssue",
+    ":pinAllExceptPeerDependencies",
     ":enableVulnerabilityAlerts"
   ],
   "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
   "ignorePaths": [],
   "labels": ["dependencies", "bot"],
   "automerge": true,
@@ -22,7 +24,5 @@
       "depTypeList": ["dependencies"],
       "rangeStrategy": "bump"
     }
-  ],
-  "prCreation": "not-pending",
-  "stabilityDays": 3
+  ]
 }
