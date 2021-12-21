@@ -2344,7 +2344,7 @@ strip-json-comments@~2.0.1:
   resolved "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-2.0.1.tgz"
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
 
-stripe@^8.191.0:
+stripe@^8.194.0:
   version "8.194.0"
   resolved "https://registry.yarnpkg.com/stripe/-/stripe-8.194.0.tgz#67fc7a34260f95f9103834a1f0962d27c608cf73"
   integrity sha512-iERByJUNA7sdkfQ3fD1jcrAZqPxCtTmL2EUzvHUVLXyoacDrflkq4ux5KFxYhfCIerrOAhquVj17+sBHn96/Kg==
