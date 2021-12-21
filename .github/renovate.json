@@ -3,5 +3,33 @@
   "automerge": true,
   "prHourlyLimit": 0,
   "ignorePaths": [],
-  "labels": ["dependencies", "bot"]
+  "labels": ["dependencies", "bot"],
+  "packageRules": [
+    {
+      "paths": ["client/package.json"],
+      "automerge": true,
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest",
+        "lockFileMaintenance",
+        "rollback",
+        "bump"
+      ]
+    },
+    {
+      "paths": ["server/package.json"],
+      "automerge": true,
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest",
+        "lockFileMaintenance",
+        "rollback",
+        "bump"
+      ]
+    }
+  ]
 }
