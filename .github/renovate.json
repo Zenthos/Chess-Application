@@ -25,6 +25,10 @@
     {
       "depTypeList": ["dependencies"],
       "rangeStrategy": "bump"
+    },
+    {
+      "packageNames": ["node"],
+      "enabled": false
     }
   ]
 }
