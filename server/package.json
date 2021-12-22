@@ -7,6 +7,7 @@
     "build": "tsc",
     "build:client": "cd ../client && yarn build",
     "start": "node build/Server.js",
+    "start:daemon": "pm2 start eco.config.js && pm2 logs",
     "start:dev": "nodemon Server.js"
   },
   "keywords": [],
