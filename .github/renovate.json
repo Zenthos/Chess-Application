@@ -5,6 +5,7 @@
     ":automergeAll",
     ":label(internal)",
     ":masterIssue",
+    ":skipStatusChecks",
     "group:allNonMajor",
     "schedule:earlyMondays",
     ":pinAllExceptPeerDependencies",
