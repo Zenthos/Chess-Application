@@ -22,16 +22,15 @@ In the Git Bash terminal, clone this repository using,
 
 > git clone https://github.com/Zenthos/Chess-Application
 
-Then open up two separate terminals and install the dependencies for both the client and the server
-The package manager I used is `yarn`.
+Then install the dependencies for the application
 
 > yarn install
 
-Then for the server (not needed for client), you would compile the typescript code into javascript with
+Then you can begin the server using
 
 > yarn dev
 
-And Thats It! You should have a working SPA running on your machine locally.
+And thats it! You should have a working Next.js application working from your computer.
 
 > http://localhost:3000/
 
