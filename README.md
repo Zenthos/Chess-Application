@@ -28,7 +28,7 @@ Then install the dependencies for the application
 
 Then you can begin the server using
 
-> yarn dev
+> yarn start
 
 And thats it! You should have a working Next.js application working from your computer.
 

@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "ts-node --project tsconfig.server.json server/index.ts",
-    "start": "next start",
+    "start": "ts-node --project tsconfig.server.json server/index.ts",
     "build": "next build",
     "build:analyze": "ANALYZE=true npm run build",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\""
