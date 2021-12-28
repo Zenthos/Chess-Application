@@ -5,7 +5,6 @@
     ":automergeAll",
     ":label(internal)",
     ":masterIssue",
-    ":skipStatusChecks",
     "group:allNonMajor",
     "schedule:earlyMondays",
     ":pinAllExceptPeerDependencies",
@@ -14,7 +13,7 @@
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
   "ignorePaths": [],
-  "labels": ["dependencies", "bot"],
+  "labels": ["dependencies"],
   "automerge": true,
   "major": {
     "automerge": false

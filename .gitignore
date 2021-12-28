@@ -1,1 +1,10 @@
-testing
+# npm
+node_modules
+# editor config files
+.vscode
+# next.js build files
+.next
+# environment variables
+.env
+.env.*
+!.env.example
