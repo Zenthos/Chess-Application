@@ -1,13 +1,10 @@
 import next from 'next';
 import express from 'express';
-import config from './config';
 import cookieParser from 'cookie-parser';
-import { Server as SocketServer } from 'socket.io';
-import { initializeSocket } from './socket';
 
-const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
-const handle = app.getRequestHandler()
+const dev = process.env.NODE_ENV !== 'production';
+const app = next({ dev, port: Number(process.env.PORT) });
+const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
   const server = express();
@@ -18,8 +15,8 @@ app.prepare().then(() => {
     return handle(req, res)
   });
 
-  server.listen(config.PORT, () => {
-    console.log(`> Ready on http://localhost:${config.PORT}`)
+  server.listen(process.env.PORT, () => {
+    console.log(`> Ready on http://localhost:${process.env.PORT}`)
   });
 }, (err) => {
   console.error(err);

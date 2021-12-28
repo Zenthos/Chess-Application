@@ -14,7 +14,7 @@
     "build": "next build",
     "build:analyze": "ANALYZE=true npm run build",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\"",
-    "start": "ts-node --project tsconfig.server.json server/index.ts"
+    "start": "ts-node --project tsconfig.server.json server/index.ts "
   },
   "engines": {
     "node": "16.13.0"
@@ -43,7 +43,6 @@
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.6",
-    "dotenv": "^10.0.0",
     "eslint": "8.5.0",
     "express": "^4.17.2",
     "jsonwebtoken": "^8.5.1",
