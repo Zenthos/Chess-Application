@@ -25,7 +25,7 @@ export const InfoCard = ({ image, title, description, flipped, link, linkText }:
         <Box margin="auto">
           <h1>{title}</h1>
           <p>{description}</p>
-          <Link href={link}>
+          <Link href={link} passHref>
             <Button>{linkText}</Button>
           </Link>
         </Box>

@@ -21,7 +21,7 @@ export const Navbar = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Link href="/">
+        <Link href="/" passHref>
           <Typography color="white" variant="h6" component="div" sx={{ cursor: 'pointer' }} >
             Home
           </Typography>
