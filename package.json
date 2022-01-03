@@ -16,9 +16,6 @@
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\"",
     "start": "ts-node --project tsconfig.server.json server/index.ts "
   },
-  "engines": {
-    "node": "16.13.0"
-  },
   "dependencies": {
     "@emotion/react": "11.7.1",
     "@emotion/styled": "11.6.0",
