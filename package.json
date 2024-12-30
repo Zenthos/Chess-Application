@@ -47,7 +47,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.12.3",
-    "next": "12.3.4",
+    "next": "14.2.15",
     "next-compose-plugins": "^2.2.1",
     "nodemon": "^2.0.22",
     "passport": "^0.6.0",
