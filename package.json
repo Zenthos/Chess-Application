@@ -49,7 +49,7 @@
     "mongoose": "^6.12.3",
     "next": "12.3.4",
     "next-compose-plugins": "^2.2.1",
-    "nodemon": "^2.0.22",
+    "nodemon": "^3.1.9",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
